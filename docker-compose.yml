@@ -1,0 +1,52 @@
+services:
+  # Service 'php' : Conteneur pour l'application PHP et le serveur web Apache.
+  php:
+    image: php:8.2-apache  
+    container_name: SoliDev_php 
+    ports:
+      - "90:80"  # Port 90 de l'ordi → port 80 du conteneur
+    volumes:
+      - ./:/var/www/html  # Dossier du projet → dans le conteneur
+    build:
+      context: .  # Construit depuis ce dossier
+      dockerfile: Dockerfile  # Fichier Docker à utiliser
+    networks:
+      - app-network  # Réseau utilisé
+
+  # Service 'db' : Conteneur pour la base de données MySQL.
+  db:
+    image: mysql:latest  # MySQL dernière version
+    container_name: SoliDev_mysql 
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} 
+      MYSQL_DATABASE: ${MYSQL_DATABASE}  
+      MYSQL_USER: ${MYSQL_USER}  
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}  
+    ports:
+      - "3306:3306"  
+    volumes:
+      - SoliDev-data:/var/lib/mysql  # Sauvegarde des données
+    networks:
+      - app-network  # Réseau utilisé
+
+  # Service 'phpmyadmin' : Conteneur pour l'interface web de gestion de base de données phpMyAdmin.
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin  
+    container_name: SoliDev_phpmyadmin  
+    environment:
+      PMA_HOST: ${PMA_HOST}  
+      PMA_USER: ${PMA_USER}  
+      PMA_PASSWORD: ${PMA_PASSWORD}  
+    ports:
+      - "9000:80"  # Accès à phpMyAdmin sur le port 9000
+    depends_on:
+      - db  # Attend que MySQL soit prêt
+    networks:
+      - app-network  # Réseau utilisé
+
+# Réseau utilisé par tous les services
+networks:
+  app-network:
+# Volume pour sauvegarder les données MySQL
+volumes:
+  SoliDev-data:
