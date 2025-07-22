@@ -25,11 +25,15 @@ class Controller{
     protected function render(string $path, array $params = []):void
     {
         $filePath = _ROOTPATH_. '/views/'.$path.'.php';
-
-        if(!file_exists($filePath)){
-            // Générer erreur
-        }else {
-            require_once $filePath;
+        try {
+                if(!file_exists($filePath)){
+                throw new \Exception("Fichier non trouvé :".$filePath);
+            }else {
+                extract($params);
+                require_once $filePath;
+            }
+        } catch (\Exception $e) {
+            echo $e->getMessage();
         }
     }
 }
