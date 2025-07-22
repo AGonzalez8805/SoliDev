@@ -15,7 +15,8 @@ class Controller{
                         break;
                     case 'blog';
                     //charger controleur blog
-                        var_dump('On charge BlogController');
+                        $pageController = new BlogController();
+                        $pageController->route();
                         break;
                     default:
                         throw new \Exception("Le controleur n'existe pas");
@@ -28,11 +29,9 @@ class Controller{
             }
         } catch (\Exception $e) {
             $this->render('errors/default' , [
-                'error' => $e->getMessage()
+                'errors' => $e->getMessage()
             ]);
-            
         }
-
     }
 
     protected function render(string $path, array $params = []):void
@@ -46,7 +45,9 @@ class Controller{
                 require_once $filePath;
             }
         } catch (\Exception $e) {
-            echo $e->getMessage();
+                $this->render('errors/default' , [
+                'errors' => $e->getMessage()
+            ]);
         }
     }
 }

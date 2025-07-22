@@ -4,7 +4,7 @@ namespace App\Controller;
 
 class PageController extends Controller
 {
-     public function route(): void 
+    public function route(): void 
     {
             try {
                 if (isset($_GET['action'])){
