@@ -1,8 +1,8 @@
 <?php require_once _ROOTPATH_ . '/views/header.php'; ?>
 
-<?php if($error){?>
+<?php if($errors){?>
 <div class="alert alert-danger">
-    <?=$error;?>
+    <?=$errors;?>
 </div>
 <?php }?>
 

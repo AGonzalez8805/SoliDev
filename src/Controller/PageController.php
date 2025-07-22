@@ -4,42 +4,46 @@ namespace App\Controller;
 
 class PageController extends Controller
 {
-     public function route(): void //Ne retourne rien
+     public function route(): void 
     {
-        if (isset($_GET['action'])){
-            switch ($_GET['action']) {
-                case 'home':
-                    // appeler la méthode home()
-                    $this->home();
-                    break;
-                case 'about':
-                    // appeler la méthode about();
-                    $this->about();
-                
-                default:
-                    //Erreur
-                    break;
+            try {
+                if (isset($_GET['action'])){
+                switch ($_GET['action']) {
+                    case 'about':
+                        // appeler la méthode about();
+                        $this->about();
+                        break;
+                    case 'home':
+                        // appeler la méthode home()
+                        $this->home();
+                        break;
+                    default:
+                        throw new \Exception("Cette action n'existe pas : ".$_GET['action']);
+                        break;
+                }
+            }else {
+                throw new \Exception("Aucune action détecté");
             }
-        }else {
-            //Charger la page d'accueil
+        } catch (\Exception $e) {
+            $this->render('errors/default', [
+                'errors' => $e->getMessage()
+            ]);
         }
+
     }
 
     protected function about()
     {
-        $params = [
+        $this->render('page/about', [
             'test' => 'abc',
             'test2'=>'abc2'
-        ];
-
-        $this->render('page/about', $params);
+        ]);
     }
 
-        protected function home()
+    protected function home()
     {
-        // On pourrait récupérer les données
-        // en faisant appel au modèle
-
-        $this->render('page/home');
+        $this->render('page/home', [
+            
+        ]);
     }
 }

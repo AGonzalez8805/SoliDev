@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 class Controller{
-    public function route(): void //Ne retourne rien
+    public function route(): void 
     {
         try {
             if (isset($_GET['controller'])){
@@ -13,13 +13,18 @@ class Controller{
                         $pageController = new PageController();
                         $pageController->route();
                         break;
-                    
+                    case 'blog';
+                    //charger controleur blog
+                        var_dump('On charge BlogController');
+                        break;
                     default:
                         throw new \Exception("Le controleur n'existe pas");
                         break;
                 }
             }else {
                 //Charger la page d'accueil
+                $pageController = new PageController();
+                $pageController->home();
             }
         } catch (\Exception $e) {
             $this->render('errors/default' , [
