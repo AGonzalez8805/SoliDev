@@ -1,3 +1,6 @@
 RewriteEngine On
+RewriteBase /
 
-RewriteRule ^a-propos/$ /studi/live/bookeo/index.php?controller=page&action=about
+# Cette règle capture ce qui suit la base et le passe comme 'controller'
+# Notez le '?' après le 'index.php' pour indiquer le début des paramètres
+RewriteRule ^([^/]+)/?$ index.php?controller=$1 [QSA,L]

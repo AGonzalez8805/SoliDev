@@ -1,7 +1,8 @@
 <?php
-require_once "templates/header.php";
 
+require __DIR__ . '/vendor/autoload.php';
 
+use App\Controller\Controller;
 
-
-require_once "templates/footer.php";
+$controller = new Controller();
+$controller->route();
