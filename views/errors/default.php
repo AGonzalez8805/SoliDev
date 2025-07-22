@@ -1,4 +1,4 @@
-<?php require_once _ROOTPATH_ . '/views/header.php'; ?>
+<?php require_once APP_ROOT . '/views/header.php'; ?>
 
 <?php if($errors){?>
 <div class="alert alert-danger">
@@ -6,4 +6,4 @@
 </div>
 <?php }?>
 
-<?php require_once _ROOTPATH_ . '/views/footer.php'; ?>
+<?php require_once APP_ROOT . '/views/footer.php'; ?>

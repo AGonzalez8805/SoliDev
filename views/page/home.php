@@ -1,4 +1,4 @@
-<?php require_once  _ROOTPATH_. '/views/header.php'; ?>
+<?php require_once  APP_ROOT . '/views/header.php'; ?>
 
 <main class="container">
     <section >
@@ -48,4 +48,4 @@
         </div>
     </section>
 </main>
-<?php require_once  _ROOTPATH_. '/views/footer.php';?>
+<?php require_once  APP_ROOT . '/views/footer.php';?>

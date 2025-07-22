@@ -1,0 +1,21 @@
+.navbar{
+   background-color: #D95D30; 
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #F2A444;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+footer{
+    background-color: #D95D30;
+}
