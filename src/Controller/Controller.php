@@ -18,6 +18,11 @@ class Controller{
                         $pageController = new BlogController();
                         $pageController->route();
                         break;
+                    case 'auth';
+                    //charger controleur blog
+                        $pageController = new AuthController();
+                        $pageController->route();
+                        break;
                     default:
                         throw new \Exception("Le controleur n'existe pas");
                         break;

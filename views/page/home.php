@@ -1,6 +1,5 @@
 <?php require_once  APP_ROOT . '/views/header.php'; ?>
 
-<main class="container">
     <section >
         <div class="border rounded">
         <h1>Bonjour et bienvenue sur SoliDev !</h1>
@@ -47,5 +46,5 @@
             </div>
         </div>
     </section>
-</main>
+
 <?php require_once  APP_ROOT . '/views/footer.php';?>

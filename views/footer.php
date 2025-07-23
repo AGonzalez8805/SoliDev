@@ -1,4 +1,5 @@
-<footer> 
+</main>
+<footer style="background-color: #D95D30;"> 
     <ul class="nav justify-content-center border-bottom border-black pb-3 mb-3"> 
         <li class="nav-item">
             <a href="#" class="nav-link px-2 text-body-secondary">Mentions Légales</a>
