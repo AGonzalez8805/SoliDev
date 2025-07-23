@@ -1,4 +1,5 @@
 <?php require_once APP_ROOT . '/views/header.php'; ?>
+
 <main class="login flex-grow-1 d-flex align-items-center justify-content-center py-5">
     <div class="solidev-card p-4" style="max-width: 400px; width: 100%;">
         <div class="text-center mb-4">
@@ -6,7 +7,7 @@
         </div>
         <h2 class="form-title text-center mb-4">Connexion à SoliDev</h2>
         <form>
-            <div class="mb-3">
+            <div class="mb-3 ">
                 <label for="email" class="form-label">Adresse email</label>
                 <input type="email" class="form-control" id="email" placeholder="exemple@solidev.com" required>
             </div>

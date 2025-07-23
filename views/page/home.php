@@ -1,11 +1,11 @@
 <?php require_once  APP_ROOT . '/views/header.php'; ?>
 
-    <section >
-        <div class="border rounded">
-        <h1>Bonjour et bienvenue sur SoliDev !</h1>
-            <p> La plateforme pensée par et pour les développeurs: <br> 
-                Partage d'astuces, entraide, actus tech et projet open source. <br>
-                Que vous soyez débutant ou expert, ici on code solidaire</p>
+    <section class="hero-section">
+        <div class="container-fluid hero-content text-center">
+            <h1 class="hero-section__title">Bonjour et bienvenue sur SoliDev !</h1>
+            <p class="hero-section__welcome-text"> La plateforme pensée par et pour les développeurs: <br> 
+                    Partage d'astuces, entraide, actus tech et projet open source. <br>
+                    Que vous soyez débutant ou expert, ici on code solidaire</p>
         </div>
     </section>
     <section>
