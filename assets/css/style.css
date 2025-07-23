@@ -129,25 +129,18 @@ nav a:hover {
     }
 }
 
-
-
-
-
-
-
-
-
-/* formulaire de connexion */
+/* formulaire de connexion et d'inscription */
 .form-logo {
-    display: block; /* S'assure qu'il se comporte comme un bloc pour le centrage */
-    margin: 0 auto 20px auto; /* Centre horizontalement et ajoute une marge en bas */
-    max-width: 120px; /* Taille maximale du logo */
-    height: auto; /* Maintient les proportions */
+    display: block; 
+    margin: 0 auto 20px auto; 
+    max-width: 120px; 
+    height: auto; 
 }
 .login {
     background: linear-gradient(135deg, #E67E22 0%, #D35400 30%, #BF2C53 70%, #0F1726 100%);
     position: relative;
     overflow-x: hidden;
+    min-height: 100%;
 }
 
 .login h2{
@@ -224,7 +217,7 @@ nav a:hover {
     bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
+    width: 100px;
     height: 3px;
     background: linear-gradient(90deg, #E67E22, #BF2C53);
     border-radius: 2px;

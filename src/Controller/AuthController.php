@@ -42,10 +42,6 @@ class AuthController extends Controller
     {
         $this->render('auth/login');
     }
-    public function logout()
-    {
-        $this->render('auth/logout');
-    }
     public function registration()
     {
         $this->render('auth/registration');

@@ -13,15 +13,15 @@ class Controller{
                         $pageController = new PageController();
                         $pageController->route();
                         break;
-                    case 'blog';
+                    case 'blog':
                     //charger controleur blog
-                        $pageController = new BlogController();
-                        $pageController->route();
+                        $controller = new BlogController();
+                        $controller->route();
                         break;
-                    case 'auth';
-                    //charger controleur blog
-                        $pageController = new AuthController();
-                        $pageController->route();
+                    case 'auth':
+                    //charger controleur auth
+                        $controller = new AuthController();
+                        $controller->route();
                         break;
                     default:
                         throw new \Exception("Le controleur n'existe pas");
