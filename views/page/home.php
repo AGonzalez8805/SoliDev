@@ -8,43 +8,65 @@
                     Que vous soyez débutant ou expert, ici on code solidaire</p>
         </div>
     </section>
-    <section>
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-        <div class="row text-center">
-            <div class="col-md-4 my-2 d-flex">
+<section class="container my-5">
+    <div class="row">
+    <!-- Partie principale (posts) -->
+    <div class="col-lg-8">
+        <!-- Featured post -->
+        <div class="card mb-4">
+            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/dee2e6/6c757d.jpg" alt="..." /></a>
+        <div class="card-body">
+            <div class="small text-muted">January 1, 2023</div>
+                <h2 class="card-title">Featured Post Title</h2>
+                <p class="card-text">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam.
+                </p>
+            <a class="btn btn-primary" href="#!">Read more →</a>
+        </div>
+        </div>
+
+        <!-- Tes autres cartes (card-home-two) -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
                 <div class="card">
-                        <img src=" uploads/books/1-1984.jpg" class="card-img-top" alt="Desc">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
+                    <a href="#!"><img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="..." /></a>
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">Some quick example text to build on the card title.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
                 </div>
             </div>
-            <div class="col-md-4 my-2 d-flex">
-                <div class="card">
-                    <img src=" uploads/books/2-histoires-courtes.jpg" class="card-img-top" alt="Desc">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
-                    </div>
-                </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <a href="#!"><img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="..." /></a>
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
             </div>
-            <div class="col-md-4 my-2 d-flex">
-                <div class="card">
-                    <img src=" uploads/books/3-zai-zai-zai-zai.jpg" class="card-img-top" alt="Desc">
-                        <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                        </div>
-                </div>
             </div>
         </div>
-    </section>
+        </div>
+    </div>
+
+        <!-- Barre latérale -->
+        <div class="col-lg-4">
+        <!-- Search -->
+        <div class="search-home mb-4">
+            <div class="text-center mb-2">Recherche</div>
+            <div class="card-body">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Entrer votre recherche..." aria-label="Enter search term..." aria-describedby="button-search" />
+                <button class="btn btn-primary" id="button-search" type="button">
+                <img src="/assets/icones/search.png" alt="">
+                </button>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</section>
+
 
 <?php require_once  APP_ROOT . '/views/footer.php';?>

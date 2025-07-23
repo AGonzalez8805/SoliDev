@@ -25,7 +25,6 @@ nav{
     font-style: normal;
     font-size: 1.2rem;
 }
-
 /* Style des liens dans la navbar */
 .nav-link {
     color: #0F1726 !important;
@@ -42,9 +41,7 @@ nav a:hover {
 .nav-link.active-link {
     border-bottom: 2px solid #ffffff;
 }
-
-
-/* les boutons */
+/* les boutons de la navbar */
 .btn-registration {
   background: linear-gradient(135deg, #f48703, #F2A444);
   border: none;
@@ -72,7 +69,7 @@ nav a:hover {
   transform: scale(1.05);
 }
 
-/* page d'accueil */
+/* page d'accueil première section */
 .hero-section{
     max-width: 960px;
     margin: 40px auto;
@@ -98,6 +95,47 @@ nav a:hover {
     font-weight: 400;
     font-style: normal;
 }
+/* page d'accueil deuxième section */
+.home-wrapper {
+    display: flex;
+    justify-content: center; 
+    align-items: flex-start; 
+    flex-wrap: wrap; 
+}
+
+.search-home{
+    max-width: 500px;
+    width: 90%;
+    margin: 40px auto;
+    padding: 40px; 
+    background-color: rgba(6, 7, 8, 0.15);
+    border: 3px solid #592F25;
+    border-top-left-radius: 40px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 40px;
+    border-bottom-left-radius: 0; 
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-left: 150px;
+}
+
+@media (max-width: 768px) { 
+    .search-home {
+        width: 90%; 
+        margin: 40px auto; 
+        padding: 20px; 
+    }
+}
+
+
+
+
+
+
+
+
 
 /* formulaire de connexion */
 .form-logo {

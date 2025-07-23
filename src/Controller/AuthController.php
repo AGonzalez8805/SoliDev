@@ -20,6 +20,9 @@ class AuthController extends Controller
                     case 'logout':
                         $this->logout();
                         break;
+                    case 'registration':
+                        $this->registration();
+                        break;
                     default:
                         throw new \Exception("Cette action n'existe pas : ".$_GET['action']);
                         break;
@@ -39,6 +42,15 @@ class AuthController extends Controller
     {
         $this->render('auth/login');
     }
+    public function logout()
+    {
+        $this->render('auth/logout');
+    }
+    public function registration()
+    {
+        $this->render('auth/registration');
+    }
+
 
     public function handleLogin()
     {
