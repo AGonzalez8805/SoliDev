@@ -46,7 +46,7 @@ class AuthController extends Controller
         $password = $_POST['password']??'';
 
         $userRepo = new UserRepository();
-        $user = $user->findByEmail($email);
+        $user = $userRepo->findByEmail($email);
 
         if($user && password_verify($password, $user['mot_de_passe'])){
             //Connexion réussie
@@ -66,7 +66,7 @@ class AuthController extends Controller
     {
         session_start();
         session_destroy();
-        header('Location : index.php');
+        header('Location: index.php');
         exit;
     }
 }
