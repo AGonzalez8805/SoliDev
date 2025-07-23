@@ -1,6 +1,6 @@
 <?php require_once APP_ROOT . '/views/header.php'; ?>
 
-<main class="login flex-grow-1 d-flex align-items-center justify-content-center py-5">
+<section class="login flex-grow-1 d-flex align-items-center justify-content-center py-5">
     <div class="solidev-card p-4" style="max-width: 400px; width: 100%;">
         <div class="text-center mb-4">
             <img src="/assets/images/logo-png.png" alt="" class="form-logo">
@@ -25,7 +25,7 @@
             <a href="#" class="forgot-link">Mot de passe oublié ?</a>
         </div>
     </div>
-</main>
+</section>
 
 
 

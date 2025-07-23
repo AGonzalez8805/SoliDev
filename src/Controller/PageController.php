@@ -17,6 +17,10 @@ class PageController extends Controller
                         // appeler la méthode home()
                         $this->home();
                         break;
+                    case 'contact':
+                        // appeler la méthode contact()
+                        $this->contact();
+                        break;
                     default:
                         throw new \Exception("Cette action n'existe pas : ".$_GET['action']);
                         break;
@@ -34,16 +38,16 @@ class PageController extends Controller
 
     protected function about()
     {
-        $this->render('page/about', [
-            'test' => 'abc',
-            'test2'=>'abc2'
-        ]);
+        $this->render('page/about');
     }
 
     protected function home()
     {
-        $this->render('page/home', [
-            
-        ]);
+        $this->render('page/home');
+    }
+
+    protected function contact()
+    {
+        $this->render('page/contact');
     }
 }

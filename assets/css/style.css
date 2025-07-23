@@ -34,8 +34,8 @@ nav{
 }
 
 nav a:hover {
-  color: #ffffff;
-  border-bottom: 2px solid #ffffff;
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
 }
 
 .nav-link.active-link {
@@ -43,30 +43,30 @@ nav a:hover {
 }
 /* les boutons de la navbar */
 .btn-registration {
-  background: linear-gradient(135deg, #f48703, #F2A444);
-  border: none;
-  color: #0F1726;
-  font-weight: bold;
-  transition: 0.3s ease;
+    background: linear-gradient(135deg, #f48703, #F2A444);
+    border: none;
+    color: #0F1726;
+    font-weight: bold;
+    transition: 0.3s ease;
 }
 
 .btn-registration:hover {
-  background: transparent;
-  border: 2px solid #0F1726;
-  color: #0F1726;
+    background: transparent;
+    border: 2px solid #0F1726;
+    color: #0F1726;
 }
 
 .btn-login {
-  border: 2px solid #0F1726;
-  color: #0F1726;
-  font-weight: bold;
-  transition: 0.3s ease;
+    border: 2px solid #0F1726;
+    color: #0F1726;
+    font-weight: bold;
+    transition: 0.3s ease;
 }
 
 .btn-login:hover {
-  background-color: #F2A444;
-  color: #0F1726;
-  transform: scale(1.05);
+    background-color: #F2A444;
+    color: #0F1726;
+    transform: scale(1.05);
 }
 
 /* page d'accueil première section */
@@ -180,18 +180,6 @@ nav a:hover {
     overflow: hidden;
 }
 
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Subtle gradient overlay on card */
 .solidev-card::before {
     content: '';
     position: absolute;
@@ -254,13 +242,11 @@ nav a:hover {
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 8px;
-    transition: color 0.3s ease;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* Floating icons */
 .input-icon {
     position: absolute;
     right: 16px;
@@ -277,7 +263,6 @@ nav a:hover {
     transform: translateY(-50%) scale(1.1);
 }
 
-/* Custom checkbox */
 .form-check-enhanced {
     margin: 1.5rem 0;
     display: flex;
@@ -349,7 +334,6 @@ nav a:hover {
     transform: translateY(-1px);
 }
 
-/* Loading state */
 .solidev-btn.loading {
     background: #95A5A6;
     cursor: not-allowed;
@@ -375,7 +359,6 @@ nav a:hover {
     to { transform: rotate(360deg); }
 }
 
-/* Success state */
 .solidev-btn.success {
     background: linear-gradient(135deg, #27AE60, #2ECC71);
 }
@@ -409,12 +392,6 @@ nav a:hover {
     width: 100%;
 }
 
-/* Floating animation for the card */
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-5px); }
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .solidev-card {
@@ -425,4 +402,39 @@ nav a:hover {
     .form-title {
         font-size: 24px;
     }
+}
+
+/* Page contact */
+.contact-logo {
+    max-width: 500px;
+    height: auto;
+}
+.contact img{
+    margin-right: 50px;  
+    background-color: linear-gradient(to bottom, #FFB86A, #FF9933); /* Un orange chaud et un peu plus vif */
+
+}
+
+.solidev-contact{
+    width: 550px;
+    padding: 40px; 
+    border: 3px solid #592F25;
+    border-radius: 40px; 
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-left: 150px;
+}
+
+.contact h2{
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: italic;
+}
+.contact {
+    background: linear-gradient(135deg,#BF2C53 0%,#D35400 50%,#E67E22 100%);
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100%;
 }
