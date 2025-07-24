@@ -31,7 +31,8 @@
                 <a class="nav-link <?= $currentPage === 'home' ? 'active-link' : '' ?>" href="/page?action=home">Accueil</a>
                 <a class="nav-link <?= $currentPage === 'forum' ? 'active-link' : '' ?>" href="/page?action=forum">Forum</a>
                 <a class="nav-link <?= $currentPage === 'show' ? 'active-link' : '' ?>" href="/blog?action=show">Blog</a>
-                <a class="nav-link <?= $currentPage === 'contact' ? 'active-link' : '' ?>" href="/page?action=contact">Contact</a>
+                <a class="nav-link <?= $currentPage === 'project' ? 'active-link' : '' ?>" href="/project?action=">Projets</a>
+                <a class="nav-link <?= $currentPage === 'snippets' ? 'active-link' : '' ?>" href="/snippets?action=">Snippets</a>
                 </div>
                 <div class="ms-auto">
                     <?php if (isset($_SESSION['admin_id'])): ?>

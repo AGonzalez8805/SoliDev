@@ -87,6 +87,7 @@ nav a:hover {
     font-family: "Poppins", sans-serif;
     font-weight: 500;
     font-style: italic;
+    color: #BF2C53;
 }
 
 .hero-section p{
@@ -94,6 +95,8 @@ nav a:hover {
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+    color: #BF2C53;
+    font-size: 1.2rem;
 }
 /* page d'accueil deuxième section */
 .home-wrapper {

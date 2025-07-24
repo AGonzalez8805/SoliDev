@@ -10,6 +10,10 @@
         <li class="nav-item">
             <a href="#" class="nav-link px-2 text-body-secondary">FAQs</a>
         </li> 
+        <li class="nav-item">
+            <a class="nav-link <?= $currentPage === 'contact' ? 'active-link' : '' ?>" href="/page?action=contact">Contact</a>
+        </li> 
+        
     </ul> 
     <p class="text-center text-body-secondary">© 2025 SoliDev. Tous droits réservés.</p> 
 </footer>
