@@ -23,7 +23,7 @@ class AuthController extends Controller
                     case 'registration':
                         $this->registration();
                         break;
-                    case 'handleRegister';
+                    case 'handleRegister':
                         $this->handleRegister();
                         break;
                     default:
@@ -46,32 +46,62 @@ class AuthController extends Controller
     }
     public function registration()
     {
+        $userRepo = new UserRepository();
+        if ($userRepo->findByRole('admin')) {
+            // Un admin existe déjà, redirection vers login
+            header('Location: index.php?controller=auth&action=login');
+            exit;
+        }
         $this->render('auth/registration');
     }
 
 
     public function handleLogin()
     {
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
+        // Dans App\Controller\AuthController.php
+
+        // Lire les données JSON envoyées par fetch
+        $input = json_decode(file_get_contents("php://input"), true);
+
+        if (!$input) {
+            echo json_encode(["success" => false, "message" => "Données invalides."]);
+            return;
+        }
+
+        $email = trim($input['email'] ?? '');
+        $password = $input['password'] ?? '';
+        $remember = $input['remember'] ?? false; // Capturer 'rememberMe' si vous prévoyez de l'utiliser
+
+        // Validation de base
+        if (empty($email) || empty($password)) {
+            echo json_encode(["success" => false, "message" => "L'email et le mot de passe sont requis."]);
+            return;
+        }
 
         $userRepo = new UserRepository();
         $user = $userRepo->findByEmail($email);
 
+        // Vérifier l'identité et le rôle
         if ($user && password_verify($password, $user['mot_de_passe'])) {
-            //Connexion réussie
             session_start();
-            if ($user['rôle'] === 'admin') {
-                $_SESSION['admin_id'] = $user['id_user'];
-            } else {
-                $_SESSION['user_id'] = $user['id_user'];
+            $_SESSION['user_id'] = $user['id_user'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['rôle']; // Stocker le rôle de l'utilisateur
+
+            // Si 'se souvenir de moi' est coché, vous pourriez définir un cookie ici
+            if ($remember) {
+                //     Définir un cookie de longue durée pour se souvenir de l'utilisateur
             }
-            header('Location: index.php');
+
+            echo json_encode(["success" => true]); // Envoyer une réponse JSON de succès
+            return;
         } else {
-            //Connexion echoué
-            $this->render('auth/login', ['error' => 'Identification incorrects']);
+            echo json_encode(["success" => false, "message" => "Email ou mot de passe incorrect."]); // Envoyer une réponse JSON d'échec
+            return;
         }
     }
+
+
     public function logout()
     {
         session_start();
@@ -79,6 +109,7 @@ class AuthController extends Controller
         header('Location: index.php');
         exit;
     }
+
 
     public function handleRegister()
     {
@@ -113,6 +144,13 @@ class AuthController extends Controller
 
         $userRepo = new UserRepository();
 
+        // Déterminer le rôle du nouvel utilisateur
+        $roleToAssign = 'utilisateur'; // Rôle par défaut
+        if (!$userRepo->findByRole('admin')) {
+            // Si aucun administrateur n'existe, cet utilisateur sera l'administrateur
+            $roleToAssign = 'admin';
+        }
+
         // Vérifier si l'email existe déjà
         if ($userRepo->findByEmail($email)) {
             echo json_encode(["success" => false, "message" => "Cet email est déjà utilisé."]);
@@ -128,6 +166,7 @@ class AuthController extends Controller
             'prenom' => $firstName,
             'email' => $email,
             'mot_de_passe' => $hashedPassword,
+            'rôle' => $roleToAssign // Utiliser le rôle déterminé
         ]);
 
         if ($result) {

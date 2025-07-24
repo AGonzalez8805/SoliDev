@@ -27,7 +27,6 @@ export class Registration {
     );
     this.inputPassword.addEventListener("input", () => {
       this.updatePasswordCriteria(this.inputPassword.value);
-      this.validatePasswordStrength();
       this.validatePasswordMatch();
     });
     this.inputValidatePassword.addEventListener("input", () =>
@@ -82,7 +81,6 @@ export class Registration {
       this.validateField(this.inputName) &
       this.validateField(this.inputFirstName) &
       this.validateEmail(this.inputMail) &
-      this.validatePasswordStrength() &
       this.validatePasswordMatch();
 
     if (!allValid) {

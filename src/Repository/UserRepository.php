@@ -35,8 +35,18 @@ class UserRepository
             ':prenom' => $data['prenom'],
             ':email' => $data['email'],
             ':mot_de_passe' => $data['mot_de_passe'],
-            ':role' => 'utilisateur'
+            ':role' => $data['rôle']
 
         ]);
+    }
+    public function findByRole(string $role)
+    {
+        $mysql = Mysql::getInstance();
+        $pdo = $mysql->getPDO();
+
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE rôle = :role LIMIT 1");
+        $stmt->execute(['role' => $role]);
+
+        return $stmt->fetch();
     }
 }
