@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-class UserController extends Controller
+class AdminController extends Controller
 {
     public function route(): void
     {
@@ -12,7 +12,7 @@ class UserController extends Controller
                     $this->dashboard();
                     break;
                 default:
-                    throw new \Exception("Action utilisateur inconnue");
+                    throw new \Exception("Action admin inconnue");
             }
         }
     }
@@ -20,11 +20,11 @@ class UserController extends Controller
     public function dashboard(): void
     {
         session_start();
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'utilisateur') {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             header('Location: /?controller=auth&action=login');
             exit;
         }
 
-        $this->render('user/dashboard');
+        $this->render('admin/dashboard');
     }
 }

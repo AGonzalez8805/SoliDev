@@ -60,9 +60,7 @@ export class Login {
         "index.php?controller=auth&action=handleLogin",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         }
       );
@@ -80,7 +78,8 @@ export class Login {
       }
 
       if (result.success) {
-        window.location.href = "page?action=home";
+        // Utilise la redirection renvoyée par le serveur si elle existe
+        window.location.href = result.redirect || "";
       } else {
         alert(result.message || "Erreur d'identifiants.");
       }

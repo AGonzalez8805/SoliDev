@@ -97,7 +97,15 @@ class AuthController extends Controller
                 //     Définir un cookie de longue durée pour se souvenir de l'utilisateur
             }
             ob_end_clean(); // supprime toute sortie parasite
-            echo json_encode(["success" => true]); // Envoyer une réponse JSON de succès
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['role'] = $user['role'];
+
+            $url = ($_SESSION['role'] === 'admin')
+                ? '/?controller=admin&action=dashboard'
+                : '/?controller=user&action=dashboard';
+
+            echo json_encode(["success" => true, "redirect" => $url]);
+
             return;
         } else {
             echo json_encode(["success" => false, "message" => "Email ou mot de passe incorrect."]); // Envoyer une réponse JSON d'échec
@@ -181,7 +189,5 @@ class AuthController extends Controller
         } else {
             echo json_encode(["success" => false, "message" => "Erreur lors de l'inscription."]);
         }
-
-        $data = json_decode(file_get_contents('php://input'), true);
     }
 }
