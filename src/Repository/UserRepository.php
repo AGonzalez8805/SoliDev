@@ -27,15 +27,15 @@ class UserRepository
         $pdo = $mysql->getPDO();
 
         $query = $pdo->prepare('
-        INSERT INTO users (nom, prenom, email, mot_de_passe, rôle)
-        VALUES (:nom, :prenom, :email, :mot_de_passe, :role)');
+        INSERT INTO users (name, firstName, email, password, role)
+        VALUES (:name, :firstName, :email, :password, :role)');
 
         return $query->execute([
-            ':nom' => $data['nom'],
-            ':prenom' => $data['prenom'],
+            ':name' => $data['name'],
+            ':firstName' => $data['firstName'],
             ':email' => $data['email'],
-            ':mot_de_passe' => $data['mot_de_passe'],
-            ':role' => $data['rôle']
+            ':password' => $data['password'],
+            ':role' => $data['role']
 
         ]);
     }
@@ -44,7 +44,7 @@ class UserRepository
         $mysql = Mysql::getInstance();
         $pdo = $mysql->getPDO();
 
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE rôle = :role LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE role = :role LIMIT 1");
         $stmt->execute(['role' => $role]);
 
         return $stmt->fetch();

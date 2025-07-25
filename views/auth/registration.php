@@ -6,7 +6,7 @@
             <img src="/assets/images/logo-png.png" alt="" class="form-logo">
         </div>
         <h2 class="form-title text-center mb-4">Inscription à SoliDev</h2>
-        <form id="registrationForm">
+        <form id="registrationForm" method="post">
             <div class="row">
                 <div class="col">
                     <label for="name" class="form-label">Nom</label>

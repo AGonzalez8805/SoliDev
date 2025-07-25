@@ -108,16 +108,21 @@ export class Registration {
         }
       );
 
-      const result = await response.json();
+      const text = await response.text();
 
-      if (result.success) {
-        alert("Inscription réussie !");
-        window.location.href = "index.php?controller=auth&action=login";
-      } else {
-        alert(result.message || "Erreur lors de l'inscription.");
+      try {
+        const result = JSON.parse(text);
+        if (result.success) {
+          alert("Inscription réussie !");
+          window.location.href = "index.php?controller=auth&action=login";
+        } else {
+          alert(result.message || "Erreur lors de l'inscription.");
+        }
+      } catch (e) {
+        console.error("Réponse invalide :", text);
       }
-    } catch (error) {
-      console.error("Erreur lors de l'envoi de la requête :", error);
+    } catch (err) {
+      console.error("Erreur lors de l'envoi de la requête :", err);
     }
   }
 

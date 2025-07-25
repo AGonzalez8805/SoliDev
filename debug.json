@@ -1,0 +1,1 @@
+{"received":"{\"name\":\"Bois\",\"firstName\":\"Julie\",\"email\":\"julie.bois@gmail.com\",\"password\":\"P@ssword1\",\"validatePassword\":\"P@ssword1\"}","get":{"controller":"auth","action":"handleRegister"},"post":[]}

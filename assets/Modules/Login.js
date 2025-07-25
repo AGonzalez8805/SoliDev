@@ -1,6 +1,8 @@
 export class Login {
   constructor() {
-    this.form = document.querySelector(".loginForm");
+    this.form = document.getElementById("loginForm");
+    if (!this.form) return;
+
     this.inputMail = document.getElementById("email");
     this.inputPassword = document.getElementById("password");
     this.btnValidation = document.getElementById("login");
@@ -65,16 +67,26 @@ export class Login {
         }
       );
 
-      const result = await response.json();
+      const text = await response.text();
+      console.log("Réponse brute du serveur :", text);
+
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (err) {
+        console.error("Erreur de parsing JSON :", err);
+        alert("La réponse du serveur n'est pas du JSON valide.");
+        return;
+      }
 
       if (result.success) {
-        alert("Connexion réussie !");
-        window.location.href = "index.php?controller=home";
+        window.location.href = "page?action=home";
       } else {
-        alert(result.message || "Email ou mot de passe incorrect.");
+        alert(result.message || "Erreur d'identifiants.");
       }
     } catch (error) {
       console.error("Erreur lors de la connexion :", error);
+      alert("Une erreur technique est survenue.");
     }
   }
 }

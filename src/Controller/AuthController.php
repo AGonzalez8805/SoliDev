@@ -34,11 +34,20 @@ class AuthController extends Controller
                 throw new \Exception("Aucune action détecté");
             }
         } catch (\Exception $e) {
-            $this->render('errors/default', [
-                'errors' => $e->getMessage()
-            ]);
+            if (
+                isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+            ) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+            } else {
+                $this->render('errors/default', [
+                    'errors' => $e->getMessage()
+                ]);
+            }
         }
     }
+
 
     public function login()
     {
@@ -46,21 +55,16 @@ class AuthController extends Controller
     }
     public function registration()
     {
-        $userRepo = new UserRepository();
-        if ($userRepo->findByRole('admin')) {
-            // Un admin existe déjà, redirection vers login
-            header('Location: index.php?controller=auth&action=login');
-            exit;
-        }
         $this->render('auth/registration');
     }
 
 
     public function handleLogin()
     {
-        // Dans App\Controller\AuthController.php
+        ob_start();
+        header('Content-Type: application/json');
+        http_response_code(200);
 
-        // Lire les données JSON envoyées par fetch
         $input = json_decode(file_get_contents("php://input"), true);
 
         if (!$input) {
@@ -82,17 +86,17 @@ class AuthController extends Controller
         $user = $userRepo->findByEmail($email);
 
         // Vérifier l'identité et le rôle
-        if ($user && password_verify($password, $user['mot_de_passe'])) {
+        if ($user && password_verify($password, $user['password'])) {
             session_start();
-            $_SESSION['user_id'] = $user['id_user'];
+            $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['email'] = $user['email'];
-            $_SESSION['role'] = $user['rôle']; // Stocker le rôle de l'utilisateur
+            $_SESSION['role'] = $user['role']; // Stocker le rôle de l'utilisateur
 
             // Si 'se souvenir de moi' est coché, vous pourriez définir un cookie ici
             if ($remember) {
                 //     Définir un cookie de longue durée pour se souvenir de l'utilisateur
             }
-
+            ob_end_clean(); // supprime toute sortie parasite
             echo json_encode(["success" => true]); // Envoyer une réponse JSON de succès
             return;
         } else {
@@ -113,6 +117,9 @@ class AuthController extends Controller
 
     public function handleRegister()
     {
+        header('Content-Type: application/json');
+        http_response_code(200);
+
         //Lire les données JSON envoyées par fetch
         $input = json_decode(file_get_contents("php://input"), true);
 
@@ -162,11 +169,11 @@ class AuthController extends Controller
 
         // Créer l'utilisateur
         $result = $userRepo->create([
-            'nom' => $name,
-            'prenom' => $firstName,
+            'name' => $name,
+            'firstName' => $firstName,
             'email' => $email,
-            'mot_de_passe' => $hashedPassword,
-            'rôle' => $roleToAssign // Utiliser le rôle déterminé
+            'password' => $hashedPassword,
+            'role' => $roleToAssign
         ]);
 
         if ($result) {
@@ -174,5 +181,7 @@ class AuthController extends Controller
         } else {
             echo json_encode(["success" => false, "message" => "Erreur lors de l'inscription."]);
         }
+
+        $data = json_decode(file_get_contents('php://input'), true);
     }
 }
