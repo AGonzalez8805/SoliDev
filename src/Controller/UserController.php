@@ -19,7 +19,7 @@ class UserController extends Controller
 
     public function dashboard(): void
     {
-        session_start();
+
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'utilisateur') {
             header('Location: /?controller=auth&action=login');
             exit;

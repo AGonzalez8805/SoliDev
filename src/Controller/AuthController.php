@@ -87,7 +87,7 @@ class AuthController extends Controller
 
         // Vérifier l'identité et le rôle
         if ($user && password_verify($password, $user['password'])) {
-            session_start();
+
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role']; // Stocker le rôle de l'utilisateur
@@ -116,12 +116,12 @@ class AuthController extends Controller
 
     public function logout()
     {
-        session_start();
-        session_destroy();
-        header('Location: index.php');
+
+        session_unset(); // Supprime toutes les variables de session
+        session_destroy(); // Détruit la session
+        header('Location: /?controller=page&action=home');
         exit;
     }
-
 
     public function handleRegister()
     {

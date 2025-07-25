@@ -39,14 +39,13 @@
                     <div class="ms-auto">
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <?php if ($_SESSION['role'] === 'admin'): ?>
-                                <a href="/?controller=admin&action=dashboard" class="mr-5">Tableau de bord</a>
+                                <a href="/?controller=admin&action=dashboard" class="btn btn-outline-light btn-registration me-3">Tableau de bord</a>
                             <?php else: ?>
-                                <a href="/?controller=user&action=dashboard" class="mr-5">Mon compte</a>
+                                <a href="/?controller=user&action=dashboard" class="btn btn-outline-light btn-registration me-3">Mon compte</a>
                             <?php endif; ?>
-                            <a href="/?controller=page&action=home" class="mr-5">Déconnexion</a>
-                        <?php else: ?>
-                            <a href="/?controller=auth&action=registration" class="btn btn-outline-light me-3">Inscription</a>
-                            <a href="/?controller=auth&action=login" class="btn btn-outline-light me-3">Connexion</a>
+                            <a href="/?controller=auth&action=logout" class="btn btn-outline-light btn-login me-3">Déconnexion</a> <?php else: ?>
+                            <a href="/?controller=auth&action=registration" class="btn btn-outline-light btn-registration me-3">Inscription</a>
+                            <a href="/?controller=auth&action=login" class="btn btn-outline-light btn-login me-3">Connexion</a>
                         <?php endif; ?>
 
                     </div>
