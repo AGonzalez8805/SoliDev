@@ -6,6 +6,10 @@ use App\Repository\UserRepository;
 
 class AuthController extends Controller
 {
+    /**
+     * Méthode routeur pour rediriger vers la bonne action en fonction de la query string.
+     * Gère les erreurs en AJAX ou en HTTP standard selon le contexte de la requête.
+     */
     public function route(): void
     {
         try {
@@ -28,12 +32,12 @@ class AuthController extends Controller
                         break;
                     default:
                         throw new \Exception("Cette action n'existe pas : " . $_GET['action']);
-                        break;
                 }
             } else {
-                throw new \Exception("Aucune action détecté");
+                throw new \Exception("Aucune action détectée");
             }
         } catch (\Exception $e) {
+            // Gestion d'erreurs spécifique pour les requêtes AJAX
             if (
                 isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
                 strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
@@ -41,6 +45,7 @@ class AuthController extends Controller
                 header('Content-Type: application/json');
                 echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             } else {
+                // Affichage d'une vue d'erreur standard
                 $this->render('errors/default', [
                     'errors' => $e->getMessage()
                 ]);
@@ -48,20 +53,28 @@ class AuthController extends Controller
         }
     }
 
-
+    /**
+     * Affiche la page de connexion
+     */
     public function login()
     {
         $this->render('auth/login');
     }
+
+    /**
+     * Affiche la page d'inscription
+     */
     public function registration()
     {
         $this->render('auth/registration');
     }
 
-
+    /**
+     * Gère la soumission du formulaire de connexion via AJAX (JSON)
+     */
     public function handleLogin()
     {
-        ob_start();
+        ob_start(); // Capture le buffer de sortie pour éviter les interférences avec les headers
         header('Content-Type: application/json');
         http_response_code(200);
 
@@ -74,9 +87,9 @@ class AuthController extends Controller
 
         $email = trim($input['email'] ?? '');
         $password = $input['password'] ?? '';
-        $remember = $input['remember'] ?? false; // Capturer 'rememberMe' si vous prévoyez de l'utiliser
+        $remember = $input['remember'] ?? false;
 
-        // Validation de base
+        // Vérification que les champs obligatoires sont remplis
         if (empty($email) || empty($password)) {
             echo json_encode(["success" => false, "message" => "L'email et le mot de passe sont requis."]);
             return;
@@ -85,56 +98,60 @@ class AuthController extends Controller
         $userRepo = new UserRepository();
         $user = $userRepo->findByEmail($email);
 
-        // Vérifier l'identité et le rôle
+        // Vérification des identifiants
         if ($user && password_verify($password, $user['password'])) {
-
+            // Authentification réussie, on stocke les infos en session
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['email'] = $user['email'];
-            $_SESSION['role'] = $user['role']; // Stocker le rôle de l'utilisateur
-
-            // Si 'se souvenir de moi' est coché, vous pourriez définir un cookie ici
-            if ($remember) {
-                //     Définir un cookie de longue durée pour se souvenir de l'utilisateur
-            }
-            ob_end_clean(); // supprime toute sortie parasite
-            $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['role'] = $user['role'];
 
+            // Implémentation future possible : cookie de persistance avec $remember
+            if ($remember) {
+                // Exemple : setcookie("rememberMe", ...);
+            }
+
+            ob_end_clean(); // Nettoie le buffer de sortie
+
+            // Redirection conditionnelle selon le rôle
             $url = ($_SESSION['role'] === 'admin')
                 ? '/?controller=admin&action=dashboard'
                 : '/?controller=user&action=dashboard';
 
             echo json_encode(["success" => true, "redirect" => $url]);
-
             return;
         } else {
-            echo json_encode(["success" => false, "message" => "Email ou mot de passe incorrect."]); // Envoyer une réponse JSON d'échec
+            // Identifiants incorrects
+            echo json_encode(["success" => false, "message" => "Email ou mot de passe incorrect."]);
             return;
         }
     }
 
-
+    /**
+     * Déconnexion de l'utilisateur, suppression de la session et redirection vers la page d'accueil.
+     */
     public function logout()
     {
-
-        session_unset(); // Supprime toutes les variables de session
-        session_destroy(); // Détruit la session
+        session_unset();    // Supprime toutes les variables de session
+        session_destroy();  // Détruit la session
         header('Location: /?controller=page&action=home');
         exit;
     }
 
+    /**
+     * Gère l'inscription d'un nouvel utilisateur via AJAX (JSON)
+     */
     public function handleRegister()
     {
         header('Content-Type: application/json');
         http_response_code(200);
 
-        //Lire les données JSON envoyées par fetch
         $input = json_decode(file_get_contents("php://input"), true);
 
         if (!$input) {
             echo json_encode(["success" => false, "message" => "Données invalides"]);
             return;
         }
+
         // Sécurité : nettoyage + validation
         $name = trim($input['name'] ?? '');
         $firstName = trim($input['firstName'] ?? '');
@@ -142,6 +159,7 @@ class AuthController extends Controller
         $password = $input['password'] ?? '';
         $validatePassword = $input['validatePassword'] ?? '';
 
+        // Vérification de champs obligatoires
         if (empty($name) || empty($firstName) || empty($email) || empty($password)) {
             echo json_encode(["success" => false, "message" => "Tous les champs sont requis."]);
             return;
@@ -159,23 +177,22 @@ class AuthController extends Controller
 
         $userRepo = new UserRepository();
 
-        // Déterminer le rôle du nouvel utilisateur
+        // Vérifie si c’est le premier admin à inscrire
         $roleToAssign = 'utilisateur'; // Rôle par défaut
         if (!$userRepo->findByRole('admin')) {
-            // Si aucun administrateur n'existe, cet utilisateur sera l'administrateur
-            $roleToAssign = 'admin';
+            $roleToAssign = 'admin'; // Premier inscrit = admin
         }
 
-        // Vérifier si l'email existe déjà
+        // Vérifie l’unicité de l’email
         if ($userRepo->findByEmail($email)) {
             echo json_encode(["success" => false, "message" => "Cet email est déjà utilisé."]);
             return;
         }
 
-        // Hacher le mot de passe
+        // Hashage sécurisé du mot de passe
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        // Créer l'utilisateur
+        // Création du nouvel utilisateur
         $result = $userRepo->create([
             'name' => $name,
             'firstName' => $firstName,

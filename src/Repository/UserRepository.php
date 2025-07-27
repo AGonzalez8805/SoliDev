@@ -29,16 +29,15 @@ class UserRepository
         $query = $pdo->prepare('
         INSERT INTO users (name, firstName, email, password, role)
         VALUES (:name, :firstName, :email, :password, :role)');
-
         return $query->execute([
             ':name' => $data['name'],
             ':firstName' => $data['firstName'],
             ':email' => $data['email'],
             ':password' => $data['password'],
             ':role' => $data['role']
-
         ]);
     }
+
     public function findByRole(string $role)
     {
         $mysql = Mysql::getInstance();

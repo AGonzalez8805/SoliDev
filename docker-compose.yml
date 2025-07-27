@@ -1,7 +1,6 @@
 services:
   # Service 'php' : Conteneur pour l'application PHP et le serveur web Apache.
   php:
-    image: php:8.2-apache  
     container_name: SoliDev_php 
     ports:
       - "90:80"  # Port 90 de l'ordi → port 80 du conteneur

@@ -1,30 +1,43 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller; // Déclare le namespace du contrôleur
 
+// Déclaration de la classe AdminController qui hérite de la classe Controller
 class AdminController extends Controller
 {
+    /**
+     * Routeur de l'AdminController.
+     * Il regarde si un paramètre "action" est présent dans l'URL, et appelle la méthode correspondante.
+     */
     public function route(): void
     {
         if (isset($_GET['action'])) {
             switch ($_GET['action']) {
-                case 'dashboard':
-                    $this->dashboard();
+                case 'dashboard': // Si action = "dashboard"
+                    $this->dashboard(); // Appelle la méthode dashboard()
                     break;
                 default:
+                    // Si l'action demandée n'existe pas, lève une exception
                     throw new \Exception("Action admin inconnue");
             }
         }
     }
 
+    /**
+     * Affiche le tableau de bord admin (dashboard).
+     * Vérifie d'abord que l'utilisateur est bien connecté et qu'il a le rôle "admin".
+     * Sinon, redirige vers la page de connexion.
+     */
     public function dashboard(): void
     {
-
+        // Vérifie que l'utilisateur est connecté ET que son rôle est "admin"
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+            // Redirige vers la page de login s'il n'est pas autorisé
             header('Location: /?controller=auth&action=login');
             exit;
         }
 
+        // Si tout est ok, affiche la vue du dashboard admin
         $this->render('admin/dashboard');
     }
 }

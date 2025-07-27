@@ -2,11 +2,6 @@
 FROM php:8.2-apache
 
 # Met à jour les paquets et installe les dépendances nécessaires
-# - git : pour la gestion de version
-# - unzip/zip : pour la gestion des fichiers compressés
-# - libicu-dev : nécessaire pour l'extension intl (internationalisation)
-# - libzip-dev : nécessaire pour l'extension zip
-# - libonig-dev : nécessaire pour certaines fonctions de regex (ex : mbstring)
 RUN apt-get update && apt-get install -y \
     git unzip zip libicu-dev libzip-dev libonig-dev \
     && docker-php-ext-install intl pdo pdo_mysql zip

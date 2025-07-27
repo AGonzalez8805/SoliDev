@@ -1,10 +1,11 @@
 <?php
 session_start();
 
-define('APP_ROOT', __DIR__);
-define('APP_ENV', ".env");
+define('APP_ROOT', dirname(__DIR__)); // ce sera /var/www/html
 
-require __DIR__ . '/vendor/autoload.php';
+define('APP_ENV', dirname(__DIR__) . '/.env');
+
+require __DIR__ . '/../vendor/autoload.php';
 
 use App\Controller\Controller;
 
