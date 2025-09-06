@@ -11,16 +11,18 @@ class AdminController extends Controller
      */
     public function route(): void
     {
-        if (isset($_GET['action'])) {
-            switch ($_GET['action']) {
-                case 'dashboard': // Si action = "dashboard"
-                    $this->dashboard(); // Appelle la méthode dashboard()
-                    break;
-                default:
-                    // Si l'action demandée n'existe pas, lève une exception
-                    throw new \Exception("Action admin inconnue");
+        $this->handleRoute(function () {
+            if (isset($_GET['action'])) {
+                switch ($_GET['action']) {
+                    case 'dashboard': // Si action = "dashboard"
+                        $this->dashboard(); // Appelle la méthode dashboard()
+                        break;
+                    default:
+                        // Si l'action demandée n'existe pas, lève une exception
+                        throw new \Exception("Action admin inconnue");
+                }
             }
-        }
+        });
     }
 
     /**

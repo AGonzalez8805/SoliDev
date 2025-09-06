@@ -10,18 +10,20 @@ class UserController extends Controller
      */
     public function route(): void
     {
-        if (isset($_GET['action'])) {
-            switch ($_GET['action']) {
-                case 'dashboard':
-                    // Affiche le tableau de bord utilisateur
-                    $this->dashboard();
-                    break;
+        $this->handleRoute(function () {
+            if (isset($_GET['action'])) {
+                switch ($_GET['action']) {
+                    case 'dashboard':
+                        // Affiche le tableau de bord utilisateur
+                        $this->dashboard();
+                        break;
 
-                default:
-                    // L'action n'est pas reconnue pour ce contrôleur
-                    throw new \Exception("Action utilisateur inconnue");
+                    default:
+                        // L'action n'est pas reconnue pour ce contrôleur
+                        throw new \Exception("Action utilisateur inconnue");
+                }
             }
-        }
+        });
     }
 
     /**

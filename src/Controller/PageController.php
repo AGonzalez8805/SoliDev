@@ -10,9 +10,8 @@ class PageController extends Controller
      */
     public function route(): void
     {
-        try {
-            // Vérifie si une action est définie dans l'URL
-            if (isset($_GET['action'])) {
+        $this->handleRoute(function () {
+ if (isset($_GET['action'])) {
                 switch ($_GET['action']) {
                     case 'about':
                         // Affiche la page "À propos"
@@ -33,16 +32,8 @@ class PageController extends Controller
                         // Action non reconnue
                         throw new \Exception("Cette action n'existe pas : " . $_GET['action']);
                 }
-            } else {
-                // Aucune action n'a été fournie dans l'URL
-                throw new \Exception("Aucune action détectée");
             }
-        } catch (\Exception $e) {
-            // Affiche une page d'erreur en cas d'exception
-            $this->render('errors/default', [
-                'errors' => $e->getMessage()
-            ]);
-        }
+        });
     }
 
     /**

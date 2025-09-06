@@ -8,8 +8,8 @@ class BlogController extends Controller
 {
     public function route(): void 
     {
-            try {
-                if (isset($_GET['action'])){
+            $this->handleRoute(function () {
+                   if (isset($_GET['action'])){
                 switch ($_GET['action']) {
                     case 'show':
                         $this->show();
@@ -37,14 +37,8 @@ class BlogController extends Controller
                         throw new \Exception("Cette action n'existe pas : ".$_GET['action']);
                         break;
                 }
-            }else {
-                throw new \Exception("Aucune action détecté");
             }
-        } catch (\Exception $e) {
-            $this->render('errors/default', [
-                'errors' => $e->getMessage()
-            ]);
-        }
+            });
     }
 
     protected function show()
