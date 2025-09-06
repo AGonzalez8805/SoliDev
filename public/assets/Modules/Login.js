@@ -1,103 +1,80 @@
 export class Login {
   constructor() {
-    // Récupération du formulaire
     this.form = document.getElementById("loginForm");
-
-    // Si le formulaire n'existe pas (par exemple sur une autre page), on stoppe
     if (!this.form) return;
 
-    // Récupération des champs nécessaires
     this.inputMail = document.getElementById("email");
     this.inputPassword = document.getElementById("password");
+    this.rememberMe = document.getElementById("rememberMe");
 
-    // Lancement des écouteurs d'événements
     this.init();
   }
 
   init() {
-    // Événement sur l'email : validation en temps réel
-    this.inputMail.addEventListener("input", () =>
-      this.validateEmail(this.inputMail)
-    );
+    this.inputMail.addEventListener("input", () => this.toggleValidation(this.inputMail, this.validateEmail));
+    this.inputPassword.addEventListener("input", () => this.toggleValidation(this.inputPassword, this.validatePassword));
 
-    // Événement sur le mot de passe : vérifie juste que le champ n'est pas vide
-    this.inputPassword.addEventListener("input", () =>
-      this.validatePassword(this.inputPassword)
-    );
-
-    // Gestion de la soumission du formulaire
     this.form.addEventListener("submit", (e) => {
-      e.preventDefault(); // Empêche l'envoi classique
-      this.handleLogin(); // Déclenche la logique de connexion
+      e.preventDefault();
+      this.handleLogin();
     });
   }
 
-  // Vérifie que l'email est au bon format
-  validateEmail(field) {
-    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field.value);
+  toggleValidation(field, validator) {
+    const isValid = validator(field.value);
     field.classList.toggle("is-valid", isValid);
     field.classList.toggle("is-invalid", !isValid);
     return isValid;
   }
 
-  // Vérifie simplement que le champ n'est pas vide
-  validatePassword(field) {
-    const isValid = field.value.trim().length > 0;
-    field.classList.toggle("is-valid", isValid);
-    field.classList.toggle("is-invalid", !isValid);
-    return isValid;
+  validateEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
 
-  // Gère l'envoi des données au backend pour connexion
+  validatePassword(value) {
+    return value.trim().length > 0;
+  }
+
   async handleLogin() {
-    // Re-valide les champs avant soumission
-    const isMailValid = this.validateEmail(this.inputMail);
-    const isPasswordValid = this.validatePassword(this.inputPassword);
+    const isMailValid = this.toggleValidation(this.inputMail, this.validateEmail);
+    const isPasswordValid = this.toggleValidation(this.inputPassword, this.validatePassword);
 
-    // Affiche une alerte si un champ est invalide
     if (!isMailValid || !isPasswordValid) {
       alert("Merci de corriger les champs avant de vous connecter.");
       return;
     }
 
-    // Prépare les données du formulaire
     const data = {
       email: this.inputMail.value,
       password: this.inputPassword.value,
-      remember: document.getElementById("rememberMe").checked,
+      remember: this.rememberMe?.checked || false,
     };
 
     try {
-      // Envoie les données au contrôleur backend
-      const response = await fetch(
-        "index.php?controller=auth&action=handleLogin",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch("index.php?controller=auth&action=handleLogin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
       const text = await response.text();
 
       let result;
       try {
-        result = JSON.parse(text); // Essaie de parser la réponse JSON
+        result = JSON.parse(text);
       } catch (err) {
-        console.error("Erreur de parsing JSON :", err);
-        alert("La réponse du serveur n'est pas du JSON valide.");
+        console.error("Réponse du serveur invalide :", text);
+        alert("Erreur serveur : réponse non valide.");
         return;
       }
 
-      // Si la connexion est un succès, on redirige
       if (result.success) {
-        window.location.href = result.redirect || "";
+        window.location.href = result.redirect || "/";
       } else {
-        // Affiche le message d'erreur personnalisé ou un message par défaut
-        alert(result.message || "Erreur d'identifiants.");
+        alert(result.message || "Email ou mot de passe incorrect.");
       }
-    } catch (error) {
-      console.error("Erreur lors de la connexion :", error);
+    } catch (err) {
+      console.error("Erreur réseau ou serveur :", err);
       alert("Une erreur technique est survenue.");
     }
   }

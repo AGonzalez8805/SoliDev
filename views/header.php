@@ -40,8 +40,8 @@
                         <!-- Récupère l'action de la page via l'URL, ou 'home' par défaut -->
                         <?php $currentPage = $_GET['action'] ?? 'home'; ?>
                         <!-- Liens de navigation avec surlignage de la page active -->
-                        <a class="nav-link <?= $currentPage === 'home' ? 'active-link' : '' ?>" href="/page?action=home">Accueil</a>
-                        <a class="nav-link <?= $currentPage === 'forum' ? 'active-link' : '' ?>" href="/page?action=forum">Forum</a>
+                        <a class="nav-link <?= $currentPage === 'home' ? 'active-link' : '' ?>" href="/?controller=page&action=home">Accueil</a>
+                        <a class="nav-link <?= $currentPage === 'forum' ? 'active-link' : '' ?>" href="/?controller=forum&action=forum">Forum</a>
                         <a class="nav-link <?= $currentPage === 'show' ? 'active-link' : '' ?>" href="/blog?action=show">Blog</a>
                         <a class="nav-link <?= $currentPage === 'project' ? 'active-link' : '' ?>" href="/project?action=">Projets</a>
                         <a class="nav-link <?= $currentPage === 'snippets' ? 'active-link' : '' ?>" href="/snippets?action=">Snippets</a>

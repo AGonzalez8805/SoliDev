@@ -1,20 +1,23 @@
 services:
-  # Service 'php' : Conteneur pour l'application PHP et le serveur web Apache.
+  # Service 'php'
   php:
     container_name: SoliDev_php 
     ports:
-      - "90:80"  # Port 90 de l'ordi → port 80 du conteneur
+      - "90:80"
     volumes:
-      - ./:/var/www/html  # Dossier du projet → dans le conteneur
+      - ./:/var/www/html 
     build:
-      context: .  # Construit depuis ce dossier
-      dockerfile: Dockerfile  # Fichier Docker à utiliser
+      context: . 
+      dockerfile: Dockerfile  
+    depends_on:
+      - db
+      - mongodb
     networks:
-      - app-network  # Réseau utilisé
+      - app-network 
 
-  # Service 'db' : Conteneur pour la base de données MySQL.
+  # Service 'db' 
   db:
-    image: mysql:latest  # MySQL dernière version
+    image: mysql:latest
     container_name: SoliDev_mysql 
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} 
@@ -24,11 +27,39 @@ services:
     ports:
       - "3306:3306"  
     volumes:
-      - SoliDev-data:/var/lib/mysql  # Sauvegarde des données
+      - SoliDev-data:/var/lib/mysql 
     networks:
-      - app-network  # Réseau utilisé
+      - app-network 
 
-  # Service 'phpmyadmin' : Conteneur pour l'interface web de gestion de base de données phpMyAdmin.
+  # Service 'mongodb'
+  mongodb:
+    image: mongo:7.0
+    container_name: SoliDev_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - SoliDev-mongodb_data:/data/db
+    networks:
+      - app-network
+
+  # Service 'mongo-express'
+  mongo-express:
+    image: mongo-express
+    container_name: SoliDev_mongo_express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_EXPRESS_PASSWORD}@mongodb:27017/
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  # Service 'phpmyadmin'  
   phpmyadmin:
     image: phpmyadmin/phpmyadmin  
     container_name: SoliDev_phpmyadmin  
@@ -37,11 +68,13 @@ services:
       PMA_USER: ${PMA_USER}  
       PMA_PASSWORD: ${PMA_PASSWORD}  
     ports:
-      - "9000:80"  # Accès à phpMyAdmin sur le port 9000
+      - "9000:80"  
     depends_on:
-      - db  # Attend que MySQL soit prêt
+      - db 
     networks:
-      - app-network  # Réseau utilisé
+      - app-network 
+
+    
 
 # Réseau utilisé par tous les services
 networks:
@@ -49,3 +82,4 @@ networks:
 # Volume pour sauvegarder les données MySQL
 volumes:
   SoliDev-data:
+  SoliDev-mongodb_data:

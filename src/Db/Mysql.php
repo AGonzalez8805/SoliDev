@@ -15,49 +15,54 @@ class Mysql
     private ?\PDO $pdo = null;
 
     // Instance unique de la classe (singleton)
-    private static ?self $_instance = null;
+    private static ?self $instance = null;
 
-    /**
-     * Constructeur privé pour empêcher l'instanciation directe (pattern Singleton).
-     * Il lit la configuration de la base depuis un fichier INI.
-     */
+    //Constructeur privé pour empêcher l'instanciation directe (pattern Singleton).
     private function __construct()
     {
-        $dbConf = parse_ini_file(APP_ENV);
+        //Récupération de la config (pour heroku)
+        $databaseUrl = getenv('DATABASE_URL') ?: getenv('JAWSDB_URL');
 
-
-        $this->dbHost = $dbConf["db_host"];
-        $this->dbUser = $dbConf["db_user"];
-        $this->dbPassword = $dbConf["db_password"];
-        $this->dbPort = $dbConf["db_port"];
-        $this->dbName = $dbConf["db_name"];
+        if ($databaseUrl) {
+            $url = parse_url($databaseUrl);
+            $this->dbHost = $url["host"];
+            $this->dbUser = $url["user"];
+            $this->dbPassword = $url["pass"];
+            $this->dbPort = $url["port"] ?? 3306;
+            $this->dbName = ltrim($url["path"], '/');
+        } else {
+            // Sinon on charge depuis le fichier ini
+            $ini = parse_ini_file(APP_ENV);
+            $this->dbHost = $ini['db_host'];
+            $this->dbUser = $ini['db_user'];
+            $this->dbPassword = $ini['db_password'];
+            $this->dbPort = $ini['db_port'] ?? 3306;
+            $this->dbName = $ini['db_name'];
+        }
     }
 
-
-    /**
-     * Retourne l'instance unique de Mysql (Singleton).
-     * Crée une nouvelle instance si elle n'existe pas encore.
-     */
+    //Retourne l'instance unique de Mysql (Singleton).
     public static function getInstance(): self
     {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new Mysql();
+        if (is_null(self::$instance)) {
+            self::$instance = new Mysql();
         }
 
-        return self::$_instance;
+        return self::$instance;
     }
 
-    /**
-     * Retourne l'objet PDO connecté à la base de données.
-     * Crée la connexion s'il n'en existe pas encore.
-     */
+    //Retourne l'objet PDO connecté à la base de données.
     public function getPDO(): \PDO
     {
         if (is_null($this->pdo)) {
             $this->pdo = new \PDO(
                 "mysql:dbname={$this->dbName};charset=utf8;host={$this->dbHost};port={$this->dbPort}",
                 $this->dbUser,
-                $this->dbPassword
+                $this->dbPassword,
+                [
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,  // Active les exceptions sur erreurs SQL
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC, // Mode de fetch par défaut
+                ]
             );
         }
 

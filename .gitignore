@@ -1,3 +1,5 @@
 .env
+.db.ini
 /vendor/
 .vscode/
+generate-password.php

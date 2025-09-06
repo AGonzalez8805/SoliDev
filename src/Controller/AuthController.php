@@ -73,58 +73,51 @@ class AuthController extends Controller
      * Gère la soumission du formulaire de connexion via AJAX (JSON)
      */
     public function handleLogin()
-    {
-        ob_start(); // Capture le buffer de sortie pour éviter les interférences avec les headers
-        header('Content-Type: application/json');
-        http_response_code(200);
-
-        $input = json_decode(file_get_contents("php://input"), true);
-
-        if (!$input) {
-            echo json_encode(["success" => false, "message" => "Données invalides."]);
-            return;
-        }
-
-        $email = trim($input['email'] ?? '');
-        $password = $input['password'] ?? '';
-        $remember = $input['remember'] ?? false;
-
-        // Vérification que les champs obligatoires sont remplis
-        if (empty($email) || empty($password)) {
-            echo json_encode(["success" => false, "message" => "L'email et le mot de passe sont requis."]);
-            return;
-        }
-
-        $userRepo = new UserRepository();
-        $user = $userRepo->findByEmail($email);
-
-        // Vérification des identifiants
-        if ($user && password_verify($password, $user['password'])) {
-            // Authentification réussie, on stocke les infos en session
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['role'] = $user['role'];
-
-            // Implémentation future possible : cookie de persistance avec $remember
-            if ($remember) {
-                // Exemple : setcookie("rememberMe", ...);
-            }
-
-            ob_end_clean(); // Nettoie le buffer de sortie
-
-            // Redirection conditionnelle selon le rôle
-            $url = ($_SESSION['role'] === 'admin')
-                ? '/?controller=admin&action=dashboard'
-                : '/?controller=user&action=dashboard';
-
-            echo json_encode(["success" => true, "redirect" => $url]);
-            return;
-        } else {
-            // Identifiants incorrects
-            echo json_encode(["success" => false, "message" => "Email ou mot de passe incorrect."]);
-            return;
-        }
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
+
+    // Nettoyer tout buffer précédent
+    while (ob_get_level()) ob_end_clean();
+
+    header('Content-Type: application/json');
+    http_response_code(200);
+
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    if (!$input || empty($input['email']) || empty($input['password'])) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Email et mot de passe requis."
+        ]);
+        return;
+    }
+
+    $email = trim($input['email']);
+    $password = $input['password'];
+
+    $userRepo = new UserRepository();
+    $user = $userRepo->findByEmail($email);
+
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user_id'] = $user['users_id'] ?? $user['id'] ?? null;
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['role'] = $user['role'];
+
+        $url = $user['role'] === 'admin'
+            ? '/?controller=admin&action=dashboard'
+            : '/?controller=user&action=dashboard';
+
+        echo json_encode(["success" => true, "redirect" => $url]);
+    } else {
+        echo json_encode([
+            "success" => false,
+            "message" => "Email ou mot de passe incorrect."
+        ]);
+    }
+}
+
 
     /**
      * Déconnexion de l'utilisateur, suppression de la session et redirection vers la page d'accueil.
@@ -140,71 +133,65 @@ class AuthController extends Controller
     /**
      * Gère l'inscription d'un nouvel utilisateur via AJAX (JSON)
      */
-    public function handleRegister()
-    {
-        header('Content-Type: application/json');
-        http_response_code(200);
-
-        $input = json_decode(file_get_contents("php://input"), true);
-
-        if (!$input) {
-            echo json_encode(["success" => false, "message" => "Données invalides"]);
-            return;
-        }
-
-        // Sécurité : nettoyage + validation
-        $name = trim($input['name'] ?? '');
-        $firstName = trim($input['firstName'] ?? '');
-        $email = trim($input['email'] ?? '');
-        $password = $input['password'] ?? '';
-        $validatePassword = $input['validatePassword'] ?? '';
-
-        // Vérification de champs obligatoires
-        if (empty($name) || empty($firstName) || empty($email) || empty($password)) {
-            echo json_encode(["success" => false, "message" => "Tous les champs sont requis."]);
-            return;
-        }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo json_encode(["success" => false, "message" => "Adresse email invalide."]);
-            return;
-        }
-
-        if ($password !== $validatePassword) {
-            echo json_encode(["success" => false, "message" => "Le mot de passe ne correspond pas."]);
-            return;
-        }
-
-        $userRepo = new UserRepository();
-
-        // Vérifie si c’est le premier admin à inscrire
-        $roleToAssign = 'utilisateur'; // Rôle par défaut
-        if (!$userRepo->findByRole('admin')) {
-            $roleToAssign = 'admin'; // Premier inscrit = admin
-        }
-
-        // Vérifie l’unicité de l’email
-        if ($userRepo->findByEmail($email)) {
-            echo json_encode(["success" => false, "message" => "Cet email est déjà utilisé."]);
-            return;
-        }
-
-        // Hashage sécurisé du mot de passe
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-
-        // Création du nouvel utilisateur
-        $result = $userRepo->create([
-            'name' => $name,
-            'firstName' => $firstName,
-            'email' => $email,
-            'password' => $hashedPassword,
-            'role' => $roleToAssign
-        ]);
-
-        if ($result) {
-            echo json_encode(["success" => true]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Erreur lors de l'inscription."]);
-        }
+   public function handleRegister()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
+
+    while (ob_get_level()) ob_end_clean();
+
+    header('Content-Type: application/json');
+    http_response_code(200);
+
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    if (!$input || empty($input['name']) || empty($input['firstName']) || empty($input['email']) || empty($input['password'])) {
+        echo json_encode([
+            "success" => false,
+            "message" => "Tous les champs sont requis."
+        ]);
+        return;
+    }
+
+    $name = trim($input['name']);
+    $firstName = trim($input['firstName']);
+    $email = trim($input['email']);
+    $password = $input['password'];
+    $validatePassword = $input['validatePassword'] ?? '';
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(["success" => false, "message" => "Email invalide."]);
+        return;
+    }
+
+    if ($password !== $validatePassword) {
+        echo json_encode(["success" => false, "message" => "Les mots de passe ne correspondent pas."]);
+        return;
+    }
+
+    $userRepo = new UserRepository();
+
+    if ($userRepo->findByEmail($email)) {
+        echo json_encode(["success" => false, "message" => "Email déjà utilisé."]);
+        return;
+    }
+
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+    $result = $userRepo->create([
+        'name' => $name,
+        'firstName' => $firstName,
+        'email' => $email,
+        'password' => $hashedPassword,
+        'role' => 'utilisateur'
+    ]);
+
+    if ($result) {
+        echo json_encode(["success" => true]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Erreur lors de l'inscription."]);
+    }
+}
+
 }

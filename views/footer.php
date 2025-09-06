@@ -17,7 +17,7 @@
         </li>
         <li class="nav-item">
             <!-- Lien vers la page de contact, avec activation dynamique de la classe si la page est active -->
-            <a class="nav-link <?= $currentPage === 'contact' ? 'active-link' : '' ?>" href="/page?action=contact">Contact</a>
+            <a class="nav-link <?= $currentPage === 'contact' ? 'active-link' : '' ?>" href="/?controller=page&action=contact">Contact</a>
         </li>
     </ul>
     <!-- Texte de copyright centré -->

@@ -1,10 +1,15 @@
+
 # Utilise l'image officielle PHP 8.2 avec Apache comme base
 FROM php:8.2-apache
 
 # Met à jour les paquets et installe les dépendances nécessaires
-RUN apt-get update && apt-get install -y \
-    git unzip zip libicu-dev libzip-dev libonig-dev \
-    && docker-php-ext-install intl pdo pdo_mysql zip
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    git unzip zip libicu-dev libzip-dev libonig-dev libssl-dev pkg-config \
+    && docker-php-ext-install intl pdo pdo_mysql zip \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb \
+    && rm -rf /var/lib/apt/lists/*
 
 # Active le module "rewrite" d'Apache (utile pour les routes en PHP/Laravel/Symfony)
 RUN a2enmod rewrite
