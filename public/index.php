@@ -28,7 +28,12 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 // Connexion à la base de données
 use App\Db\Mysql;
+use App\Db\Mongo;
+
 $mysql = Mysql::getInstance()->getPDO();
+
+$mongo = Mongo::getInstance();
+$dbMongo = $mongo->getDatabase();
 
 
 // Lancer le contrôleur principal

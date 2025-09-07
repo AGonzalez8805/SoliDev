@@ -6,6 +6,18 @@ use App\Db\Mysql;
 
 class UserRepository
 {
+        public function findById(int $id): ?array
+    {
+        $mysql = Mysql::getInstance();
+        $pdo = $mysql->getPDO();
+
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE users_id = :id");
+        $stmt->execute(['id' => $id]);
+
+        $user = $stmt->fetch();
+        return $user ?: null;
+    }
+
     public function findByEmail(string $email)
     {
         //Appel bdd

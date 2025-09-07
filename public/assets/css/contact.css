@@ -1,0 +1,38 @@
+/* Page contact */
+.contact-logo {
+    max-width: 500px;
+    height: auto;
+}
+
+.contact img {
+    margin-right: 50px;
+    background-color: linear-gradient(to bottom,
+            #ffb86a,
+            #ff9933);
+    /* Un orange chaud et un peu plus vif */
+}
+
+.solidev-contact {
+    width: 550px;
+    padding: 40px;
+    border: 3px solid #592f25;
+    border-radius: 40px;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-left: 150px;
+}
+
+.contact h2 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: italic;
+}
+
+.contact {
+    background: linear-gradient(135deg, #bf2c53 0%, #d35400 50%, #e67e22 100%);
+    position: relative;
+    overflow-x: hidden;
+    min-height: 100%;
+}

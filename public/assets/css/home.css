@@ -1,0 +1,75 @@
+/* page d'accueil première section */
+.hero-section {
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 40px 20px;
+    background-color: #f9d09d;
+    border: 2px solid #592f25;
+    border-top-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+    box-sizing: border-box;
+}
+
+.hero-section h1 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+    color: #bf2c53;
+}
+
+.hero-section p {
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: #bf2c53;
+    font-size: 1.2rem;
+}
+
+/* page d'accueil deuxième section */
+.home-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.search-home {
+    max-width: 500px;
+    width: 80%;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: rgba(6, 7, 8, 0.15);
+    border: 3px solid #592f25;
+    border-top-left-radius: 40px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 40px;
+    border-bottom-left-radius: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-left: 150px;
+}
+
+@media (max-width: 768px) {
+
+    .search-home,
+    .hero-section {
+        width: 90%;
+        margin: 40px auto;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 1024px) {
+
+    .search-home,
+    .hero-section {
+        width: 90%;
+        margin: 40px auto;
+        padding: 20px;
+    }
+}
