@@ -44,6 +44,7 @@ class TopicRepository
     public function findAll(): array
     {
         $cursor = $this->collection->find([], ['sort' => ['created_at' => -1]]);
+        /** @var array $cursor */
         $topics = array_map(fn($doc) => Topic::fromMongo((array)$doc), iterator_to_array($cursor));
 
         foreach ($topics as $topic) {

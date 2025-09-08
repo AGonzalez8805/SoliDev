@@ -13,7 +13,7 @@ class ForumController extends Controller
     {
         // Instancie ton UserRepository MySQL
         $mysqlUserRepo = new UserRepository();
-        
+
         // Passe l'instance à TopicRepository pour récupérer les noms depuis MySQL
         $this->topicRepository = new TopicRepository($mysqlUserRepo);
     }
@@ -46,13 +46,25 @@ class ForumController extends Controller
     {
         $categories = $this->buildCategoriesWithStats();
         $onlineUsers = $this->getOnlineUsersData();
-        $recentTopics = $this->topicRepository->findAll();
+
+        // Vérifie si une catégorie est demandée
+        $selectedCategory = $_GET['category'] ?? null;
+
+        if ($selectedCategory && $this->isValidCategory($selectedCategory)) {
+            // On récupère seulement les topics de cette catégorie
+            $recentTopics = $this->topicRepository->getTopicsByCategory($selectedCategory, 20, 0);
+        } else {
+            // Sinon on récupère tous les topics
+            $recentTopics = $this->topicRepository->findAll();
+        }
+
 
         $this->render('forum/forum', [
             'categories' => $categories,
             'onlineUsers' => $onlineUsers,
             'recentTopics' => array_slice($recentTopics, 0, 5),
-            'pageTitle' => 'Forum - Accueil'
+            'pageTitle' => 'Forum - Accueil',
+            'selectedCategory' => $selectedCategory
         ]);
     }
 
