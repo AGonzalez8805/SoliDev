@@ -17,17 +17,16 @@ class Mongo
         $mongoUrl = getenv('MONGODB_URI');
 
         if ($mongoUrl) {
-            // On utilise directement l'URI fourni
+            // Configuration prod
             $this->client = new Client($mongoUrl);
             $this->dbName = ltrim(parse_url($mongoUrl, PHP_URL_PATH), '/');
         } else {
-            // Fallback local : lecture du fichier .db.ini
+            // Configuration développement
             if (!defined('APP_ENV') || !file_exists(APP_ENV)) {
                 throw new \Exception("Le fichier de configuration APP_ENV est introuvable !");
             }
 
             $dbConf = parse_ini_file(APP_ENV);
-
             $dbHost = $dbConf["mongo_host"] ?? 'localhost';
             $dbPort = $dbConf["mongo_port"] ?? 27017;
             $dbUser = rawurlencode($dbConf["mongo_user"] ?? '');

@@ -1,4 +1,5 @@
-<?php require_once APP_ROOT . '/views/header.php'; ?>
+<?php require_once APP_ROOT . '/views/header.php';
+?>
 
 <!-- En-tête du forum -->
 <section class="forum-header">
@@ -23,7 +24,6 @@
         <form method="get" action="/" class="mb-4">
             <input type="hidden" name="controller" value="forum">
             <input type="hidden" name="action" value="forum">
-
             <label for="categorySelect" class="form-label">Filtrer par catégorie :</label>
             <select id="categorySelect" name="category" class="form-select" onchange="this.form.submit()">
                 <option value="">Toutes les catégories</option>
@@ -35,8 +35,6 @@
                 <?php endforeach; ?>
             </select>
         </form>
-
-
 
         <!-- Sidebar -->
         <div class="">
@@ -71,18 +69,6 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
-            </div>
-
-            <div class="recent-topics mt-4">
-                <h5 class="mb-3">
-                    <i class="fas fa-circle text-success me-2"></i>
-                    Membres en ligne (<?= count($onlineUsers) ?>)
-                </h5>
-                <div class="d-flex flex-wrap gap-2">
-                    <?php foreach ($onlineUsers as $user): ?>
-                        <span class="badge bg-light text-dark"><?= htmlspecialchars($user['username']) ?></span>
-                    <?php endforeach; ?>
-                </div>
             </div>
         </div>
     </div>

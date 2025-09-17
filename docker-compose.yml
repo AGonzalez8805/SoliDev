@@ -79,7 +79,7 @@ services:
 # Réseau utilisé par tous les services
 networks:
   app-network:
-# Volume pour sauvegarder les données MySQL
+# Volume pour sauvegarder les données
 volumes:
   SoliDev-data:
   SoliDev-mongodb_data:

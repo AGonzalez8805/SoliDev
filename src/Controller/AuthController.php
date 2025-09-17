@@ -88,17 +88,19 @@ class AuthController extends Controller
             $_SESSION['user_id'] = $user['users_id'] ?? $user['id'] ?? null;
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role'];
+            $redirect = $_SESSION['redirect_after_login'] ?? null;
+            unset($_SESSION['redirect_after_login']);
 
-            $url = $user['role'] === 'admin'
-                ? '/?controller=admin&action=dashboard'
-                : '/?controller=user&action=dashboard';
+            if (!$redirect) {
+                // Si pas de redirection spécifique, dashboard selon le rôle
+                $redirect = $user['role'] === 'admin'
+                    ? '/?controller=admin&action=dashboard'
+                    : '/?controller=user&action=dashboard';
+            }
 
-            echo json_encode(["success" => true, "redirect" => $url]);
+            echo json_encode(["success" => true, "redirect" => $redirect]);
         } else {
-            echo json_encode([
-                "success" => false,
-                "message" => "Email ou mot de passe incorrect."
-            ]);
+            echo json_encode(["success" => false, "message" => "Email ou mot de passe incorrect."]);
         }
     }
 

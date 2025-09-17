@@ -1,0 +1,69 @@
+.notLogin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.error-content {
+  background: white;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: #d95d30;
+  margin-bottom: 1.5rem;
+}
+
+.error-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f1726;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.btn-login-error {
+  background: linear-gradient(135deg, #f48703, #f2a444);
+  border: none;
+  color: #0f1726;
+  font-weight: 500;
+  font-size: 1.1rem;
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.btn-login-error:hover {
+  transform: translateY(-2px);
+  color: #0f1726;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .error-content {
+    padding: 2rem;
+  }
+
+  .error-title {
+    font-size: 1.5rem;
+  }
+}

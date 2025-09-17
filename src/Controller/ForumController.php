@@ -45,7 +45,6 @@ class ForumController extends Controller
     public function forum(): void
     {
         $categories = $this->buildCategoriesWithStats();
-        $onlineUsers = $this->getOnlineUsersData();
 
         // Vérifie si une catégorie est demandée
         $selectedCategory = $_GET['category'] ?? null;
@@ -58,10 +57,8 @@ class ForumController extends Controller
             $recentTopics = $this->topicRepository->findAll();
         }
 
-
         $this->render('forum/forum', [
             'categories' => $categories,
-            'onlineUsers' => $onlineUsers,
             'recentTopics' => array_slice($recentTopics, 0, 5),
             'pageTitle' => 'Forum - Accueil',
             'selectedCategory' => $selectedCategory
@@ -187,16 +184,6 @@ class ForumController extends Controller
         return $categoriesConfig;
     }
 
-    /** Utilisateurs en ligne */
-    private function getOnlineUsersData(): array
-    {
-        return [
-            ['username' => 'JohnDev', 'avatar' => null, 'status' => 'online'],
-            ['username' => 'MariaL', 'avatar' => null, 'status' => 'online'],
-            ['username' => 'TechCoder', 'avatar' => null, 'status' => 'away'],
-        ];
-    }
-
     /** Validation et sécurisation des données */
     private function validatePostData(array $data): array
     {
@@ -300,7 +287,11 @@ class ForumController extends Controller
     {
         if (!$this->isAuthenticated()) {
             $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
-            throw new \Exception('Vous devez être connecté pour effectuer cette action', 401);
+            $this->render('errors/notLogin', [
+                'pageTitle' => 'Connexion requise',
+                'message' => 'Vous devez être connecté'
+            ]);
+            exit;
         }
     }
 
