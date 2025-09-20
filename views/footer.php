@@ -30,6 +30,8 @@
     crossorigin="anonymous"></script>
 <!-- Script principal de l'application (JavaScript personnalisé) -->
 <script type="module" src="/assets/app.js"></script>
+
+<script src="https://kit.fontawesome.com/f5ae6a01b5.js" crossorigin="anonymous"></script>
 </body>
 
 </html>

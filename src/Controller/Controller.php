@@ -52,9 +52,14 @@ class Controller
                         $controller = new UserController();
                         $controller->route();
                         break;
-                    
+
                     case 'forum':
                         $controller = new ForumController();
+                        $controller->route();
+                        break;
+
+                    case 'blog':
+                        $controller = new BlogController();
                         $controller->route();
                         break;
 

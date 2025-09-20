@@ -4,7 +4,6 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #f2a444;
   overflow-x: hidden;
 }
 
@@ -19,7 +18,7 @@ main {
 }
 
 /* Navbar */
-nav {
+.navbar {
   background-color: #d95d30;
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;

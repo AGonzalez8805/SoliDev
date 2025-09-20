@@ -8,7 +8,8 @@
             <i class="fas fa-comments me-3"></i>
             Forum SoliDev
         </h1>
-        <p class="lead mb-4">Échangez, partagez et apprenez ensemble dans notre communauté de développeurs solidaires</p>
+        <p class="lead mb-4">Posez vos questions techniques, partagez vos solutions, demandez des avis sur vos projets ou discutez des dernières tendances du développement.
+            Notre communauté bienveillante est là pour vous accompagner dans vos défis quotidiens de développeur.</p>
     </div>
 </section>
 

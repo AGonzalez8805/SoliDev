@@ -1,133 +1,150 @@
 .forum-header {
-    background: linear-gradient(135deg, #d95d30, #f48703);
-    color: white;
-    padding: 2%;
-    text-align: center;
+  background: linear-gradient(135deg, #d95d30, #f48703);
+  border-radius: 50px 0 50px 0;
+  color: white;
+  padding: 2% 3%;
+  text-align: center;
+  margin: 10px auto;
+  max-width: 90%;
+}
+
+.forum-header h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.forum-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .forum-stats {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 1rem;
-    margin-top: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
 }
 
 .category-card {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-bottom: 1rem;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 1rem;
 }
 
 .category-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .category-icon {
-    font-size: 2.5rem;
-    color: #d95d30;
-    margin-bottom: 1rem;
+  font-size: 2.5rem;
+  color: #d95d30;
+  margin-bottom: 1rem;
 }
 
 .category-title {
-    color: #0f1726;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+  color: #0f1726;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
 .category-description {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 
 .category-stats {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    color: #888;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #888;
 }
 
 .btn-new-topic {
-    background: linear-gradient(135deg, #f48703, #d95d30);
-    border: none;
-    color: white;
-    padding: 0.8rem 2rem;
-    border-radius: 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
+  background: linear-gradient(135deg, #f48703, #d95d30);
+  border: none;
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .btn-new-topic:hover {
-    background: linear-gradient(135deg, #d95d30, #f48703);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(217, 93, 48, 0.3);
-    color: white;
+  background: linear-gradient(135deg, #d95d30, #f48703);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(217, 93, 48, 0.3);
+  color: white;
 }
 
 .recent-topics {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    margin-top: 2rem;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-top: 2rem;
 }
 
 .topic-item {
-    border-bottom: 1px solid #eee;
-    padding: 1rem 0;
-    transition: background-color 0.3s ease;
+  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+  transition: background-color 0.3s ease;
 }
 
 .topic-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .topic-item:hover {
-    background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
 
 .topic-title {
-    color: #0f1726;
-    font-weight: 600;
-    text-decoration: none;
+  color: #0f1726;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .topic-title:hover {
-    color: #d95d30;
-    text-decoration: none;
+  color: #d95d30;
+  text-decoration: none;
 }
 
 .topic-meta {
-    font-size: 0.8rem;
-    color: #888;
+  font-size: 0.8rem;
+  color: #888;
 }
 
 .user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #f48703, #d95d30);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f48703, #d95d30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
 }
 
 .breadcrumb {
-    background-color: transparent;
-    padding: 0;
-    margin-bottom: 1rem;
+  background-color: transparent;
+  padding: 0;
+  margin-bottom: 1rem;
 }
 
 .breadcrumb-item a {
-    color: #0f1726;
-    text-decoration: none;
+  color: #0f1726;
+  text-decoration: none;
 }
 
 .breadcrumb-item a:hover {
-    color: #d95d30;
+  color: #d95d30;
 }
