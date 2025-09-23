@@ -4,59 +4,139 @@ namespace App\Repository;
 
 use App\Models\Blog;
 use App\Db\Mysql;
+use PDO;
 
 class BlogRepository
 {
-    public function findOneById(int $id)
+    public function findOneById(int $id): ?Blog
     {
-        //Appel bdd
-        $mysql = Mysql::getInstance();
+        $pdo = Mysql::getInstance()->getPDO();
 
-        $pdo = $mysql->getPDO();
+        $stmt = $pdo->prepare('SELECT * FROM blog WHERE id = :id');
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        $query = $pdo->prepare('SELECT * FROM blog WHERE id = :id');
-        $query->bindValue(':id', $id, $pdo::PARAM_INT);
-        $query->execute();
-        $blog = $query->fetch(); //On en récupère qu'un
+        if (!$row) {
+            return null;
+        }
 
-        // $blog = ['id' => 1, 'title' => 'titre test', 'description' => 'description test'];
-
-        $blogModels = new Blog();
-        $blogModels->setId($blog['id']);
-        $blogModels->setTitle($blog['title']);
-        $blogModels->setDescription($blog['description']);
-
-        return $blogModels;
+        return $this->mapRowToBlog($row);
     }
 
     public function findAll(): array
     {
-        $mysql = Mysql::getInstance();
-        $pdo = $mysql->getPDO();
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->query('SELECT * FROM blog ORDER BY created_at DESC');
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $query = $pdo->query('SELECT * FROM blog ORDER BY created_at DESC');
-        $rows = $query->fetchAll();
-
-        $blogs = [];
-        foreach ($rows as $row) {
-            $blog = new Blog();
-            $blog->setId($row['id'])
-                ->setTitle($row['title'])
-                ->setDescription($row['description']);
-            $blogs[] = $blog;
-        }
-
-        return $blogs;
+        return array_map([$this, 'mapRowToBlog'], $rows);
     }
 
-    public function insert(string $title, string $description): void
+    public function insert(Blog $blog): int
     {
-        $mysql = Mysql::getInstance();
-        $pdo = $mysql->getPDO();
+        $pdo = Mysql::getInstance()->getPDO();
 
-        $query = $pdo->prepare('INSERT INTO blog (title, description) VALUES (:title, :description)');
-        $query->bindValue(':title', $title, \PDO::PARAM_STR);
-        $query->bindValue(':description', $description, \PDO::PARAM_STR);
-        $query->execute();
+        $stmt = $pdo->prepare("
+            INSERT INTO blog (title, category, content, status, cover_image, excerpt)
+            VALUES (:title, :category, :content, :status, :cover_image, :excerpt)
+        ");
+
+        $stmt->execute([
+            ':title' => $blog->getTitle(),
+            ':category' => $blog->getCategory(),
+            ':content' => $blog->getContent(),
+            ':status' => $blog->getStatus(),
+            ':cover_image' => $blog->getCoverImage(),
+            ':excerpt' => $blog->getExcerpt(),
+        ]);
+
+        return (int)$pdo->lastInsertId();
+    }
+
+    public function findFilteredPaginated(?string $category, ?string $search, string $sort, int $limit, int $offset): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        $sql = "SELECT * FROM blog WHERE 1=1";
+        $params = [];
+
+        if ($category) {
+            $sql .= " AND category = :category";
+            $params[':category'] = $category;
+        }
+
+        if ($search) {
+            $sql .= " AND (title LIKE :search OR content LIKE :search)";
+            $params[':search'] = "%$search%";
+        }
+
+        // Tri selon le filtre
+        $orderBy = 'created_at DESC';
+        if ($sort === 'popular') {
+            $orderBy = 'views DESC';       // ou champ pour popularité
+        } elseif ($sort === 'commented') {
+            $orderBy = 'comments_count DESC'; // ou champ pour nb de commentaires
+        }
+        $sql .= " ORDER BY $orderBy";
+
+        $sql .= " LIMIT $limit OFFSET $offset";
+
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+        return array_map([$this, 'mapRowToBlog'], $stmt->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+
+
+
+    public function countFiltered(?string $category, ?string $search): int
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        $sql = "SELECT COUNT(*) FROM blog WHERE 1=1";
+        $params = [];
+
+        if ($category) {
+            $sql .= " AND category = :category";
+            $params[':category'] = $category;
+        }
+
+        if ($search) {
+            $sql .= " AND (title LIKE :search OR content LIKE :search)";
+            $params[':search'] = "%" . $search . "%";
+        }
+
+        $stmt = $pdo->prepare($sql);
+
+        if (isset($params[':category'])) {
+            $stmt->bindValue(':category', $params[':category'], PDO::PARAM_STR);
+        }
+        if (isset($params[':search'])) {
+            $stmt->bindValue(':search', $params[':search'], PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
+    private function mapRowToBlog(array $row): Blog
+    {
+        $blog = new Blog();
+        $blog->setId((int)$row['id']);
+        $blog->setTitle($row['title']);
+        $blog->setCategory($row['category']);
+        $blog->setContent($row['content']);
+        $blog->setStatus($row['status']);
+        $blog->setCoverImage($row['cover_image']);
+        $blog->setAllowComments((bool)$row['allow_comments']);
+        $blog->setFeatured((bool)$row['featured']);
+        $blog->setExcerpt($row['excerpt']);
+
+        return $blog;
     }
 }

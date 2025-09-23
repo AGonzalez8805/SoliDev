@@ -54,7 +54,7 @@
                     <p class="feature-description">
                         Rédigez et découvrez des articles techniques, tutoriels et analyses approfondies sur les dernières technologies.
                     </p>
-                    <a href="/blog?action=show" class="feature-link">
+                    <a href="/?controller=blog&action=show" class="feature-link">
                         Lire le blog <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>

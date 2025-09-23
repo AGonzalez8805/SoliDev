@@ -1,5 +1,6 @@
-import { Registration } from "/assets/modules/Registration.js";
-import { Login } from "/assets/modules/Login.js";
+import { Registration } from "./Modules/Registration.js";
+import { Login } from "./Modules/Login.js";
+import { CreateBlog } from "./Modules/CreateBlog.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("registrationForm")) {
@@ -8,5 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.getElementById("loginForm")) {
     new Login();
+  }
+
+  if (document.getElementById("articleForm")) {
+    new CreateBlog();
   }
 });

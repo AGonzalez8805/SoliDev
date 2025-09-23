@@ -20,11 +20,11 @@ class BlogController extends Controller
                     case 'createBlog':
                         $this->createBlog();
                         break;
-                    case 'edit':
-                        //Appeler méthode edit()
-                        break;
                     case 'store':
-                        // Appeler méthode store()
+                        $this->store();
+                        break;
+                    case 'comment':
+                        $this->comment();
                         break;
                     case 'update':
                         //Appeler méthode update()
@@ -41,17 +41,41 @@ class BlogController extends Controller
         });
     }
 
+    protected function list(): void
+    {
+        $category = $_GET['category'] ?? null;
+        $search   = $_GET['q'] ?? null;
+        $sort     = $_GET['sort'] ?? 'recent';
+
+        $limit = 5;
+        $page  = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $offset = ($page - 1) * $limit;
+
+        $blogRepository = new BlogRepository();
+        $blogs = $blogRepository->findFilteredPaginated($category, $search, $sort, $limit, $offset);
+
+        $totalBlogs = $blogRepository->countFiltered($category, $search);
+        $totalPages = (int) ceil($totalBlogs / $limit);
+
+        $this->render('blog/show', [
+            'blogs'      => $blogs,
+            'page'       => $page,
+            'totalPages' => $totalPages,
+            'category'   => $category,
+            'search'     => $search,
+            'sort'       => $sort,
+            'Parsedown'  => new \Parsedown()
+        ]);
+    }
+
+
     protected function show(): void
     {
         try {
             if (!isset($_GET['id'])) {
-                $blogRepository = new BlogRepository();
-                $blogs = $blogRepository->findAll();
-
-                $this->render('blog/show', [
-                    'blogs' => $blogs
-                ]);
-                return;
+                // Redirige vers la liste si aucun id
+                header("Location: /?controller=blog&action=list");
+                exit;
             }
 
             $id = (int)$_GET['id'];
@@ -61,7 +85,11 @@ class BlogController extends Controller
             if (!$blog) {
                 throw new \Exception("Blog introuvable pour l'id : $id");
             }
-            $this->render('blog/show', ['blog' => $blog]);
+
+            $this->render('blog/show_single', [
+                'blog' => $blog,
+                'Parsedown' => new \Parsedown()
+            ]);
         } catch (\Exception $e) {
             $this->render('errors/default', [
                 'errors' => $e->getMessage()
@@ -69,21 +97,6 @@ class BlogController extends Controller
         }
     }
 
-    protected function list(): void
-    {
-        try {
-            $blogRepository = new BlogRepository();
-            $blogs = $blogRepository->findAll();
-
-            $this->render('blog/list', [
-                'blogs' => $blogs
-            ]);
-        } catch (\Exception $e) {
-            $this->render('errors/default', [
-                'errors' => $e->getMessage()
-            ]);
-        }
-    }
 
     protected function createBlog(): void
     {
@@ -93,23 +106,63 @@ class BlogController extends Controller
     protected function store(): void
     {
         try {
-            if (empty($_POST['title']) || empty($_POST['description'])) {
-                throw new \Exception("Veuillez remplir tous les champs");
+            // Champs obligatoires
+            if (empty($_POST['title']) || empty($_POST['category']) || empty($_POST['content']) || empty($_POST['excerpt'])) {
+                throw new \Exception("Veuillez remplir tous les champs obligatoires (*)");
             }
 
             $title = trim($_POST['title']);
-            $description = trim($_POST['description']);
+            $category = $_POST['category'];
+            $excerpt = trim($_POST['excerpt']);
+            $content = trim($_POST['content']);
+            $status = $_POST['status'] ?? 'draft';
 
-            $blogRepository = new BlogRepository();
-            $blogRepository->insert($title, $description);
+            // Gestion de l'image optionnelle
+            // Gestion de l’image
+            $coverImagePath = null;
+            if (!empty($_FILES['cover_image']['name'])) {
 
-            // Redirige vers la liste après création
-            header("Location: /?controller=blog&action=list");
+                // Limite de taille
+                $maxSize = 2 * 1024 * 1024; // 2MB
+                if ($_FILES['cover_image']['size'] > $maxSize) {
+                    throw new \Exception("Le fichier est trop volumineux (max 2MB).");
+                }
+
+                $targetDir = APP_ROOT . "/public/uploads/";
+                if (!is_dir($targetDir)) {
+                    mkdir($targetDir, 0777, true);
+                }
+                $fileName = time() . "_" . basename($_FILES['cover_image']['name']);
+                $targetFile = $targetDir . $fileName;
+
+                if (move_uploaded_file($_FILES['cover_image']['tmp_name'], $targetFile)) {
+                    $coverImagePath = "/uploads/" . $fileName;
+                }
+            }
+
+            // Création de l'article
+            $blog = new \App\Models\Blog();
+            $blog->setTitle($title);
+            $blog->setCategory($category);
+            $blog->setExcerpt($excerpt);
+            $blog->setContent($content);
+            $blog->setStatus($status);
+            $blog->setCoverImage($coverImagePath);
+
+            // Insertion en BDD
+            $blogRepository = new \App\Repository\BlogRepository();
+            $lastId = $blogRepository->insert($blog);
+
+            // Redirection vers la page show avec le nouvel ID
+            header("Location: /?controller=blog&action=show&id=" . $lastId);
             exit;
         } catch (\Exception $e) {
-            $this->render('errors/default', [
-                'errors' => $e->getMessage()
-            ]);
+            $this->render('errors/default', ['errors' => $e->getMessage()]);
         }
+    }
+
+    protected function comment(): void
+    {
+        $this->render('blog/comment');
     }
 }
