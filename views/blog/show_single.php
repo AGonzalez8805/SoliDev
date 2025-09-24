@@ -17,7 +17,7 @@
         <?= $Parsedown->text($blog->getContent()) ?>
     </div>
 
-    <div class="article-actions">
+    <div class="article-actions" style="margin: 20px;">
         <a href="/?controller=blog&action=comment&id=<?= $blog->getId() ?>" class="btn btn-primary">Commentaire</a>
         <a href="/?controller=blog&action=list" class="btn btn-secondary">Retour aux articles</a>
     </div>
