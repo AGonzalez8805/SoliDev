@@ -26,11 +26,8 @@ class BlogController extends Controller
                     case 'comment':
                         $this->comment();
                         break;
-                    case 'update':
-                        //Appeler méthode update()
-                        break;
-                    case 'delete':
-                        //Appeler méthode delete()
+                    case 'preview':
+                        $this->preview();
                         break;
 
                     default:
@@ -68,7 +65,6 @@ class BlogController extends Controller
         ]);
     }
 
-
     protected function show(): void
     {
         try {
@@ -96,7 +92,6 @@ class BlogController extends Controller
             ]);
         }
     }
-
 
     protected function createBlog(): void
     {
@@ -164,5 +159,10 @@ class BlogController extends Controller
     protected function comment(): void
     {
         $this->render('blog/comment');
+    }
+
+    protected function preview(): void
+    {
+        $this->render('blog/preview');
     }
 }
