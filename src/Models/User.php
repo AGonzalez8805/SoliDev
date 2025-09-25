@@ -11,6 +11,11 @@ class User extends Models
     protected ?string $firstName = '';
     protected ?string $role = '';
     protected ?string $photo = null;
+    private ?string $githubUrl = null;
+    private ?string $linkedinUrl = null;
+    private ?string $websiteUrl = null;
+    private ?string $bio = null;
+    private ?string $skills = null;
 
     /**
      * Get the value of id
@@ -134,6 +139,96 @@ class User extends Models
     public function setPhoto(?string $photo): self
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of githubUrl
+     */
+    public function getGithubUrl(): ?string
+    {
+        return $this->githubUrl;
+    }
+
+    /**
+     * Set the value of githubUrl
+     */
+    public function setGithubUrl(?string $githubUrl): self
+    {
+        $this->githubUrl = $githubUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of linkedinUrl
+     */
+    public function getLinkedinUrl(): ?string
+    {
+        return $this->linkedinUrl;
+    }
+
+    /**
+     * Set the value of linkedinUrl
+     */
+    public function setLinkedinUrl(?string $linkedinUrl): self
+    {
+        $this->linkedinUrl = $linkedinUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of websiteUrl
+     */
+    public function getWebsiteUrl(): ?string
+    {
+        return $this->websiteUrl;
+    }
+
+    /**
+     * Set the value of websiteUrl
+     */
+    public function setWebsiteUrl(?string $websiteUrl): self
+    {
+        $this->websiteUrl = $websiteUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of bio
+     */
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    /**
+     * Set the value of bio
+     */
+    public function setBio(?string $bio): self
+    {
+        $this->bio = $bio;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of skills
+     */
+    public function getSkills(): ?string
+    {
+        return $this->skills;
+    }
+
+    /**
+     * Set the value of skills
+     */
+    public function setSkills(?string $skills): self
+    {
+        $this->skills = $skills;
 
         return $this;
     }

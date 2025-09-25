@@ -16,20 +16,17 @@
                     </div>
                 </label>
             </form>
+            <h1><strong><?= htmlspecialchars(ucwords($user->getName())) ?> <?= htmlspecialchars(ucwords($user->getFirstName())) ?></strong></h1>
 
-            <h1><strong><?= htmlspecialchars($user->getName()) ?> <?= htmlspecialchars($user->getFirstName()) ?></strong></h1>
             <div class="social-links">
-                <a href="https://github.com/alexandre-dev" class="github-link" target="_blank">
-                    <i class="fab fa-github"></i>
-                    GitHub
+                <a href="<?= htmlspecialchars($user->getGithubUrl() ?? '#') ?>" class="github-link <?= $user->getGithubUrl() ? '' : 'disabled' ?>" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
                 </a>
-                <a href="https://linkedin.com/in/alexandre-dev" class="github-link" target="_blank">
-                    <i class="fab fa-linkedin"></i>
-                    LinkedIn
+                <a href="<?= htmlspecialchars($user->getLinkedinUrl() ?? '#') ?>" class="linkedin-link <?= $user->getLinkedinUrl() ? '' : 'disabled' ?>" target="_blank">
+                    <i class="fab fa-linkedin"></i> LinkedIn
                 </a>
-                <a href="https://alexandre-dev.com" class="github-link" target="_blank">
-                    <i class="fas fa-globe"></i>
-                    Portfolio
+                <a href="<?= htmlspecialchars($user->getWebsiteUrl() ?? '#') ?>" class="website-link <?= $user->getWebsiteUrl() ? '' : 'disabled' ?>" target="_blank">
+                    <i class="fas fa-globe"></i> Portfolio
                 </a>
             </div>
         </div>
@@ -105,60 +102,47 @@
                                     <i class="fas fa-user-edit me-2"></i>
                                     Modifier mon profil
                                 </h3>
-                                <form id="profileForm">
+                                <form id="profileForm" action="/?controller=user&action=updateProfile" method="post">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="firstName" class="form-label">Prénom</label>
-                                            <input type="text" class="form-control" id="firstName" value="<?= htmlspecialchars($user->getFirstName()) ?>" required>
+                                            <input type="text" class="form-control" id="firstName" name="firstName" value="<?= htmlspecialchars($user->getFirstName()) ?>" required>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="lastName" class="form-label">Nom</label>
-                                            <input type="text" class="form-control" id="lastName" value="<?= htmlspecialchars($user->getName()) ?>">
+                                            <input type="text" class="form-control" id="lastName" name="lastName" value="<?= htmlspecialchars($user->getName()) ?>">
                                         </div>
                                     </div>
-
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" value="<?= htmlspecialchars($user->getEmail()) ?>">
+                                        <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($user->getEmail()) ?>">
                                     </div>
-
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="githubUrl" class="form-label">
-                                                <i class="fab fa-github me-2"></i>GitHub
-                                            </label>
-                                            <input type="url" class="form-control" id="githubUrl" value="https://github.com/alexandre-dev" placeholder="https://github.com/username">
+                                            <label for="githubUrl" class="form-label"><i class="fab fa-github me-2"></i>GitHub</label>
+                                            <input type="url" class="form-control" id="githubUrl" name="githubUrl" value="<?= htmlspecialchars($user->getGithubUrl() ?? '') ?>" placeholder="https://github.com/username">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="linkedinUrl" class="form-label">
-                                                <i class="fab fa-linkedin me-2"></i>LinkedIn
-                                            </label>
-                                            <input type="url" class="form-control" id="linkedinUrl" placeholder="https://linkedin.com/in/username">
+                                            <label for="linkedinUrl" class="form-label"><i class="fab fa-linkedin me-2"></i>LinkedIn</label>
+                                            <input type="url" class="form-control" id="linkedinUrl" name="linkedinUrl" value="<?= htmlspecialchars($user->getLinkedinUrl() ?? '') ?>" placeholder="https://linkedin.com/in/username">
                                         </div>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="websiteUrl" class="form-label">
-                                                <i class="fas fa-globe me-2"></i>Site web
-                                            </label>
-                                            <input type="url" class="form-control" id="websiteUrl" placeholder="https://monsite.com">
+                                            <label for="websiteUrl" class="form-label"><i class="fas fa-globe me-2"></i>Site web</label>
+                                            <input type="url" class="form-control" id="websiteUrl" name="websiteUrl" value="<?= htmlspecialchars($user->getWebsiteUrl() ?? '') ?>" placeholder="https://monsite.com">
                                         </div>
                                     </div>
-
                                     <div class="mb-3">
                                         <label for="bio" class="form-label">Bio</label>
-                                        <textarea class="form-control" id="bio" rows="4" placeholder="Parlez-nous de vous..."></textarea>
+                                        <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="Parlez-nous de vous..."><?= htmlspecialchars($user->getBio() ?? '') ?></textarea>
                                     </div>
-
                                     <div class="mb-3">
                                         <label for="skills" class="form-label">Compétences (séparées par des virgules)</label>
-                                        <input type="text" class="form-control" id="skills" placeholder="JavaScript, PHP, React...">
+                                        <input type="text" class="form-control" id="skills" name="skills" value="<?= htmlspecialchars($user->getSkills() ?? '') ?>" placeholder="JavaScript, PHP, React...">
                                     </div>
-
                                     <button type="submit" class="btn btn-primary-custom">
-                                        <i class="fas fa-save me-2"></i>
-                                        Enregistrer les modifications
+                                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
                                     </button>
                                 </form>
                             </div>
@@ -170,26 +154,26 @@
                                     <i class="fas fa-history me-2"></i>
                                     Activité récente
                                 </h3>
-
-                                <div class="activity-item">
-                                    <div><i class="fas fa-code me-2"></i>Nouveau snippet publié</div>
-                                    <div class="activity-time">Il y a 2 heures</div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div><i class="fas fa-comment me-2"></i>Réponse au forum</div>
-                                    <div class="activity-time">Il y a 1 jour</div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div><i class="fas fa-project-diagram me-2"></i>Projet mis à jour</div>
-                                    <div class="activity-time">Il y a 3 jours</div>
-                                </div>
-
-                                <div class="activity-item">
-                                    <div><i class="fas fa-heart me-2"></i>Snippet liké</div>
-                                    <div class="activity-time">Il y a 5 jours</div>
-                                </div>
+                                <?php foreach ($activities as $activity): ?>
+                                    <div class="activity-item">
+                                        <div>
+                                            <?php
+                                            $icon = match ($activity['type']) {
+                                                'snippet' => 'fas fa-code',
+                                                'comment' => 'fas fa-comment',
+                                                'project' => 'fas fa-project-diagram',
+                                                'like' => 'fas fa-heart',
+                                                default => 'fas fa-info-circle',
+                                            };
+                                            ?>
+                                            <i class="<?= $icon ?> me-2"></i>
+                                            <?= htmlspecialchars($activity['message']) ?>
+                                        </div>
+                                        <div class="activity-time">
+                                            <?= (new DateTime($activity['created_at']))->diff(new DateTime())->format('%a jours, %h heures') ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
 
                             <!-- Actions rapides -->
@@ -199,21 +183,21 @@
                                     Actions rapides
                                 </h3>
                                 <div class="d-grid gap-2">
-                                    <a href="/?controller=forum&action=new" class="btn btn-primary-custom">
-                                        <i class="fas fa-plus me-2"></i>
-                                        Nouveau sujet
+                                    <a href="/?controller=forum&action=createPost" class="btn btn-primary-custom">
+                                        <i class="fas fa-pen me-2"></i>
+                                        Nouveau poste pour le forum
                                     </a>
-                                    <a href="/project?action=new" class="btn btn-primary-custom">
+                                    <a href="/?controller=blog&action=createBlog" class="btn btn-primary-custom">
+                                        <i class="fas fa-plus me-2"></i>
+                                        Nouvel article pour le blog
+                                    </a>
+                                    <a href="/project" class="btn btn-primary-custom">
                                         <i class="fas fa-project-diagram me-2"></i>
                                         Nouveau projet
                                     </a>
-                                    <a href="/snippets?action=new" class="btn btn-primary-custom">
+                                    <a href="/snippets" class="btn btn-primary-custom">
                                         <i class="fas fa-code me-2"></i>
                                         Nouveau snippet
-                                    </a>
-                                    <a href="/?controller=blog&action=new" class="btn btn-primary-custom">
-                                        <i class="fas fa-pen me-2"></i>
-                                        Nouvel article
                                     </a>
                                 </div>
                             </div>

@@ -18,6 +18,10 @@ class UserController extends Controller
                     case 'uploadPhoto':
                         $this->uploadPhoto();
                         break;
+                    case 'updateProfile':
+                        $this->updateProfile();
+                        break;
+
 
                     default:
                         throw new \Exception("Action utilisateur inconnue");
@@ -43,25 +47,27 @@ class UserController extends Controller
         }
 
         // Hydratation du modèle
+        // Hydratation du modèle
         $user = (new User())
             ->setId($userData['users_id'])
             ->setName($userData['name'])
             ->setFirstName($userData['firstName'])
             ->setEmail($userData['email'])
             ->setRole($userData['role'])
-            ->setPhoto($userData['photo'] ?? null);
+            ->setPhoto($userData['photo'] ?? null)
+            ->setGithubUrl($userData['github_url'] ?? null)
+            ->setLinkedinUrl($userData['linkedin_url'] ?? null)
+            ->setWebsiteUrl($userData['website_url'] ?? null)
+            ->setBio($userData['bio'] ?? null)
+            ->setSkills($userData['skills'] ?? null);
 
-        // 🔹 Exemple de stats dynamiques
-        $stats = [
-            'messages' => 12, // $userRepo->countForumMessages($user->getId())
-            'projects' => 5,  // $userRepo->countProjects($user->getId())
-            'snippets' => 8,  // $userRepo->countSnippets($user->getId())
-            'likes' => 23     // $userRepo->countLikes($user->getId())
-        ];
+        $activities = $userRepo->findRecentByUser($_SESSION['user_id']);
 
-        // Passer les données à la vue
+        $stats = $userRepo->getStats($_SESSION['user_id']);
+
         $this->render('user/dashboard', [
             'user' => $user,
+            'activities' => $activities,
             'stats' => $stats
         ]);
     }
@@ -109,6 +115,27 @@ class UserController extends Controller
         }
 
         // 🔹 Sinon → redirection classique
+        header('Location: /?controller=user&action=dashboard');
+        exit;
+    }
+
+    public function updateProfile(): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /?controller=auth&action=login');
+            exit;
+        }
+
+        $github = $_POST['githubUrl'] ?? null;
+        $linkedin = $_POST['linkedinUrl'] ?? null;
+        $website = $_POST['websiteUrl'] ?? null;
+        $bio = $_POST['bio'] ?? null;
+        $skills = $_POST['skills'] ?? null;
+
+        $userRepo = new UserRepository();
+        $userRepo->updateSocialLinks($_SESSION['user_id'], $github, $linkedin, $website);
+        $userRepo->updateProfileDetails($_SESSION['user_id'], $bio, $skills);
+
         header('Location: /?controller=user&action=dashboard');
         exit;
     }

@@ -70,4 +70,78 @@ class UserRepository
             ':id' => $userId
         ]);
     }
+
+    public function updateSocialLinks(int $userId, ?string $github, ?string $linkedin, ?string $website): bool
+    {
+        $sql = "UPDATE users
+            SET github_url = :github, linkedin_url = :linkedin, website_url = :website
+            WHERE users_id = :id";
+
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([
+            ':github' => $github,
+            ':linkedin' => $linkedin,
+            ':website' => $website,
+            ':id' => $userId
+        ]);
+    }
+
+    public function updateProfileDetails(int $userId, ?string $bio, ?string $skills): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("
+        UPDATE users
+        SET bio = :bio, skills = :skills
+        WHERE users_id = :id
+        ");
+        return $stmt->execute([
+            ':bio' => $bio,
+            ':skills' => $skills,
+            ':id' => $userId
+        ]);
+    }
+
+    public function findRecentByUser(int $userId, int $limit = 5): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("
+            SELECT type, message, created_at
+            FROM user_activities
+            WHERE user_id = :user_id
+            ORDER BY created_at DESC
+            LIMIT $limit
+        ");
+        $stmt->bindValue(':user_id', $userId, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function getStats(int $userId): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        // Messages Forum → exemple : nombre de brouillons ou publiés dans blog
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE status='published' AND author_id=:user_id");
+        $stmt->execute(['user_id' => $userId]);
+        $messages = (int) $stmt->fetchColumn();
+
+        // Projets Partagés → si tu ajoutes une table projects
+        $projects = 0;
+
+        // Snippets → si tu ajoutes une table snippets
+        $snippets = 0;
+
+        // Likes reçus
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id=:user_id AND type='like'");
+        $stmt->execute(['user_id' => $userId]);
+        $likes = (int) $stmt->fetchColumn();
+
+        return [
+            'messages' => $messages,
+            'projects' => $projects,
+            'snippets' => $snippets,
+            'likes' => $likes,
+        ];
+    }
 }

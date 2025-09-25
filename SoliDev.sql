@@ -14,21 +14,40 @@ CREATE TABLE users(
 
 CREATE TABLE blog (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,             -- Titre de l’article
-    category VARCHAR(100) NOT NULL,          -- Catégorie (php, js, etc.)
-    content LONGTEXT NOT NULL,               -- Contenu principal de l’article
-    status ENUM('draft','published') DEFAULT 'draft', -- Statut de publication
-    cover_image VARCHAR(255) DEFAULT NULL,   -- Chemin de l’image uploadée
-    allow_comments TINYINT(1) DEFAULT 1,     -- Autorisation commentaires (1=oui, 0=non)
-    featured TINYINT(1) DEFAULT 0,           -- Article vedette
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- Date de création
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Date de mise à jour
+    author_id int NOT NULL,
+    title VARCHAR(255) NOT NULL,            
+    category VARCHAR(100) NOT NULL,          
+    content LONGTEXT NOT NULL,    
+    status ENUM('draft','published') DEFAULT 'draft',
+    cover_image VARCHAR(255) DEFAULT NULL,
+    allow_comments TINYINT(1) DEFAULT 1,    
+    featured TINYINT(1) DEFAULT 0,        
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    excerpt varchar(500) DEFAULT NULL,
+    CONSTRAINT blog_ibfk_1 FOREIGN KEY (author_id) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
-ALTER TABLE blog
-ADD COLUMN excerpt VARCHAR(500) DEFAULT NULL;
+CREATE TABLE user_activities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    type ENUM('snippet','comment','project','like','other') NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(users_id) ON DELETE CASCADE
+);
 
 ALTER TABLE users ADD COLUMN photo VARCHAR(255) NULL AFTER email;
+ALTER TABLE users
+ADD COLUMN github_url VARCHAR(255) DEFAULT NULL,
+ADD COLUMN linkedin_url VARCHAR(255) DEFAULT NULL,
+ADD COLUMN website_url VARCHAR(255) DEFAULT NULL;
+
+ALTER TABLE users 
+ADD COLUMN bio TEXT DEFAULT NULL,
+ADD COLUMN skills VARCHAR(255) DEFAULT NULL;
+
+
 
 
 
