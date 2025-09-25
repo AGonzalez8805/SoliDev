@@ -2,44 +2,114 @@
 
 namespace App\Controller;
 
+use App\Repository\UserRepository;
+use App\Models\User;
+
 class UserController extends Controller
 {
-    /**
-     * Méthode de routage principale du contrôleur utilisateur.
-     * Elle redirige vers la méthode appropriée en fonction de l'action passée en GET.
-     */
     public function route(): void
     {
         $this->handleRoute(function () {
             if (isset($_GET['action'])) {
                 switch ($_GET['action']) {
                     case 'dashboard':
-                        // Affiche le tableau de bord utilisateur
                         $this->dashboard();
+                        break;
+                    case 'uploadPhoto':
+                        $this->uploadPhoto();
                         break;
 
                     default:
-                        // L'action n'est pas reconnue pour ce contrôleur
                         throw new \Exception("Action utilisateur inconnue");
                 }
             }
         });
     }
 
-    /**
-     * Affiche la vue du tableau de bord pour un utilisateur connecté.
-     * Redirige vers la page de login si l'utilisateur n'est pas connecté ou n'a pas le bon rôle.
-     */
     public function dashboard(): void
     {
-        // Vérifie si l'utilisateur est connecté et a le rôle 'utilisateur'
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'utilisateur') {
-            // Redirige vers la page de connexion s'il n'est pas autorisé
             header('Location: /?controller=auth&action=login');
             exit;
         }
 
-        // Affiche la vue du tableau de bord utilisateur
-        $this->render('user/dashboard');
+        $userRepo = new UserRepository();
+        $userData = $userRepo->findById($_SESSION['user_id']);
+
+        if (!$userData) {
+            session_destroy();
+            header('Location: /?controller=auth&action=login');
+            exit;
+        }
+
+        // Hydratation du modèle
+        $user = (new User())
+            ->setId($userData['users_id'])
+            ->setName($userData['name'])
+            ->setFirstName($userData['firstName'])
+            ->setEmail($userData['email'])
+            ->setRole($userData['role'])
+            ->setPhoto($userData['photo'] ?? null);
+
+        // 🔹 Exemple de stats dynamiques
+        $stats = [
+            'messages' => 12, // $userRepo->countForumMessages($user->getId())
+            'projects' => 5,  // $userRepo->countProjects($user->getId())
+            'snippets' => 8,  // $userRepo->countSnippets($user->getId())
+            'likes' => 23     // $userRepo->countLikes($user->getId())
+        ];
+
+        // Passer les données à la vue
+        $this->render('user/dashboard', [
+            'user' => $user,
+            'stats' => $stats
+        ]);
+    }
+
+    public function uploadPhoto(): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /?controller=auth&action=login');
+            exit;
+        }
+
+        if (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
+            throw new \Exception("Erreur lors de l'upload de la photo");
+        }
+
+        $uploadDir = APP_ROOT . '/public/photos/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $extension = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
+        $fileName = uniqid('user_' . $_SESSION['user_id'] . '_') . '.' . $extension;
+        $filePath = $uploadDir . $fileName;
+
+        if (!move_uploaded_file($_FILES['photo']['tmp_name'], $filePath)) {
+            throw new \Exception("Impossible d'enregistrer la photo");
+        }
+
+        $userRepo = new UserRepository();
+        $userRepo->updatePhoto($_SESSION['user_id'], $fileName);
+
+        $photoUrl = '/photos/' . $fileName;
+
+        // 🔹 Si c’est AJAX → JSON
+        if (
+            isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+        ) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'photo' => $photoUrl
+            ]);
+            exit;
+        }
+
+        // 🔹 Sinon → redirection classique
+        header('Location: /?controller=user&action=dashboard');
+        exit;
     }
 }

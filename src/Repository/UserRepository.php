@@ -6,7 +6,7 @@ use App\Db\Mysql;
 
 class UserRepository
 {
-        public function findById(int $id): ?array
+    public function findById(int $id): ?array
     {
         $mysql = Mysql::getInstance();
         $pdo = $mysql->getPDO();
@@ -59,5 +59,15 @@ class UserRepository
         $stmt->execute(['role' => $role]);
 
         return $stmt->fetch();
+    }
+
+    public function updatePhoto(int $userId, string $fileName): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("UPDATE users SET photo = :photo WHERE users_id = :id");
+        return $stmt->execute([
+            ':photo' => $fileName,
+            ':id' => $userId
+        ]);
     }
 }

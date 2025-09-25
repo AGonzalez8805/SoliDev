@@ -10,6 +10,7 @@ class User extends Models
     protected ?string $name = '';
     protected ?string $firstName = '';
     protected ?string $role = '';
+    protected ?string $photo = null;
 
     /**
      * Get the value of id
@@ -115,6 +116,24 @@ class User extends Models
     public function setRole(?string $role): self
     {
         $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of photo
+     */
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    /**
+     * Set the value of photo
+     */
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
 
         return $this;
     }
