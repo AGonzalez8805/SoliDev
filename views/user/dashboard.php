@@ -36,8 +36,14 @@
             <div class="row mb-4">
                 <div class="col-md-3 col-sm-6">
                     <div class="stats-card text-center">
-                        <div class="stats-number"><?= $stats['messages'] ?></div>
+                        <div class="stats-number"><?= $stats['forum_posts'] ?></div>
                         <div><i class="fas fa-comments me-2"></i>Messages Forum</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stats-card text-center">
+                        <div class="stats-number"><?= $stats['blog_posts'] ?></div>
+                        <div><i class="fas fa-blog me-2"></i>Posts Blog</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-6">
@@ -50,12 +56,6 @@
                     <div class="stats-card text-center">
                         <div class="stats-number"><?= $stats['snippets'] ?></div>
                         <div><i class="fas fa-code me-2"></i>Snippets</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="stats-card text-center">
-                        <div class="stats-number"><?= $stats['likes'] ?></div>
-                        <div><i class="fas fa-thumbs-up me-2"></i>Likes Reçus</div>
                     </div>
                 </div>
             </div>
@@ -214,90 +214,6 @@
                                     <i class="fas fa-file-alt me-2"></i>
                                     Mes brouillons
                                 </h3>
-
-                                <div class="draft-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5><i class="fas fa-file-code me-2"></i>API REST avec Node.js</h5>
-                                            <p class="mb-2">Guide complet pour créer une API REST avec Express et MongoDB...</p>
-                                            <div class="draft-meta">
-                                                <span class="badge-custom">Article</span>
-                                                <span class="ms-2"><i class="fas fa-clock me-1"></i>Modifié il y a 3 heures</span>
-                                            </div>
-                                        </div>
-                                        <div class="ms-3">
-                                            <button class="btn btn-outline-custom btn-sm me-2">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-primary-custom btn-sm">
-                                                <i class="fas fa-paper-plane"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="draft-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5><i class="fas fa-code me-2"></i>Fonction de validation email</h5>
-                                            <p class="mb-2">Snippet JavaScript pour valider les adresses email...</p>
-                                            <div class="draft-meta">
-                                                <span class="badge-custom">Snippet</span>
-                                                <span class="ms-2"><i class="fas fa-clock me-1"></i>Modifié il y a 1 jour</span>
-                                            </div>
-                                        </div>
-                                        <div class="ms-3">
-                                            <button class="btn btn-outline-custom btn-sm me-2">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-primary-custom btn-sm">
-                                                <i class="fas fa-paper-plane"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="draft-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5><i class="fas fa-project-diagram me-2"></i>Portfolio React</h5>
-                                            <p class="mb-2">Projet de portfolio personnel développé avec React et Tailwind...</p>
-                                            <div class="draft-meta">
-                                                <span class="badge-custom">Projet</span>
-                                                <span class="ms-2"><i class="fas fa-clock me-1"></i>Modifié il y a 2 jours</span>
-                                            </div>
-                                        </div>
-                                        <div class="ms-3">
-                                            <button class="btn btn-outline-custom btn-sm me-2">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-primary-custom btn-sm">
-                                                <i class="fas fa-paper-plane"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="draft-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div class="flex-grow-1">
-                                            <h5><i class="fas fa-question-circle me-2"></i>Problème avec async/await</h5>
-                                            <p class="mb-2">Comment gérer les erreurs avec async/await en JavaScript...</p>
-                                            <div class="draft-meta">
-                                                <span class="badge-custom">Question Forum</span>
-                                                <span class="ms-2"><i class="fas fa-clock me-1"></i>Modifié il y a 1 semaine</span>
-                                            </div>
-                                        </div>
-                                        <div class="ms-3">
-                                            <button class="btn btn-outline-custom btn-sm me-2">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-primary-custom btn-sm">
-                                                <i class="fas fa-paper-plane"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

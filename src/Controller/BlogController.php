@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Models\Blog;
 use App\Repository\BlogRepository;
 
 class BlogController extends Controller
@@ -28,6 +29,12 @@ class BlogController extends Controller
                         break;
                     case 'preview':
                         $this->preview();
+                        break;
+                    case 'saveDraft':
+                        $this->saveDraft();
+                        break;
+                    case 'getDrafts':
+                        $this->getDrafts();
                         break;
 
                     default:
@@ -101,7 +108,6 @@ class BlogController extends Controller
     protected function store(): void
     {
         try {
-            // Champs obligatoires
             if (empty($_POST['title']) || empty($_POST['category']) || empty($_POST['content']) || empty($_POST['excerpt'])) {
                 throw new \Exception("Veuillez remplir tous les champs obligatoires (*)");
             }
@@ -111,22 +117,18 @@ class BlogController extends Controller
             $excerpt = trim($_POST['excerpt']);
             $content = trim($_POST['content']);
             $status = $_POST['status'] ?? 'draft';
+            $userId = $_SESSION['user_id'] ?? null;
 
-            // Gestion de l'image optionnelle
-            // Gestion de l’image
             $coverImagePath = null;
             if (!empty($_FILES['cover_image']['name'])) {
-
-                // Limite de taille
-                $maxSize = 2 * 1024 * 1024; // 2MB
+                $maxSize = 2 * 1024 * 1024;
                 if ($_FILES['cover_image']['size'] > $maxSize) {
                     throw new \Exception("Le fichier est trop volumineux (max 2MB).");
                 }
 
                 $targetDir = APP_ROOT . "/public/uploads/";
-                if (!is_dir($targetDir)) {
-                    mkdir($targetDir, 0777, true);
-                }
+                if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
+
                 $fileName = time() . "_" . basename($_FILES['cover_image']['name']);
                 $targetFile = $targetDir . $fileName;
 
@@ -135,23 +137,35 @@ class BlogController extends Controller
                 }
             }
 
-            // Création de l'article
-            $blog = new \App\Models\Blog();
+            $blog = new Blog();
             $blog->setTitle($title);
             $blog->setCategory($category);
             $blog->setExcerpt($excerpt);
             $blog->setContent($content);
             $blog->setStatus($status);
             $blog->setCoverImage($coverImagePath);
+            $blog->setAuthorId($userId);
 
-            // Insertion en BDD
-            $blogRepository = new \App\Repository\BlogRepository();
+            $blogRepository = new BlogRepository();
             $lastId = $blogRepository->insert($blog);
 
-            // Redirection vers la page show avec le nouvel ID
+            // Retour JSON si AJAX
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'id' => $lastId]);
+                exit;
+            }
+
+            // Sinon redirection normale
             header("Location: /?controller=blog&action=show&id=" . $lastId);
             exit;
         } catch (\Exception $e) {
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+                exit;
+            }
+
             $this->render('errors/default', ['errors' => $e->getMessage()]);
         }
     }
@@ -164,5 +178,45 @@ class BlogController extends Controller
     protected function preview(): void
     {
         $this->render('blog/preview');
+    }
+
+    public function saveDraft()
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $userId = $_SESSION['user_id'];
+
+        $blog = new Blog();
+        $blog->setTitle($data['title'] ?? '');
+        $blog->setCategory($data['category'] ?? 'other');
+        $blog->setExcerpt($data['excerpt'] ?? '');
+        $blog->setContent($data['content'] ?? '');
+        $blog->setStatus('draft');
+        $blog->setAuthorId($userId);
+
+        $blogRepo = new \App\Repository\BlogRepository();
+        $id = $blogRepo->insert($blog);
+
+        echo json_encode(['success' => true, 'id' => $id]);
+    }
+
+    protected function getDrafts(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        try {
+            $userId = $_SESSION['user_id'] ?? null;
+            if (!$userId) {
+                echo json_encode(['success' => false, 'error' => 'Utilisateur non connecté']);
+                return;
+            }
+
+            $blogRepository = new BlogRepository();
+            $drafts = $blogRepository->findDraftsByUser($userId);
+
+            echo json_encode(['success' => true, 'drafts' => $drafts]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
     }
 }

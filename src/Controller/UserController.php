@@ -47,7 +47,6 @@ class UserController extends Controller
         }
 
         // Hydratation du modèle
-        // Hydratation du modèle
         $user = (new User())
             ->setId($userData['users_id'])
             ->setName($userData['name'])

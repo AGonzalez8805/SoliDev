@@ -12,7 +12,12 @@ class BlogRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
 
-        $stmt = $pdo->prepare('SELECT * FROM blog WHERE id = :id');
+        $stmt = $pdo->prepare("
+            SELECT b.*, u.firstName, u.name
+            FROM blog b
+            JOIN users u ON b.author_id = u.users_id
+            WHERE b.id = :id
+        ");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -27,7 +32,13 @@ class BlogRepository
     public function findAll(): array
     {
         $pdo = Mysql::getInstance()->getPDO();
-        $stmt = $pdo->query('SELECT * FROM blog ORDER BY created_at DESC');
+        $sql = "
+            SELECT b.*, u.firstName, u.name 
+            FROM blog b
+            JOIN users u ON b.author_id = u.users_id
+            ORDER BY b.created_at DESC
+        ";
+        $stmt = $pdo->query($sql);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return array_map([$this, 'mapRowToBlog'], $rows);
@@ -38,18 +49,20 @@ class BlogRepository
         $pdo = Mysql::getInstance()->getPDO();
 
         $stmt = $pdo->prepare("
-            INSERT INTO blog (title, category, content, status, cover_image, excerpt)
-            VALUES (:title, :category, :content, :status, :cover_image, :excerpt)
+            INSERT INTO blog (author_id, title, category, content, status, cover_image, excerpt)
+            VALUES (:author_id, :title, :category, :content, :status, :cover_image, :excerpt)
         ");
 
         $stmt->execute([
-            ':title' => $blog->getTitle(),
-            ':category' => $blog->getCategory(),
-            ':content' => $blog->getContent(),
-            ':status' => $blog->getStatus(),
+            ':author_id'   => $blog->getAuthorId(),
+            ':title'       => $blog->getTitle(),
+            ':category'    => $blog->getCategory(),
+            ':content'     => $blog->getContent(),
+            ':status'      => $blog->getStatus(),
             ':cover_image' => $blog->getCoverImage(),
-            ':excerpt' => $blog->getExcerpt(),
+            ':excerpt'     => $blog->getExcerpt(),
         ]);
+
 
         return (int)$pdo->lastInsertId();
     }
@@ -58,29 +71,27 @@ class BlogRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
 
-        $sql = "SELECT * FROM blog WHERE 1=1";
+        $sql = "SELECT b.*, u.firstName, u.name FROM blog b JOIN users u ON b.author_id = u.users_id WHERE 1=1";
         $params = [];
 
         if ($category) {
-            $sql .= " AND category = :category";
+            $sql .= " AND b.category = :category";
             $params[':category'] = $category;
         }
 
         if ($search) {
-            $sql .= " AND (title LIKE :search OR content LIKE :search)";
+            $sql .= " AND (b.title LIKE :search OR b.content LIKE :search)";
             $params[':search'] = "%$search%";
         }
 
         // Tri selon le filtre
-        $orderBy = 'created_at DESC';
+        $orderBy = 'b.created_at DESC';
         if ($sort === 'popular') {
-            $orderBy = 'views DESC';       // ou champ pour popularité
+            $orderBy = 'b.views DESC';
         } elseif ($sort === 'commented') {
-            $orderBy = 'comments_count DESC'; // ou champ pour nb de commentaires
+            $orderBy = 'b.comments_count DESC';
         }
-        $sql .= " ORDER BY $orderBy";
-
-        $sql .= " LIMIT $limit OFFSET $offset";
+        $sql .= " ORDER BY $orderBy LIMIT $limit OFFSET $offset";
 
         $stmt = $pdo->prepare($sql);
         foreach ($params as $key => $value) {
@@ -90,9 +101,6 @@ class BlogRepository
         $stmt->execute();
         return array_map([$this, 'mapRowToBlog'], $stmt->fetchAll(PDO::FETCH_ASSOC));
     }
-
-
-
 
     public function countFiltered(?string $category, ?string $search): int
     {
@@ -137,6 +145,26 @@ class BlogRepository
         $blog->setFeatured((bool)$row['featured']);
         $blog->setExcerpt($row['excerpt']);
 
+        // Ajouter l'auteur
+        $authorName = $row['firstName'] ?? $row['name'] ?? 'Anonyme';
+        $blog->setAuthorName($authorName);
+
         return $blog;
+    }
+
+
+    public function findDraftsByUser(int $userId): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        $stmt = $pdo->prepare("
+            SELECT id, title, excerpt, category, updated_at 
+            FROM blog 
+            WHERE author_id = :userId AND status = 'draft'
+            ORDER BY updated_at DESC
+        ");
+        $stmt->execute(['userId' => $userId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

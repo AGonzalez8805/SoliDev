@@ -12,9 +12,12 @@ class Blog
     protected ?string $cover_image = null;
     protected bool $allow_comments = true;
     protected bool $featured = false;
-    protected string $created_at;
-    protected string $updated_at;
+    protected ?string $created_at = null;
+    protected ?string $updated_at = null;
     protected string $excerpt;
+    protected string $author_id;
+    private string $authorName;
+
 
     /**
      * Get the value of id
@@ -125,60 +128,6 @@ class Blog
     }
 
     /**
-     * Get the value of created_at
-     */
-    public function getCreatedAt(): string
-    {
-        return $this->created_at;
-    }
-
-    /**
-     * Set the value of created_at
-     */
-    public function setCreatedAt(string $created_at): self
-    {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of updated_at
-     */
-    public function getUpdatedAt(): string
-    {
-        return $this->updated_at;
-    }
-
-    /**
-     * Set the value of updated_at
-     */
-    public function setUpdatedAt(string $updated_at): self
-    {
-        $this->updated_at = $updated_at;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of excerpt
-     */
-    public function getExcerpt(): string
-    {
-        return $this->excerpt;
-    }
-
-    /**
-     * Set the value of excerpt
-     */
-    public function setExcerpt(string $excerpt): self
-    {
-        $this->excerpt = $excerpt;
-
-        return $this;
-    }
-
-    /**
      * Get the value of allow_comments
      */
     public function isAllowComments(): bool
@@ -210,6 +159,96 @@ class Blog
     public function setFeatured(bool $featured): self
     {
         $this->featured = $featured;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of created_at
+     */
+    public function getCreatedAt(): ?string
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * Set the value of created_at
+     */
+    public function setCreatedAt(?string $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of updated_at
+     */
+    public function getUpdatedAt(): ?string
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * Set the value of updated_at
+     */
+    public function setUpdatedAt(?string $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of excerpt
+     */
+    public function getExcerpt(): string
+    {
+        return $this->excerpt;
+    }
+
+    /**
+     * Set the value of excerpt
+     */
+    public function setExcerpt(string $excerpt): self
+    {
+        $this->excerpt = $excerpt;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of author_id
+     */
+    public function getAuthorId(): string
+    {
+        return $this->author_id;
+    }
+
+    /**
+     * Set the value of author_id
+     */
+    public function setAuthorId(string $author_id): self
+    {
+        $this->author_id = $author_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of authorName
+     */
+    public function getAuthorName(): string
+    {
+        return $this->authorName;
+    }
+
+    /**
+     * Set the value of authorName
+     */
+    public function setAuthorName(string $authorName): self
+    {
+        $this->authorName = $authorName;
 
         return $this;
     }

@@ -121,27 +121,27 @@ class UserRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
 
-        // Messages Forum → exemple : nombre de brouillons ou publiés dans blog
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE status='published' AND author_id=:user_id");
+        // Messages Forum
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id=:user_id AND type='forum_post'");
         $stmt->execute(['user_id' => $userId]);
-        $messages = (int) $stmt->fetchColumn();
+        $forumPosts = (int) $stmt->fetchColumn();
 
-        // Projets Partagés → si tu ajoutes une table projects
+        // Posts Blog
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE author_id=:user_id AND status='published'");
+        $stmt->execute(['user_id' => $userId]);
+        $blogPosts = (int) $stmt->fetchColumn();
+
+        // Projets Partagés → si tu as une table projects
         $projects = 0;
 
-        // Snippets → si tu ajoutes une table snippets
+        // Snippets → si tu as une table snippets
         $snippets = 0;
 
-        // Likes reçus
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id=:user_id AND type='like'");
-        $stmt->execute(['user_id' => $userId]);
-        $likes = (int) $stmt->fetchColumn();
-
         return [
-            'messages' => $messages,
+            'forum_posts' => $forumPosts,
+            'blog_posts' => $blogPosts,
             'projects' => $projects,
             'snippets' => $snippets,
-            'likes' => $likes,
         ];
     }
 }

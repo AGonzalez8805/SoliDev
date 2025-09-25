@@ -39,7 +39,8 @@ export class CreateBlog {
         this.initLivePreview();
         this.initFormSubmit();
         this.initImageUpload();
-        this.initPreviewButton(); // 👈 nouvelle méthode
+        this.initPreviewButton();
+        this.initSaveDraft();
     }
 
     // Gestion des boutons de l'éditeur
@@ -99,7 +100,6 @@ export class CreateBlog {
         });
     }
 
-
     // Copier le contenu dans le textarea caché avant l'envoi
     initFormSubmit() {
         this.form.addEventListener("submit", () => {
@@ -130,6 +130,39 @@ export class CreateBlog {
                 this.imagePreview.innerHTML = `<img src="${e.target.result}" alt="Image de couverture" style="max-width:100%; height:auto; border-radius:5px;">`;
             };
             reader.readAsDataURL(file);
+        });
+    }
+
+    // Méthode pour sauvegarder le brouillon automatiquement
+    initSaveDraft() {
+        const saveBtn = document.getElementById("saveDraftBtn");
+        if (!saveBtn) return;
+
+        saveBtn.addEventListener("click", async () => {
+            const formData = new FormData(this.form);
+            // Forcer le status en draft
+            formData.set("status", "draft");
+            // Ajouter le contenu de l'éditeur
+            formData.set("content", this.editor.innerHTML.trim());
+
+            try {
+                const response = await fetch("/?controller=blog&action=store", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    const statusEl = document.getElementById("autosaveStatus");
+                    statusEl.textContent = "Brouillon sauvegardé à l'instant";
+                    statusEl.classList.add("text-success");
+                } else {
+                    alert("Erreur lors de la sauvegarde du brouillon !");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Impossible de sauvegarder le brouillon.");
+            }
         });
     }
 }

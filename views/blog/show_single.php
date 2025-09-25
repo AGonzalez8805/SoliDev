@@ -16,6 +16,20 @@
     <div class="article-content">
         <?= $Parsedown->text($blog->getContent()) ?>
     </div>
+    <p class="article-meta">
+        Par <strong><?= htmlspecialchars($blog->getAuthorName()) ?></strong>
+        • <?= htmlspecialchars($blog->getCategory()) ?>
+        <?php
+        $createdAt = $blog->getCreatedAt();
+        $formattedDate = $createdAt ? (new \DateTime($createdAt))->format('d/m/Y H:i') : '';
+        ?>
+    <p class="article-meta">
+        Par <strong><?= htmlspecialchars($blog->getAuthorName()) ?></strong>
+        • <?= htmlspecialchars($blog->getCategory()) ?>
+        • <?= $formattedDate ?>
+    </p>
+
+    </p>
 
     <div class="article-actions" style="margin: 20px;">
         <a href="/?controller=blog&action=comment&id=<?= $blog->getId() ?>" class="btn btn-primary">Commentaire</a>

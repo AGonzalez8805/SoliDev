@@ -71,13 +71,22 @@
             <div class="col-lg-12">
                 <?php
                 if (isset($blogs) && is_array($blogs)) :
-                    foreach ($blogs as $blog) : ?>
+                    foreach ($blogs as $blog) :
+                        // Conversion de created_at en DateTime
+                        $createdAt = $blog->getCreatedAt();
+                        $formattedDate = $createdAt ? (new \DateTime($createdAt))->format('d/m/Y') : '';
+                ?>
                         <article class="article-list-item">
                             <h2 class="article-title">
                                 <a href="/?controller=blog&action=show&id=<?= $blog->getId() ?>">
                                     <?= htmlspecialchars($blog->getTitle()) ?>
                                 </a>
                             </h2>
+                            <p class="article-meta">
+                                Par <strong><?= htmlspecialchars($blog->getAuthorName()) ?></strong>
+                                • <?= htmlspecialchars($blog->getCategory()) ?>
+                                • <?= $formattedDate ?>
+                            </p>
                             <p class="article-excerpt">
                                 <?= nl2br(htmlspecialchars($blog->getExcerpt())) ?>
                             </p>
@@ -85,30 +94,31 @@
                                 Lire l'article
                             </a>
                         </article>
-                    <?php endforeach;
-                elseif (isset($blog)) : ?>
+                    <?php
+                    endforeach;
+                elseif (isset($blog)) :
+                    $createdAt = $blog->getCreatedAt();
+                    $formattedDate = $createdAt ? (new \DateTime($createdAt))->format('d/m/Y') : '';
+                    ?>
                     <article class="article-list-item">
-                        <h2 class="article-title">
-                            <?= htmlspecialchars($blog->getTitle()) ?>
-                        </h2>
-                        <p class="article-excerpt">
-                            <?= nl2br(htmlspecialchars($blog->getExcerpt())) ?>
+                        <h2 class="article-title"><?= htmlspecialchars($blog->getTitle()) ?></h2>
+                        <p class="article-meta">
+                            Par <strong><?= htmlspecialchars($blog->getAuthorName()) ?></strong>
+                            • <?= htmlspecialchars($blog->getCategory()) ?>
+                            • <?= $formattedDate ?>
                         </p>
-                        <h1><?= htmlspecialchars($blog->getTitle()) ?></h1>
                         <?php if ($blog->getCoverImage()): ?>
                             <img src="<?= htmlspecialchars($blog->getCoverImage()) ?>" alt="Image de couverture" class="cover-image">
                         <?php endif; ?>
-                        <p><strong>Catégorie:</strong> <?= htmlspecialchars($blog->getCategory()) ?></p>
                         <div class="preview-content">
                             <?= $Parsedown->text($blog->getContent()) ?>
                         </div>
-                        <a href="/?controller=blog&action=comment" class="read-more">
-                            Commentaire
-                        </a>
+                        <a href="/?controller=blog&action=comment" class="read-more">Commentaire</a>
                     </article>
                 <?php else : ?>
                     <p>Aucun article trouvé.</p>
                 <?php endif; ?>
+
 
                 <!-- Pagination -->
                 <?php if (isset($totalPages) && $totalPages >= 1): ?>

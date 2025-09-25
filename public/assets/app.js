@@ -3,6 +3,7 @@ import { Login } from "./Modules/Login.js";
 import { CreateBlog } from "./Modules/CreateBlog.js";
 import { Preview } from "./Modules/Preview.js";
 import { DashboardUser } from "./Modules/DashboardUser.js";
+import { DashboardDrafts } from "./Modules/DashboardDrafts.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("registrationForm")) {
@@ -24,4 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("photoForm")) {
     new DashboardUser();
   }
+
+  if (document.querySelector('#drafts-tab .form-card')) {
+    new DashboardDrafts();
+  }
+
 });
