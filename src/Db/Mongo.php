@@ -14,29 +14,29 @@ class Mongo
     private function __construct()
     {
         // Priorité : MONGODB_URI (prod)
-        $mongoUrl = getenv('MONGODB_URI');
+        $mongoUrl = getenv('MONGO_URI');
 
         if ($mongoUrl) {
             // Configuration prod
             $this->client = new Client($mongoUrl);
             $this->dbName = ltrim(parse_url($mongoUrl, PHP_URL_PATH), '/');
-        } else {
-            // Configuration développement
-            if (!defined('APP_ENV') || !file_exists(APP_ENV)) {
-                throw new \Exception("Le fichier de configuration APP_ENV est introuvable !");
-            }
-
-            $dbConf = parse_ini_file(APP_ENV);
-            $dbHost = $dbConf["mongo_host"] ?? 'localhost';
-            $dbPort = $dbConf["mongo_port"] ?? 27017;
-            $dbUser = rawurlencode($dbConf["mongo_user"] ?? '');
-            $dbPassword = rawurlencode($dbConf["mongo_password"] ?? '');
-            $this->dbName = $dbConf["mongo_name"] ?? 'test';
-
-            // Construction de l'URI avec authSource=admin
-            $mongoUrl = "mongodb://{$dbUser}:{$dbPassword}@{$dbHost}:{$dbPort}/{$this->dbName}?authSource=admin";
-            $this->client = new Client($mongoUrl);
+            return;
         }
+        // Configuration développement
+        if (!defined('APP_ENV') || !file_exists(APP_ENV)) {
+            throw new \Exception("Le fichier de configuration APP_ENV est introuvable !");
+        }
+
+        $dbConf = parse_ini_file(APP_ENV);
+        $dbHost = $dbConf["mongo_host"] ?? 'localhost';
+        $dbPort = $dbConf["mongo_port"] ?? 27017;
+        $dbUser = rawurlencode($dbConf["mongo_user"] ?? '');
+        $dbPassword = rawurlencode($dbConf["mongo_password"] ?? '');
+        $this->dbName = $dbConf["mongo_name"] ?? 'test';
+
+        // Construction de l'URI avec authSource=admin
+        $mongoUrl = "mongodb://{$dbUser}:{$dbPassword}@{$dbHost}:{$dbPort}/{$this->dbName}?authSource=admin";
+        $this->client = new Client($mongoUrl);
     }
 
     public static function getInstance(): self
