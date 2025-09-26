@@ -162,7 +162,8 @@
                                                 'snippet' => 'fas fa-code',
                                                 'comment' => 'fas fa-comment',
                                                 'project' => 'fas fa-project-diagram',
-                                                'like' => 'fas fa-heart',
+                                                'blog' => 'fas fa-blog',
+                                                'forum' => 'fas fa-comments',
                                                 default => 'fas fa-info-circle',
                                             };
                                             ?>

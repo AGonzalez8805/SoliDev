@@ -144,4 +144,16 @@ class UserRepository
             'snippets' => $snippets,
         ];
     }
+
+    public function addActivity(int $userId, string $type, string $message): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $sql = "INSERT INTO activities (user_id, type, message, created_at) VALUES (:user_id, :type, :message, NOW())";
+        $stmt = $pdo->prepare($sql);
+        return $stmt->execute([
+            ':user_id' => $userId,
+            ':type' => $type,
+            ':message' => $message
+        ]);
+    }
 }
