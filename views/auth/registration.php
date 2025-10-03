@@ -11,6 +11,7 @@
         <!-- Titre du formulaire -->
         <h2 class="form-title text-center mb-4">Inscription à SoliDev</h2>
         <!-- Formulaire d'inscription -->
+        <div id="registrationMessage" class="alert alert-success d-none"></div>
         <form id="registrationForm" method="post" action="/?controller=user&action=register">
             <div class="row">
                 <div class="col">

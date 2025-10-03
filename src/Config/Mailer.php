@@ -32,11 +32,8 @@ class Mailer
         $mail->Username   = $_ENV['MAIL_USERNAME'] ?? getenv('MAIL_USERNAME') ?? '';
         $mail->Password   = $_ENV['MAIL_PASSWORD'] ?? getenv('MAIL_PASSWORD') ?? '';
         $mail->Port       = (int)($_ENV['MAIL_PORT'] ?? getenv('MAIL_PORT') ?? 587);
-
-        // Gmail exige TLS
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 
-        // Options SSL
         $mail->SMTPOptions = [
             'ssl' => [
                 'verify_peer'       => true,
@@ -46,11 +43,17 @@ class Mailer
         ];
 
         // Expéditeur par défaut
-        $mail->setFrom(
-            $_ENV['MAIL_FROM'] ?? getenv('MAIL_FROM') ?? 'solidev.dev@gmail.com',
-            $_ENV['MAIL_FROM_NAME'] ?? getenv('MAIL_FROM_NAME') ?? 'SoliDev'
-        );
+        $fromEmail = $_ENV['MAIL_FROM'] ?? getenv('MAIL_FROM') ?? 'solidev.dev@gmail.com';
+        $fromName  = $_ENV['MAIL_FROM_NAME'] ?? getenv('MAIL_FROM_NAME') ?? 'SoliDev';
+
+        // Validation de l'adresse
+        if (!filter_var($fromEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new \Exception("Adresse FROM invalide : $fromEmail");
+        }
+
+        $mail->setFrom($fromEmail, $fromName);
     }
+
 
     public function sendContactMail(array $data): array
     {

@@ -118,10 +118,19 @@ export class Registration {
       }
 
       if (result.success) {
-        window.location.href = "index.php?controller=auth&action=login";
+        const messageDiv = document.getElementById("registrationMessage");
+        if (messageDiv) {
+          messageDiv.innerHTML = result.message;
+          messageDiv.classList.remove("d-none"); // Bootstrap pour afficher
+        } else {
+          alert(result.message); // fallback
+        }
+        // Optionnel : désactiver le formulaire pour éviter plusieurs soumissions
+        this.form.querySelector("button[type='submit']").disabled = true;
       } else {
         alert(result.message || "Erreur lors de l'inscription.");
       }
+
     } catch (err) {
       console.error("Erreur requête :", err);
       alert("Une erreur technique est survenue.");

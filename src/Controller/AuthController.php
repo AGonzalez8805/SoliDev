@@ -177,7 +177,8 @@ class AuthController extends Controller
         if ($result) {
             // Envoyer le mail de confirmation
             $mailer = new Mailer(true);
-            $verificationLink = "https://ton-domaine.com/?controller=auth&action=confirmEmail&token=$token";
+            $appUrl = $_ENV['APP_URL'] ?? getenv('APP_URL') ?? 'https://localhost:90';
+            $verificationLink = "$appUrl/?controller=auth&action=confirmEmail&token=$token";
             $subject = "Confirme ton compte SoliDev";
             $body = "<p>Bonjour $firstName,</p>
                     <p>Merci pour ton inscription. Clique sur le lien ci-dessous pour activer ton compte :</p>
