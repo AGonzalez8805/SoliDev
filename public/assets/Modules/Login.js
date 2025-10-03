@@ -1,5 +1,7 @@
 export class Login {
   constructor() {
+    console.log("Login initialisé");
+
     this.form = document.getElementById("loginForm");
     if (!this.form) return;
 

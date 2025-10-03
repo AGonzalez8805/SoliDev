@@ -11,7 +11,7 @@ class PageController extends Controller
     public function route(): void
     {
         $this->handleRoute(function () {
- if (isset($_GET['action'])) {
+            if (isset($_GET['action'])) {
                 switch ($_GET['action']) {
                     case 'about':
                         // Affiche la page "À propos"

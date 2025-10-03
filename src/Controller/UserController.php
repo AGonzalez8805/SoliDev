@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Repository\UserRepository;
 use App\Models\User;
+use App\Service\UserService;
+use App\Config\Mailer;
 
 class UserController extends Controller
 {
@@ -21,7 +23,9 @@ class UserController extends Controller
                     case 'updateProfile':
                         $this->updateProfile();
                         break;
-
+                    case 'register':
+                        $this->register();
+                        break;
 
                     default:
                         throw new \Exception("Action utilisateur inconnue");
@@ -136,6 +140,45 @@ class UserController extends Controller
         $userRepo->updateProfileDetails($_SESSION['user_id'], $bio, $skills);
 
         header('Location: /?controller=user&action=dashboard');
+        exit;
+    }
+
+    public function register(): void
+    {
+        $name = $_POST['name'] ?? '';
+        $firstName = $_POST['firstName'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $validatePassword = $_POST['validatePassword'] ?? '';
+
+        if ($password !== $validatePassword) {
+            $_SESSION['error'] = "Les mots de passe ne correspondent pas.";
+            header('Location: /?controller=user&action=registrationForm');
+            exit;
+        }
+
+        $config = [
+            'host' => $_ENV['MAIL_HOST'],
+            'username' => $_ENV['MAIL_USERNAME'],
+            'password' => $_ENV['MAIL_PASSWORD'],
+            'port' => $_ENV['MAIL_PORT'],
+            'encryption' => $_ENV['MAIL_SMTP_SECURE'],
+            'from_email' => $_ENV['MAIL_FROM'],
+            'from_name' => $_ENV['MAIL_FROM_NAME'],
+        ];
+
+        $mailer = new Mailer(true);
+        $userService = new UserService(new UserRepository(), $mailer);
+
+        $result = $userService->registerUser($name, $firstName, $email, $password);
+
+        if ($result['success']) {
+            $_SESSION['success'] = $result['message'];
+            header('Location: /?controller=auth&action=login');
+        } else {
+            $_SESSION['error'] = $result['message'];
+            header('Location: /?controller=user&action=registrationForm');
+        }
         exit;
     }
 }

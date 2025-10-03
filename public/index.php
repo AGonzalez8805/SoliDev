@@ -31,13 +31,16 @@ use App\Db\Mysql;
 use App\Db\Mongo;
 
 $mysql = Mysql::getInstance()->getPDO();
-
 $mongo = Mongo::getInstance();
 $dbMongo = $mongo->getDatabase();
 
+use App\Config\Mailer;
+
+// Instanciation du Mailer
+$mailer = new Mailer(true);
 
 // Lancer le contrôleur principal
 use App\Controller\Controller;
 
-$controller = new Controller();
+$controller = new Controller($mailer);
 $controller->route();

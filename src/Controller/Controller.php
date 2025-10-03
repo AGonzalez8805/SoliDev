@@ -2,8 +2,16 @@
 
 namespace App\Controller;
 
+use App\Config\Mailer;
+
 class Controller
 {
+    protected Mailer $mailer;
+
+    public function __construct(Mailer $mailer)
+    {
+        $this->mailer = $mailer;
+    }
     /* Try/catch commun pour tous les contrôleurs */
     protected function handleRoute(callable $callback): void
     {
@@ -34,32 +42,32 @@ class Controller
             if (isset($_GET['controller'])) {
                 switch ($_GET['controller']) {
                     case 'page':
-                        $pageController = new PageController();
+                        $pageController = new PageController($this->mailer);
                         $pageController->route();
                         break;
 
                     case 'auth':
-                        $controller = new AuthController();
+                        $controller = new AuthController($this->mailer);
                         $controller->route();
                         break;
 
                     case 'admin':
-                        $controller = new AdminController();
+                        $controller = new AdminController($this->mailer);
                         $controller->route();
                         break;
 
                     case 'user':
-                        $controller = new UserController();
+                        $controller = new UserController($this->mailer);
                         $controller->route();
                         break;
 
                     case 'forum':
-                        $controller = new ForumController();
+                        $controller = new ForumController($this->mailer);
                         $controller->route();
                         break;
 
                     case 'blog':
-                        $controller = new BlogController();
+                        $controller = new BlogController($this->mailer);
                         $controller->route();
                         break;
 

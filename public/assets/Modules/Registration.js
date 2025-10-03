@@ -118,7 +118,6 @@ export class Registration {
       }
 
       if (result.success) {
-        alert("Inscription réussie !");
         window.location.href = "index.php?controller=auth&action=login";
       } else {
         alert(result.message || "Erreur lors de l'inscription.");

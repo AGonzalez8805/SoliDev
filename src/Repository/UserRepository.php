@@ -39,16 +39,21 @@ class UserRepository
         $pdo = $mysql->getPDO();
 
         $query = $pdo->prepare('
-        INSERT INTO users (name, firstName, email, password, role)
-        VALUES (:name, :firstName, :email, :password, :role)');
+        INSERT INTO users (name, firstName, email, password, role, email_verification_token, is_email_verified)
+        VALUES (:name, :firstName, :email, :password, :role, :token, :is_email_verified)
+    ');
+
         return $query->execute([
             ':name' => $data['name'],
             ':firstName' => $data['firstName'],
             ':email' => $data['email'],
             ':password' => $data['password'],
-            ':role' => $data['role']
+            ':role' => $data['role'],
+            ':token' => $data['email_verification_token'],
+            ':is_email_verified' => $data['is_email_verified'] ?? 0
         ]);
     }
+
 
     public function findByRole(string $role)
     {
@@ -155,5 +160,26 @@ class UserRepository
             ':type' => $type,
             ':message' => $message
         ]);
+    }
+
+    public function findByToken(string $token): ?array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email_verification_token = :token LIMIT 1");
+        $stmt->execute([':token' => $token]);
+        $user = $stmt->fetch();
+        return $user ?: null;
+    }
+
+    // Marquer un utilisateur comme vérifié
+    public function verifyUser(int $userId): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("
+            UPDATE users
+            SET is_email_verified = 1, email_verification_token = NULL
+            WHERE users_id = :id
+        ");
+        return $stmt->execute([':id' => $userId]);
     }
 }

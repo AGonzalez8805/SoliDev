@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Config\Mailer;
 
 class AuthController extends Controller
 {
@@ -29,6 +30,9 @@ class AuthController extends Controller
                         break;
                     case 'handleRegister':
                         $this->handleRegister();
+                        break;
+                    case 'confirmEmail':
+                        $this->confirmEmail();
                         break;
                     default:
                         throw new \Exception("Cette action n'existe pas : " . $_GET['action']);
@@ -104,7 +108,6 @@ class AuthController extends Controller
         }
     }
 
-
     /**
      * Déconnexion de l'utilisateur, suppression de la session et redirection vers la page d'accueil.
      */
@@ -126,17 +129,13 @@ class AuthController extends Controller
         }
 
         while (ob_get_level()) ob_end_clean();
-
         header('Content-Type: application/json');
         http_response_code(200);
 
         $input = json_decode(file_get_contents("php://input"), true);
 
         if (!$input || empty($input['name']) || empty($input['firstName']) || empty($input['email']) || empty($input['password'])) {
-            echo json_encode([
-                "success" => false,
-                "message" => "Tous les champs sont requis."
-            ]);
+            echo json_encode(["success" => false, "message" => "Tous les champs sont requis."]);
             return;
         }
 
@@ -157,26 +156,58 @@ class AuthController extends Controller
         }
 
         $userRepo = new UserRepository();
-
         if ($userRepo->findByEmail($email)) {
             echo json_encode(["success" => false, "message" => "Email déjà utilisé."]);
             return;
         }
 
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        $token = bin2hex(random_bytes(16)); // Génère un token unique
 
         $result = $userRepo->create([
             'name' => $name,
             'firstName' => $firstName,
             'email' => $email,
             'password' => $hashedPassword,
-            'role' => 'utilisateur'
+            'role' => 'utilisateur',
+            'email_verification_token' => $token,
+            'is_email_verified' => 0
         ]);
 
         if ($result) {
-            echo json_encode(["success" => true]);
+            // Envoyer le mail de confirmation
+            $mailer = new Mailer(true);
+            $verificationLink = "https://ton-domaine.com/?controller=auth&action=confirmEmail&token=$token";
+            $subject = "Confirme ton compte SoliDev";
+            $body = "<p>Bonjour $firstName,</p>
+                    <p>Merci pour ton inscription. Clique sur le lien ci-dessous pour activer ton compte :</p>
+                    <p><a href='$verificationLink'>$verificationLink</a></p>";
+
+            $mailer->sendMail($email, $subject, $body);
+
+            echo json_encode(["success" => true, "message" => "Inscription réussie. Vérifie ton email pour confirmer ton compte."]);
         } else {
             echo json_encode(["success" => false, "message" => "Erreur lors de l'inscription."]);
         }
+    }
+
+    public function confirmEmail()
+    {
+        $token = $_GET['token'] ?? null;
+        if (!$token) {
+            $this->render('auth/confirmation', ['message' => 'Lien invalide.']);
+            return;
+        }
+
+        $userRepo = new UserRepository();
+        $user = $userRepo->findByToken($token);
+
+        if (!$user) {
+            $this->render('auth/confirmation', ['message' => 'Lien de confirmation invalide ou expiré.']);
+            return;
+        }
+
+        $userRepo->verifyUser($user['users_id']);
+        $this->render('auth/confirmation', ['message' => 'Ton compte est maintenant activé ! Tu peux te connecter.']);
     }
 }
