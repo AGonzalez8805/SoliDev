@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Config\Mailer;
+
 class PageController extends Controller
 {
     /**
@@ -26,6 +28,9 @@ class PageController extends Controller
                     case 'contact':
                         // Affiche la page de contact
                         $this->contact();
+                        break;
+                    case 'sendContact':
+                        $this->sendContact();
                         break;
 
                     default:
@@ -58,5 +63,44 @@ class PageController extends Controller
     protected function contact()
     {
         $this->render('page/contact');
+    }
+
+    protected function sendContact()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $subject = trim($_POST['subject'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+
+            if (!$name || !$email || !$subject || !$message) {
+                $_SESSION['error'] = "Tous les champs sont requis.";
+                header('Location: /?controller=page&action=contact');
+                exit;
+            }
+
+            $mailer = new Mailer(true);
+
+            $body = "<p><strong>Nom :</strong> $name</p>
+                    <p><strong>Email :</strong> $email</p>
+                    <p><strong>Message :</strong><br>$message</p>";
+
+            $sent = $mailer->sendMail(
+                $_ENV['MAIL_TO'],   // Destinataire (ton adresse)
+                $subject,
+                $body,
+                $email,             // Reply-to = email de l'utilisateur
+                $name
+            );
+
+            if ($sent) {
+                $_SESSION['success'] = "Merci, votre message a été envoyé !";
+            } else {
+                $_SESSION['error'] = "Erreur lors de l'envoi du message. Veuillez réessayer.";
+            }
+
+            header('Location: /?controller=page&action=contact');
+            exit;
+        }
     }
 }
