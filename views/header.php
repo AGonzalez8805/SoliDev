@@ -8,6 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Description de la page (utile pour le SEO) -->
     <meta name="description" content="SoliDev est une plateforme collaborative pour développeurs : forum d'entraide, présentation de projets, partage de snippets et articles de blog techniques.">
+    <!-- Mots-clés (optionnel, certains moteurs de recherche ne les utilisent plus) -->
+    <meta name="keywords" content="développement, code, forum, projets, snippets, blog, développeurs, SoliDev">
+    <!-- Robots (indexation et suivi des liens) -->
+    <meta name="robots" content="index, follow">
+
+    <link rel="shortcut icon" href="/assets/images/logo-png.jpg" type="image/x-icon">
     <!-- Préconnexion pour améliorer le chargement des polices Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

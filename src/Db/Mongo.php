@@ -23,11 +23,11 @@ class Mongo
             return;
         }
         // Configuration développement
-        if (!defined('APP_ENV') || !file_exists(APP_ENV)) {
+        if (!defined('APP_CONFIG') || !file_exists(APP_CONFIG)) {
             throw new \Exception("Le fichier de configuration APP_ENV est introuvable !");
         }
 
-        $dbConf = parse_ini_file(APP_ENV);
+        $dbConf = parse_ini_file(APP_CONFIG);
         $dbHost = $dbConf["mongo_host"] ?? 'localhost';
         $dbPort = $dbConf["mongo_port"] ?? 27017;
         $dbUser = rawurlencode($dbConf["mongo_user"] ?? '');

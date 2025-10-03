@@ -13,7 +13,7 @@ class Mailer
     {
         $this->mail = new PHPMailer(true);
 
-        // --- Debug SMTP ---
+        // Debug SMTP
         $this->mail->SMTPDebug = $debug ? 2 : 0;
         $this->mail->Debugoutput = function ($str, $level) {
             error_log("SMTP Debug level $level: $str");
@@ -27,11 +27,11 @@ class Mailer
         $mail = $this->mail;
 
         $mail->isSMTP();
-        $mail->Host       = $_ENV['MAIL_HOST'] ?? getenv('MAIL_HOST') ?? 'smtp.gmail.com';
+        $mail->Host       = $_ENV['MAIL_HOST'] ?? 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = $_ENV['MAIL_USERNAME'] ?? getenv('MAIL_USERNAME') ?? '';
-        $mail->Password   = $_ENV['MAIL_PASSWORD'] ?? getenv('MAIL_PASSWORD') ?? '';
-        $mail->Port       = (int)($_ENV['MAIL_PORT'] ?? getenv('MAIL_PORT') ?? 587);
+        $mail->Username   = $_ENV['MAIL_USERNAME'] ?? '';
+        $mail->Password   = $_ENV['MAIL_PASSWORD'] ?? '';
+        $mail->Port       = (int)($_ENV['MAIL_PORT'] ?? 587);
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
 
         $mail->SMTPOptions = [
@@ -43,17 +43,15 @@ class Mailer
         ];
 
         // Expéditeur par défaut
-        $fromEmail = $_ENV['MAIL_FROM'] ?? getenv('MAIL_FROM') ?? 'solidev.dev@gmail.com';
-        $fromName  = $_ENV['MAIL_FROM_NAME'] ?? getenv('MAIL_FROM_NAME') ?? 'SoliDev';
+        $fromEmail = $_ENV['MAIL_FROM'] ?? 'solidev.dev@gmail.com';
+        $fromName  = $_ENV['MAIL_FROM_NAME'] ?? 'SoliDev';
 
-        // Validation de l'adresse
-        if (!filter_var($fromEmail, FILTER_VALIDATE_EMAIL)) {
+        if (empty($fromEmail) || !filter_var($fromEmail, FILTER_VALIDATE_EMAIL)) {
             throw new \Exception("Adresse FROM invalide : $fromEmail");
         }
 
         $mail->setFrom($fromEmail, $fromName);
     }
-
 
     public function sendContactMail(array $data): array
     {
@@ -61,9 +59,7 @@ class Mailer
             $mail = $this->mail;
 
             $mail->clearAddresses();
-            $mail->addAddress(
-                $_ENV['MAIL_TO'] ?? getenv('MAIL_TO') ?? 'solidev.dev@gmail.com'
-            );
+            $mail->addAddress($_ENV['MAIL_TO'] ?? 'solidev.dev@gmail.com');
 
             $mail->isHTML(true);
             $mail->Subject = $data['subject'] ?? 'Sujet non défini';

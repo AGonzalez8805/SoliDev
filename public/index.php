@@ -1,40 +1,64 @@
 <?php
+// ----------------------------
+//  RACINE DU PROJET
+// ----------------------------
+define('APP_ROOT', dirname(__DIR__));
 
 // ----------------------------
-//  CONFIG PRODUCTION
+//  SESSION
 // ----------------------------
-
-// Masquer toutes les erreurs à l’écran
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
-error_reporting(0);
-
-// Logger les erreurs dans le log PHP (Heroku les capture automatiquement)
-ini_set('log_errors', 1);
-ini_set('error_log', '/tmp/php_errors.log');
-
-// Démarrer la session
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Racine du projet
-define('APP_ROOT', dirname(__DIR__));
+// ----------------------------
+//  CHEMIN CONFIG DB
+// ----------------------------
+define('APP_CONFIG', APP_ROOT . '/.db.ini');
 
-// Charger les variables du fichier .env
-$envPath = dirname(__DIR__) . '/.env';
+// ----------------------------
+//  CHARGER VARIABLES ENV
+// ----------------------------
+// Compatible avec .env standard (clé=valeur)
+$envPath = APP_ROOT . '/.env';
 if (file_exists($envPath)) {
-    $envVars = parse_ini_file($envPath);
-    foreach ($envVars as $key => $value) {
-        $_ENV[$key] = $value;
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0) continue;
+
+        [$name, $value] = explode('=', $line, 2);
+        $name  = trim($name);
+        $value = trim($value, " \t\n\r\0\x0B\""); // retire guillemets et espaces
+        $_ENV[$name] = $value;
+        putenv("$name=$value");
     }
 }
 
-// Charger l'autoloader de Composer
-require_once __DIR__ . '/../vendor/autoload.php';
+// ----------------------------
+//  ENVIRONNEMENT (dev/prod)
+// ----------------------------
+$env = $_ENV['APP_ENV'] ?? 'prod';
+
+if ($env === 'dev') {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+} else {
+    ini_set('display_errors', 0);
+    ini_set('display_startup_errors', 0);
+    error_reporting(0);
+    ini_set('log_errors', 1);
+    ini_set('error_log', APP_ROOT . '/var/log/php_errors.log');
+}
 
 // ----------------------------
-//  BASE DE DONNÉES
+//  AUTOLOADER
+// ----------------------------
+require_once APP_ROOT . '/vendor/autoload.php';
+
+// ----------------------------
+//  BASES DE DONNÉES
 // ----------------------------
 use App\Db\Mysql;
 use App\Db\Mongo;
@@ -48,10 +72,10 @@ $dbMongo = $mongo->getDatabase();
 // ----------------------------
 use App\Config\Mailer;
 
-$mailer = new Mailer(true);
+$mailer = new Mailer(true); // true = debug SMTP en dev
 
 // ----------------------------
-//  LANCER LE CONTRÔLEUR PRINCIPAL
+//  CONTROLLER
 // ----------------------------
 use App\Controller\Controller;
 
