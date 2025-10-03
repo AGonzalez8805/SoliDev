@@ -65,41 +65,36 @@ class PageController extends Controller
         $this->render('page/contact');
     }
 
-    protected function sendContact()
+    public function sendContact()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = trim($_POST['name'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $subject = trim($_POST['subject'] ?? '');
-            $message = trim($_POST['message'] ?? '');
 
-            if (!$name || !$email || !$subject || !$message) {
-                $_SESSION['error'] = "Tous les champs sont requis.";
-                header('Location: /?controller=page&action=contact');
+            $data = [
+                'name'      => $_POST['name'] ?? '',
+                'firstName' => $_POST['firstName'] ?? '',
+                'email'     => $_POST['email'] ?? '',
+                'phone'     => $_POST['number'] ?? '',
+                'subject'   => $_POST['subject'] ?? '',
+                'message'   => $_POST['message'] ?? '',
+            ];
+
+            // Vérification minimale
+            if (!$data['name'] || !$data['firstName'] || !$data['email'] || !$data['subject'] || !$data['message']) {
+                $_SESSION['error'] = "Veuillez remplir tous les champs obligatoires.";
+                header('Location: ?controller=page&action=contact');
                 exit;
             }
 
-            $mailer = new Mailer(true);
+            // Utiliser la méthode correcte du Mailer
+            $result = $this->mailer->sendContactMail($data);
 
-            $body = "<p><strong>Nom :</strong> $name</p>
-                    <p><strong>Email :</strong> $email</p>
-                    <p><strong>Message :</strong><br>$message</p>";
-
-            $sent = $mailer->sendMail(
-                $_ENV['MAIL_TO'],   // Destinataire (ton adresse)
-                $subject,
-                $body,
-                $email,             // Reply-to = email de l'utilisateur
-                $name
-            );
-
-            if ($sent) {
-                $_SESSION['success'] = "Merci, votre message a été envoyé !";
+            if ($result['success']) {
+                $_SESSION['success'] = $result['message'];
             } else {
-                $_SESSION['error'] = "Erreur lors de l'envoi du message. Veuillez réessayer.";
+                $_SESSION['error'] = $result['message'];
             }
 
-            header('Location: /?controller=page&action=contact');
+            header('Location: ?controller=page&action=contact');
             exit;
         }
     }
