@@ -1,18 +1,25 @@
 <?php
 
-// Afficher toutes les erreurs PHP
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ----------------------------
+//  CONFIG PRODUCTION
+// ----------------------------
+
+// Masquer toutes les erreurs à l’écran
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
+
+// Logger les erreurs dans le log PHP (Heroku les capture automatiquement)
+ini_set('log_errors', 1);
+ini_set('error_log', '/tmp/php_errors.log');
 
 // Démarrer la session
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Racine du projet
 define('APP_ROOT', dirname(__DIR__));
-
-// Chemin du fichier de config DB
-define('APP_ENV', dirname(__DIR__) . '/.db.ini');
 
 // Charger les variables du fichier .env
 $envPath = dirname(__DIR__) . '/.env';
@@ -26,7 +33,9 @@ if (file_exists($envPath)) {
 // Charger l'autoloader de Composer
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Connexion à la base de données
+// ----------------------------
+//  BASE DE DONNÉES
+// ----------------------------
 use App\Db\Mysql;
 use App\Db\Mongo;
 
@@ -34,12 +43,16 @@ $mysql = Mysql::getInstance()->getPDO();
 $mongo = Mongo::getInstance();
 $dbMongo = $mongo->getDatabase();
 
+// ----------------------------
+//  MAILER
+// ----------------------------
 use App\Config\Mailer;
 
-// Instanciation du Mailer
 $mailer = new Mailer(true);
 
-// Lancer le contrôleur principal
+// ----------------------------
+//  LANCER LE CONTRÔLEUR PRINCIPAL
+// ----------------------------
 use App\Controller\Controller;
 
 $controller = new Controller($mailer);
