@@ -59,16 +59,38 @@ class Mailer
             $mail = $this->mail;
 
             $mail->clearAddresses();
+            $mail->clearReplyTos();
+
+            // 📬 Destinataire (toi)
             $mail->addAddress($_ENV['MAIL_TO'] ?? 'solidev.dev@gmail.com');
 
+            // 💡 Ajouter l’adresse de l’utilisateur en Reply-To (pas en From)
+            if (!empty($data['email']) && filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $name = trim(($data['firstName'] ?? '') . ' ' . ($data['name'] ?? ''));
+                $mail->addReplyTo($data['email'], $name ?: 'Visiteur');
+            }
+
+            // Contenu du mail
             $mail->isHTML(true);
-            $mail->Subject = $data['subject'] ?? 'Sujet non défini';
-            $mail->Body =
-                "<p><strong>Nom:</strong> {$data['name']}</p>" .
-                "<p><strong>Prénom:</strong> {$data['firstName']}</p>" .
-                "<p><strong>Email:</strong> {$data['email']}</p>" .
-                "<p><strong>Téléphone:</strong> {$data['phone']}</p>" .
-                "<p><strong>Message:</strong><br>" . nl2br($data['message']) . "</p>";
+            $mail->Subject = $data['subject'] ?? '📩 Nouveau message de contact';
+
+            $mail->Body = "
+                <h2>📬 Nouveau message depuis le formulaire de contact</h2>
+                <p><strong>Nom :</strong> " . htmlspecialchars($data['name'] ?? '', ENT_QUOTES) . "</p>
+                <p><strong>Prénom :</strong> " . htmlspecialchars($data['firstName'] ?? '', ENT_QUOTES) . "</p>
+                <p><strong>Email :</strong> " . htmlspecialchars($data['email'] ?? '', ENT_QUOTES) . "</p>
+                <p><strong>Téléphone :</strong> " . htmlspecialchars($data['phone'] ?? '', ENT_QUOTES) . "</p>
+                <hr>
+                <p><strong>Message :</strong></p>
+                <p>" . nl2br(htmlspecialchars($data['message'] ?? '', ENT_QUOTES)) . "</p>
+            ";
+
+            $mail->AltBody =
+                "Nom : {$data['name']}\n" .
+                "Prénom : {$data['firstName']}\n" .
+                "Email : {$data['email']}\n" .
+                "Téléphone : {$data['phone']}\n\n" .
+                "Message :\n" . ($data['message'] ?? '');
 
             $mail->send();
 
@@ -80,6 +102,7 @@ class Mailer
             ];
         }
     }
+
 
     public function sendMail(string $to, string $subject, string $body, bool $isHtml = true): array
     {
