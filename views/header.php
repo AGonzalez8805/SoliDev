@@ -49,7 +49,7 @@
                         <a class="nav-link <?= $currentPage === 'home' ? 'active-link' : '' ?>" href="/?controller=page&action=home">Accueil</a>
                         <a class="nav-link <?= $currentPage === 'forum' ? 'active-link' : '' ?>" href="/?controller=forum&action=forum">Forum</a>
                         <a class="nav-link <?= $currentPage === 'show' ? 'active-link' : '' ?>" href="/?controller=blog&action=show">Blog</a>
-                        <a class="nav-link <?= $currentPage === 'project' ? 'active-link' : '' ?>" href="/project?action=">Projets</a>
+                        <a class="nav-link <?= $currentPage === 'project' ? 'active-link' : '' ?>" href="/?controller=project&action=project">Projets</a>
                         <a class="nav-link <?= $currentPage === 'snippets' ? 'active-link' : '' ?>" href="/snippets?action=">Snippets</a>
                     </div>
                     <!-- Zone à droite de la barre de navigation (connexion/inscription ou espace perso) -->

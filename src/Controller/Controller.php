@@ -76,6 +76,11 @@ class Controller
                     $controller->route($action);
                     break;
 
+                case 'project':
+                    $controller = new ProjectController($this->mailer);
+                    $controller->route($action);
+                    break;
+
                 default:
                     throw new \Exception("Le contrôleur '{$controllerName}' n'existe pas", 404);
             }
