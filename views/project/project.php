@@ -63,7 +63,7 @@
                 </div>
                 <!-- Section actions -->
                 <div class="action-section">
-                    <a href="/?controller=projects&action=create" class="btn-create-project">
+                    <a href="/?controller=project&action=create" class="btn-create-project">
                         <i class="fas fa-plus me-2"></i>Nouveau projet
                     </a>
                 </div>
