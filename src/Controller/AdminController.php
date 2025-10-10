@@ -9,18 +9,16 @@ class AdminController extends Controller
      * Routeur de l'AdminController.
      * Il regarde si un paramètre "action" est présent dans l'URL, et appelle la méthode correspondante.
      */
-    public function route(): void
+    public function route(string $action = 'dashboard'): void
     {
-        $this->handleRoute(function () {
-            if (isset($_GET['action'])) {
-                switch ($_GET['action']) {
-                    case 'dashboard': // Si action = "dashboard"
-                        $this->dashboard(); // Appelle la méthode dashboard()
-                        break;
-                    default:
-                        // Si l'action demandée n'existe pas, lève une exception
-                        throw new \Exception("Action admin inconnue");
-                }
+        $this->handleRoute(function () use ($action) {
+            switch ($action) {
+                case 'dashboard': // Si action = "dashboard"
+                    $this->dashboard(); // Appelle la méthode dashboard()
+                    break;
+                default:
+                    // Si l'action demandée n'existe pas, lève une exception
+                    throw new \Exception("Action admin inconnue");
             }
         });
     }

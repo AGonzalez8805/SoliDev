@@ -11,32 +11,30 @@ class AuthController extends Controller
      * Méthode routeur pour rediriger vers la bonne action en fonction de la query string.
      * Gère les erreurs en AJAX ou en HTTP standard selon le contexte de la requête.
      */
-    public function route(): void
+    public function route(string $action = 'login'): void
     {
-        $this->handleRoute(function () {
-            if (isset($_GET['action'])) {
-                switch ($_GET['action']) {
-                    case 'login':
-                        $this->login();
-                        break;
-                    case 'handleLogin':
-                        $this->handleLogin();
-                        break;
-                    case 'logout':
-                        $this->logout();
-                        break;
-                    case 'registration':
-                        $this->registration();
-                        break;
-                    case 'handleRegister':
-                        $this->handleRegister();
-                        break;
-                    case 'confirmEmail':
-                        $this->confirmEmail();
-                        break;
-                    default:
-                        throw new \Exception("Cette action n'existe pas : " . $_GET['action']);
-                }
+        $this->handleRoute(function () use ($action) {
+            switch ($action) {
+                case 'login':
+                    $this->login();
+                    break;
+                case 'handleLogin':
+                    $this->handleLogin();
+                    break;
+                case 'logout':
+                    $this->logout();
+                    break;
+                case 'registration':
+                    $this->registration();
+                    break;
+                case 'handleRegister':
+                    $this->handleRegister();
+                    break;
+                case 'confirmEmail':
+                    $this->confirmEmail();
+                    break;
+                default:
+                    throw new \Exception("Cette action n'existe pas : " . $action);
             }
         });
     }

@@ -19,10 +19,9 @@ class ForumController extends Controller
     }
 
     /** Route principal */
-    public function route(): void
+    public function route(string $action = 'forum'): void
     {
-        $this->handleRoute(function () {
-            $action = $_GET['action'] ?? 'forum';
+        $this->handleRoute(function () use ($action) {
             switch ($action) {
                 case 'forum':
                     $this->forum();

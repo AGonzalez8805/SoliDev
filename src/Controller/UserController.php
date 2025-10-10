@@ -9,27 +9,25 @@ use App\Config\Mailer;
 
 class UserController extends Controller
 {
-    public function route(): void
+    public function route(string $action = 'dashboard'): void
     {
-        $this->handleRoute(function () {
-            if (isset($_GET['action'])) {
-                switch ($_GET['action']) {
-                    case 'dashboard':
-                        $this->dashboard();
-                        break;
-                    case 'uploadPhoto':
-                        $this->uploadPhoto();
-                        break;
-                    case 'updateProfile':
-                        $this->updateProfile();
-                        break;
-                    case 'register':
-                        $this->register();
-                        break;
+        $this->handleRoute(function () use ($action) {
+            switch ($action) {
+                case 'dashboard':
+                    $this->dashboard();
+                    break;
+                case 'uploadPhoto':
+                    $this->uploadPhoto();
+                    break;
+                case 'updateProfile':
+                    $this->updateProfile();
+                    break;
+                case 'register':
+                    $this->register();
+                    break;
 
-                    default:
-                        throw new \Exception("Action utilisateur inconnue");
-                }
+                default:
+                    throw new \Exception("Action utilisateur inconnue");
             }
         });
     }

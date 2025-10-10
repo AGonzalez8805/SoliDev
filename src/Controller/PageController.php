@@ -10,33 +10,31 @@ class PageController extends Controller
      * Méthode principale de routage du contrôleur de pages.
      * Elle détermine l'action à exécuter à partir de la query string `?action=...`
      */
-    public function route(): void
+    public function route(string $action = 'home'): void
     {
-        $this->handleRoute(function () {
-            if (isset($_GET['action'])) {
-                switch ($_GET['action']) {
-                    case 'about':
-                        // Affiche la page "À propos"
-                        $this->about();
-                        break;
+        $this->handleRoute(function () use ($action) {
+            switch ($action) {
+                case 'about':
+                    // Affiche la page "À propos"
+                    $this->about();
+                    break;
 
-                    case 'home':
-                        // Affiche la page d'accueil
-                        $this->home();
-                        break;
+                case 'home':
+                    // Affiche la page d'accueil
+                    $this->home();
+                    break;
 
-                    case 'contact':
-                        // Affiche la page de contact
-                        $this->contact();
-                        break;
-                    case 'sendContact':
-                        $this->sendContact();
-                        break;
+                case 'contact':
+                    // Affiche la page de contact
+                    $this->contact();
+                    break;
+                case 'sendContact':
+                    $this->sendContact();
+                    break;
 
-                    default:
-                        // Action non reconnue
-                        throw new \Exception("Cette action n'existe pas : " . $_GET['action']);
-                }
+                default:
+                    // Action non reconnue
+                    throw new \Exception("Cette action n'existe pas : " . $action);
             }
         });
     }

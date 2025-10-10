@@ -7,40 +7,38 @@ use App\Repository\BlogRepository;
 
 class BlogController extends Controller
 {
-    public function route(): void
+    public function route(string $action = 'show'): void
     {
-        $this->handleRoute(function () {
-            if (isset($_GET['action'])) {
-                switch ($_GET['action']) {
-                    case 'show':
-                        $this->show();
-                        break;
-                    case 'list':
-                        $this->list();
-                        break;
-                    case 'createBlog':
-                        $this->createBlog();
-                        break;
-                    case 'store':
-                        $this->store();
-                        break;
-                    case 'comment':
-                        $this->comment();
-                        break;
-                    case 'preview':
-                        $this->preview();
-                        break;
-                    case 'saveDraft':
-                        $this->saveDraft();
-                        break;
-                    case 'getDrafts':
-                        $this->getDrafts();
-                        break;
+        $this->handleRoute(function () use ($action) {
+            switch ($action) {
+                case 'show':
+                    $this->show();
+                    break;
+                case 'list':
+                    $this->list();
+                    break;
+                case 'createBlog':
+                    $this->createBlog();
+                    break;
+                case 'store':
+                    $this->store();
+                    break;
+                case 'comment':
+                    $this->comment();
+                    break;
+                case 'preview':
+                    $this->preview();
+                    break;
+                case 'saveDraft':
+                    $this->saveDraft();
+                    break;
+                case 'getDrafts':
+                    $this->getDrafts();
+                    break;
 
-                    default:
-                        throw new \Exception("Cette action n'existe pas : " . $_GET['action']);
-                        break;
-                }
+                default:
+                    throw new \Exception("Cette action n'existe pas : " . $action);
+                    break;
             }
         });
     }
