@@ -5,3 +5,7 @@
 generate-password.php
 debug.json
 check_password.php
+.idea
+package.json
+package-lock.json
+node_modules
