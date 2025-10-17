@@ -5,6 +5,7 @@ import { Preview } from "./Modules/Preview.js";
 import { DashboardUser } from "./Modules/DashboardUser.js";
 import { DashboardDrafts } from "./Modules/DashboardDrafts.js";
 import { CreateProject } from "./Modules/CreateProject.js";
+import { MyCharts } from "./Modules/MyCharts.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("registrationForm")) {
@@ -35,4 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     new CreateProject();
   }
 
+  if (document.getElementById('distributionChart')) {
+    new MyCharts();
+  }
 });
