@@ -6,6 +6,13 @@ use App\Db\Mysql;
 
 class UserRepository
 {
+    public function findAll(): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->query("SELECT users_id, name, firstName, email, role, registrationDate FROM users ORDER BY users_id DESC");
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     public function findById(int $id): ?array
     {
         $mysql = Mysql::getInstance();
@@ -41,7 +48,7 @@ class UserRepository
         $query = $pdo->prepare('
         INSERT INTO users (name, firstName, email, password, role, email_verification_token, is_email_verified)
         VALUES (:name, :firstName, :email, :password, :role, :token, :is_email_verified)
-    ');
+        ');
 
         return $query->execute([
             ':name' => $data['name'],
@@ -53,7 +60,6 @@ class UserRepository
             ':is_email_verified' => $data['is_email_verified'] ?? 0
         ]);
     }
-
 
     public function findByRole(string $role)
     {
@@ -181,5 +187,52 @@ class UserRepository
             WHERE users_id = :id
         ");
         return $stmt->execute([':id' => $userId]);
+    }
+
+    // Stats pour un utilisateur
+    public function getUserStats(int $userId): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        // Messages Forum
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id=:user_id AND type='forum_post'");
+        $stmt->execute(['user_id' => $userId]);
+        $forumPosts = (int) $stmt->fetchColumn();
+
+        // Posts Blog
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE author_id=:user_id AND status='published'");
+        $stmt->execute(['user_id' => $userId]);
+        $blogPosts = (int) $stmt->fetchColumn();
+
+        // Projets
+        $projects = 0;
+
+        // Snippets
+        $snippets = 0;
+
+        return [
+            'forum_posts' => $forumPosts,
+            'blog_posts' => $blogPosts,
+            'projects' => $projects,
+            'snippets' => $snippets,
+        ];
+    }
+
+    // Stats globales
+    public function getGlobalStats(): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmtUsers = $pdo->query("SELECT COUNT(*) as count FROM users");
+        $usersCount = (int) $stmtUsers->fetch()['count'];
+        $stmtBlogs = $pdo->query("SELECT COUNT(*) as count FROM blog");
+        $blogsCount = (int) $stmtBlogs->fetch()['count'];
+        $projectsCount = 0;
+        $snippetsCount = 0;
+        return [
+            'users' => $usersCount,
+            'blogs' => $blogsCount,
+            'projects' => $projectsCount,
+            'snippets' => $snippetsCount,
+        ];
     }
 }

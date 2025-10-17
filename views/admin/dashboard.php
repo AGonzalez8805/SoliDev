@@ -6,37 +6,36 @@
         <h1>Bienvenue sur ton espace <?= $_SESSION['role']; ?></h1>
     </div>
 
-    <div class="stats-grid">
+    <section class="stats-grid">
         <div class="stat-card users">
             <div class="icon">👥</div>
             <h3>Utilisateurs</h3>
-            <div class="value" id="usersCount">125</div>
-            <div class="trend">↗ +12 ce mois</div>
+            <div class="value"><?= $stats['users'] ?></div>
         </div>
 
         <div class="stat-card blog">
             <div class="icon">📝</div>
             <h3>Articles Blog</h3>
-            <div class="value" id="blogCount">48</div>
-            <div class="trend">↗ +5 ce mois</div>
+            <div class="value"><?= $stats['blogs'] ?></div>
         </div>
 
         <div class="stat-card projects">
             <div class="icon">🚀</div>
             <h3>Projets</h3>
-            <div class="value" id="projectsCount">23</div>
-            <div class="trend">↗ +3 ce mois</div>
+            <div class="value"><?= $stats['projects'] ?></div>
         </div>
 
         <div class="stat-card snippets">
             <div class="icon">💻</div>
             <h3>Snippets</h3>
-            <div class="value" id="snippetsCount">67</div>
-            <div class="trend">↗ +8 ce mois</div>
+            <div class="value"><?= $stats['snippets'] ?></div>
         </div>
-    </div>
+    </section>
+
+
+
     <!-- Chart.js -->
-    <div class="charts-grid">
+    <section class="charts-grid">
         <div class="chart-card">
             <div class="chart-container square">
                 <canvas id="distributionChart"></canvas>
@@ -48,10 +47,10 @@
                 <canvas id="userChart"></canvas>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Gestion Utilisateurs Section -->
-    <div class="users-management-section">
+    <section class="users-management-section">
         <div class="section-header">
             <h2>Gestion des Utilisateurs</h2>
         </div>
@@ -71,52 +70,26 @@
         <div class="table-wrapper">
             <table class="users-table">
                 <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox" id="selectAll" class="checkbox-header">
-                        </th>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Statut</th>
-                        <th>Date d'inscription</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
                 <tbody id="usersTableBody">
-                    <tr>
-                        <td><input type="checkbox" class="checkbox-row"></td>
-                        <td>Jean Dupont</td>
-                        <td>jean.dupont@example.com</td>
-                        <td><span class="status-badge active">Actif</span></td>
-                        <td>15/01/2025</td>
-                        <td class="actions-cell">
-                            <button class="btn-action btn-edit" title="Modifier">✏️</button>
-                            <button class="btn-action btn-delete" title="Supprimer">🗑️</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="checkbox-row"></td>
-                        <td>Marie Martin</td>
-                        <td>marie.martin@example.com</td>
-                        <td><span class="status-badge active">Actif</span></td>
-                        <td>20/02/2025</td>
-                        <td class="actions-cell">
-                            <button class="btn-action btn-edit" title="Modifier">✏️</button>
-                            <button class="btn-action btn-delete" title="Supprimer">🗑️</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="checkbox-row"></td>
-                        <td>Pierre Bernard</td>
-                        <td>pierre.bernard@example.com</td>
-                        <td><span class="status-badge inactive">Inactif</span></td>
-                        <td>10/03/2025</td>
-                        <td class="actions-cell">
-                            <button class="btn-action btn-edit" title="Modifier">✏️</button>
-                            <button class="btn-action btn-delete" title="Supprimer">🗑️</button>
-                        </td>
-                    </tr>
+                    <?php foreach ($users as $user): ?>
+                        <tr>
+                            <td><input type="checkbox" class="checkbox-row"></td>
+                            <td><?= htmlspecialchars($user['name'] . ' ' . $user['firstName']) ?></td>
+                            <td><?= htmlspecialchars($user['email']) ?></td>
+                            <td>
+                                <span class="status-badge <?= $user['role'] === 'admin' ? 'admin' : 'utilisateur' ?>">
+                                    <?= ucfirst($user['role']) ?>
+                                </span>
+                            </td>
+                            <td><?= date('d/m/Y', strtotime($user['registrationDate'])) ?></td>
+                            <td class="actions-cell">
+                                <button class="btn-action btn-edit" title="Modifier">✏️</button>
+                                <button class="btn-action btn-delete" title="Supprimer">🗑️</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
+                </thead>
             </table>
         </div>
 
@@ -125,5 +98,6 @@
             <div class="page-numbers" id="pageNumbers"></div>
             <button class="pagination-btn" id="nextBtn">Suivant →</button>
         </div>
-    </div>
+    </section>
+
     <?php require_once APP_ROOT . '/views/footer.php'; ?>

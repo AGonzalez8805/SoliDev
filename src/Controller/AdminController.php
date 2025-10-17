@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Controller; // Déclare le namespace du contrôleur
+namespace App\Controller;
+
+use App\Repository\UserRepository;
 
 // Déclaration de la classe AdminController qui hérite de la classe Controller
 class AdminController extends Controller
@@ -37,7 +39,14 @@ class AdminController extends Controller
             exit;
         }
 
-        // Si tout est ok, affiche la vue du dashboard admin
-        $this->render('admin/dashboard');
+        $userRepo = new UserRepository();
+
+        $stats = $userRepo->getGlobalStats(); // Stats globales
+        $users = $userRepo->findAll(); // Liste de tous les utilisateurs
+
+        $this->render('admin/dashboard', [
+            'stats' => $stats,
+            'users' => $users
+        ]);
     }
 }
