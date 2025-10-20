@@ -112,7 +112,7 @@ export class Registration {
       try {
         result = JSON.parse(text);
       } catch (err) {
-        console.error("Réponse serveur invalide :", text);
+        console.error("Réponse serveur invalide :", err, text);
         alert("Erreur serveur : réponse non valide.");
         return;
       }

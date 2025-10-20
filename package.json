@@ -2,23 +2,28 @@
   "name": "solidev",
   "version": "1.0.0",
   "description": "/\r ├── Accueil\r │   └── Présentation, posts récents, projets en vedette\r ├── Inscription / Connexion\r ├── Mon profil\r ├── Forum\r │   ├── Liste des catégories\r │   ├── Discussions\r │   └── Fiche discussion\r ├── Projets\r │   ├── Liste des projets\r │   └── Détail d’un projet\r ├── Snippets\r │   ├── Liste des extraits\r │   └── Détail d’un snippet\r ├── Blog\r │   ├── Articles\r │   └── Lecture d’un article\r ├── Recherche\r ├── Tableau de bord utilisateur\r ├── Administration (privée)\r └── Mentions légales / CGU / Contact",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "keywords": [],
+  "homepage": "https://github.com/AGonzalez8805/SoliDev#readme",
+  "bugs": {
+    "url": "https://github.com/AGonzalez8805/SoliDev/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AGonzalez8805/SoliDev.git"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
+  "author": "",
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/AGonzalez8805/SoliDev/issues"
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "homepage": "https://github.com/AGonzalez8805/SoliDev#readme",
   "dependencies": {
     "chart.js": "^4.5.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0"
   }
 }

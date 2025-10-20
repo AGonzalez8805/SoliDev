@@ -65,7 +65,7 @@ export class Login {
       try {
         result = JSON.parse(text);
       } catch (err) {
-        console.error("Réponse du serveur invalide :", text);
+        console.error("Réponse du serveur invalide :", err, text);
         alert("Erreur serveur : réponse non valide.");
         return;
       }

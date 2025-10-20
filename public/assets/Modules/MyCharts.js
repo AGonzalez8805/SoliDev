@@ -1,3 +1,5 @@
+import Chart from 'chart.js/auto';
+
 export class MyCharts {
     constructor() {
         this.init();
