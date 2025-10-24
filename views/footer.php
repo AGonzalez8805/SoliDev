@@ -28,10 +28,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
     crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<!-- Script Chart.js (bibliothèque de graphiques) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <!-- Script principal de l'application (JavaScript personnalisé) -->
-<script type="module" src="/assets/app.js"></script>
+<script type="module" src="./assets/app.js"></script>
 
 <script src="https://kit.fontawesome.com/f5ae6a01b5.js" crossorigin="anonymous"></script>
 </body>

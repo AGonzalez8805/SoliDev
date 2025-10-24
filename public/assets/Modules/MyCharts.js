@@ -1,11 +1,13 @@
-import Chart from 'chart.js/auto';
+const Chart = window.Chart;
 
+// Modules/MyCharts.js
 export class MyCharts {
     constructor() {
         this.init();
     }
 
-    init() {
+    async init() {
+
         const distributionCanvas = document.getElementById('distributionChart');
         const userCanvas = document.getElementById('userChart');
 
@@ -25,10 +27,7 @@ export class MyCharts {
                     maintainAspectRatio: true,
                     aspectRatio: 1,
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { padding: 15, font: { size: 14 } }
-                        },
+                        legend: { position: 'bottom', labels: { padding: 15, font: { size: 14 } } },
                         title: {
                             display: true,
                             text: 'Répartition des contenus',
