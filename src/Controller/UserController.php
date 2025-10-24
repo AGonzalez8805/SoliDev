@@ -22,9 +22,6 @@ class UserController extends Controller
                 case 'uploadPhoto':
                     $this->uploadPhoto();
                     break;
-                case 'resizeImage':
-                    $this->resizeImage('', '', 0, 0);
-                    break;
                 case 'register':
                     $this->register();
                     break;
@@ -126,7 +123,10 @@ class UserController extends Controller
     {
         header('Content-Type: application/json; charset=utf-8');
 
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $userId = $_SESSION['user_id'] ?? null;
 
         if (!$userId) {
@@ -134,7 +134,7 @@ class UserController extends Controller
             exit;
         }
 
-        if (!isset($_FILES['photo'])) {
+        if (!isset($_FILES['photo']) || $_FILES['photo']['error'] === UPLOAD_ERR_NO_FILE) {
             echo json_encode(['success' => false, 'message' => 'Aucun fichier reçu']);
             exit;
         }
@@ -145,10 +145,9 @@ class UserController extends Controller
             $errors = [
                 UPLOAD_ERR_INI_SIZE => 'Le fichier est trop grand (php.ini).',
                 UPLOAD_ERR_FORM_SIZE => 'Le fichier dépasse la taille maximale du formulaire.',
-                UPLOAD_ERR_PARTIAL => 'Le fichier n’a été que partiellement téléchargé.',
-                UPLOAD_ERR_NO_FILE => 'Aucun fichier téléchargé.',
+                UPLOAD_ERR_PARTIAL => 'Le fichier n\'a été que partiellement téléchargé.',
                 UPLOAD_ERR_NO_TMP_DIR => 'Dossier temporaire manquant.',
-                UPLOAD_ERR_CANT_WRITE => 'Impossible d’écrire le fichier sur le disque.',
+                UPLOAD_ERR_CANT_WRITE => 'Impossible d\'écrire le fichier sur le disque.',
                 UPLOAD_ERR_EXTENSION => 'Une extension PHP a stoppé le téléchargement.'
             ];
             $msg = $errors[$file['error']] ?? 'Erreur inconnue lors du téléchargement.';
@@ -157,38 +156,62 @@ class UserController extends Controller
         }
 
         // Vérification type MIME
+        $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
 
-        if (!str_starts_with($mime, 'image/')) {
-            echo json_encode(['success' => false, 'message' => 'Le fichier doit être une image']);
+        if (!in_array($mime, $allowedMimes)) {
+            echo json_encode(['success' => false, 'message' => 'Format non autorisé. Utilisez JPG, PNG, GIF ou WEBP']);
             exit;
         }
 
-        // Limite taille 5 Mo
-        if ($file['size'] > 5 * 1024 * 1024) {
-            echo json_encode(['success' => false, 'message' => 'Image trop lourde (max 5 Mo)']);
+        // Limite taille 20 Mo (selon votre uploads.ini)
+        if ($file['size'] > 20 * 1024 * 1024) {
+            echo json_encode(['success' => false, 'message' => 'Image trop lourde (max 20 Mo)']);
             exit;
         }
 
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $fileName = "user_{$userId}_" . time() . "." . $ext;
-        $targetDir = __DIR__ . "/../../public/photos/";
 
+        // Chemin absolu depuis DocumentRoot
+        $targetDir = '/var/www/html/public/photos/';
+
+        // Vérifications de sécurité
         if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0755, true);
+            if (!mkdir($targetDir, 0775, true)) {
+                error_log("Impossible de créer le dossier: " . $targetDir);
+                echo json_encode(['success' => false, 'message' => 'Erreur de configuration du serveur']);
+                exit;
+            }
+        }
+
+        if (!is_writable($targetDir)) {
+            error_log("Dossier non accessible en écriture: " . $targetDir);
+            echo json_encode(['success' => false, 'message' => 'Erreur de permissions sur le serveur']);
+            exit;
         }
 
         $target = $targetDir . $fileName;
 
-        // --- Redimensionnement automatique si trop grand ---
-        $this->resizeImage($file['tmp_name'], $target, 1024, 1024);
+        // Redimensionnement
+        if (!$this->resizeImage($file['tmp_name'], $target, 1024, 1024)) {
+            error_log("Échec du redimensionnement de l'image");
+            echo json_encode(['success' => false, 'message' => 'Erreur lors du traitement de l\'image']);
+            exit;
+        }
+
+        // Sécuriser les permissions du fichier
+        chmod($target, 0644);
 
         // Mise à jour en base
         $userRepo = new UserRepository();
         if (!$userRepo->updatePhoto($userId, $fileName)) {
-            echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour en base']);
+            if (file_exists($target)) {
+                unlink($target);
+            }
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la sauvegarde en base de données']);
             exit;
         }
 
@@ -196,15 +219,23 @@ class UserController extends Controller
         exit;
     }
 
-    /* Redimensionne une image pour ne pas dépasser $maxWidth x $maxHeight*/
     private function resizeImage(string $sourcePath, string $targetPath, int $maxWidth, int $maxHeight): bool
     {
-        [$width, $height, $type] = getimagesize($sourcePath);
+        // Récupère les informations de l'image
+        $imageInfo = getimagesize($sourcePath);
+        if ($imageInfo === false) {
+            error_log("Impossible de lire les informations de l'image: " . $sourcePath);
+            return false;
+        }
 
+        [$width, $height, $type] = $imageInfo;
+
+        // Calcul du ratio pour conserver les proportions
         $ratio = min($maxWidth / $width, $maxHeight / $height, 1);
         $newWidth = (int)($width * $ratio);
         $newHeight = (int)($height * $ratio);
 
+        // Création de l'image source selon le type
         switch ($type) {
             case IMAGETYPE_JPEG:
                 $src = imagecreatefromjpeg($sourcePath);
@@ -215,35 +246,62 @@ class UserController extends Controller
             case IMAGETYPE_GIF:
                 $src = imagecreatefromgif($sourcePath);
                 break;
+            case IMAGETYPE_WEBP:
+                $src = imagecreatefromwebp($sourcePath);
+                break;
             default:
+                error_log("Type d'image non supporté: " . $type);
                 return false;
         }
 
+        if (!$src) {
+            error_log("Impossible de créer l'image source depuis: " . $sourcePath);
+            return false;
+        }
+
+        // Création de l'image de destination
         $dst = imagecreatetruecolor($newWidth, $newHeight);
 
-        if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_GIF) {
+        if (!$dst) {
+            imagedestroy($src);
+            error_log("Impossible de créer l'image de destination");
+            return false;
+        }
+
+        // Préserve la transparence pour PNG et GIF
+        if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_GIF || $type == IMAGETYPE_WEBP) {
             imagecolortransparent($dst, imagecolorallocatealpha($dst, 0, 0, 0, 127));
             imagealphablending($dst, false);
             imagesavealpha($dst, true);
         }
 
+        // Redimensionnement
         imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
 
+        // Sauvegarde selon le type
         $success = false;
         switch ($type) {
             case IMAGETYPE_JPEG:
                 $success = imagejpeg($dst, $targetPath, 90);
                 break;
             case IMAGETYPE_PNG:
-                $success = imagepng($dst, $targetPath);
+                $success = imagepng($dst, $targetPath, 9);
                 break;
             case IMAGETYPE_GIF:
                 $success = imagegif($dst, $targetPath);
                 break;
+            case IMAGETYPE_WEBP:
+                $success = imagewebp($dst, $targetPath, 90);
+                break;
         }
 
+        // Libération de la mémoire
         imagedestroy($src);
         imagedestroy($dst);
+
+        if (!$success) {
+            error_log("Échec de la sauvegarde de l'image redimensionnée: " . $targetPath);
+        }
 
         return $success;
     }
