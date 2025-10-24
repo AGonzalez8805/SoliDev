@@ -26,5 +26,8 @@ RUN chown -R www-data:www-data /var/www/html
 # Copie tout le contenu du projet local vers le dossier public d’Apache
 COPY . /var/www/html
 
+# Copie le fichier ini dans le dossier conf.d de PHP
+COPY uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
 # Expose le port 80 (HTTP) pour que le conteneur soit accessible via ce port
 EXPOSE 80

@@ -21,6 +21,10 @@ class UserController extends Controller
                     break;
                 case 'uploadPhoto':
                     $this->uploadPhoto();
+                    break;
+                case 'resizeImage':
+                    $this->resizeImage('', '', 0, 0);
+                    break;
                 case 'register':
                     $this->register();
                     break;
@@ -130,28 +134,119 @@ class UserController extends Controller
             exit;
         }
 
-        if (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
+        if (!isset($_FILES['photo'])) {
             echo json_encode(['success' => false, 'message' => 'Aucun fichier reçu']);
             exit;
         }
 
         $file = $_FILES['photo'];
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $fileName = "user_{$userId}_" . time() . "." . $ext;
-        $target = __DIR__ . "/../../public/photos/" . $fileName;
 
-        if (!move_uploaded_file($file['tmp_name'], $target)) {
-            echo json_encode(['success' => false, 'message' => 'Impossible de sauvegarder le fichier']);
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            $errors = [
+                UPLOAD_ERR_INI_SIZE => 'Le fichier est trop grand (php.ini).',
+                UPLOAD_ERR_FORM_SIZE => 'Le fichier dépasse la taille maximale du formulaire.',
+                UPLOAD_ERR_PARTIAL => 'Le fichier n’a été que partiellement téléchargé.',
+                UPLOAD_ERR_NO_FILE => 'Aucun fichier téléchargé.',
+                UPLOAD_ERR_NO_TMP_DIR => 'Dossier temporaire manquant.',
+                UPLOAD_ERR_CANT_WRITE => 'Impossible d’écrire le fichier sur le disque.',
+                UPLOAD_ERR_EXTENSION => 'Une extension PHP a stoppé le téléchargement.'
+            ];
+            $msg = $errors[$file['error']] ?? 'Erreur inconnue lors du téléchargement.';
+            echo json_encode(['success' => false, 'message' => $msg]);
             exit;
         }
 
+        // Vérification type MIME
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+
+        if (!str_starts_with($mime, 'image/')) {
+            echo json_encode(['success' => false, 'message' => 'Le fichier doit être une image']);
+            exit;
+        }
+
+        // Limite taille 5 Mo
+        if ($file['size'] > 5 * 1024 * 1024) {
+            echo json_encode(['success' => false, 'message' => 'Image trop lourde (max 5 Mo)']);
+            exit;
+        }
+
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $fileName = "user_{$userId}_" . time() . "." . $ext;
+        $targetDir = __DIR__ . "/../../public/photos/";
+
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        $target = $targetDir . $fileName;
+
+        // --- Redimensionnement automatique si trop grand ---
+        $this->resizeImage($file['tmp_name'], $target, 1024, 1024);
+
+        // Mise à jour en base
         $userRepo = new UserRepository();
-        $userRepo->updatePhoto($userId, $fileName);
+        if (!$userRepo->updatePhoto($userId, $fileName)) {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour en base']);
+            exit;
+        }
 
         echo json_encode(['success' => true, 'photo' => "/photos/$fileName"]);
         exit;
     }
 
+    /* Redimensionne une image pour ne pas dépasser $maxWidth x $maxHeight*/
+    private function resizeImage(string $sourcePath, string $targetPath, int $maxWidth, int $maxHeight): bool
+    {
+        [$width, $height, $type] = getimagesize($sourcePath);
+
+        $ratio = min($maxWidth / $width, $maxHeight / $height, 1);
+        $newWidth = (int)($width * $ratio);
+        $newHeight = (int)($height * $ratio);
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                $src = imagecreatefromjpeg($sourcePath);
+                break;
+            case IMAGETYPE_PNG:
+                $src = imagecreatefrompng($sourcePath);
+                break;
+            case IMAGETYPE_GIF:
+                $src = imagecreatefromgif($sourcePath);
+                break;
+            default:
+                return false;
+        }
+
+        $dst = imagecreatetruecolor($newWidth, $newHeight);
+
+        if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_GIF) {
+            imagecolortransparent($dst, imagecolorallocatealpha($dst, 0, 0, 0, 127));
+            imagealphablending($dst, false);
+            imagesavealpha($dst, true);
+        }
+
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+        $success = false;
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                $success = imagejpeg($dst, $targetPath, 90);
+                break;
+            case IMAGETYPE_PNG:
+                $success = imagepng($dst, $targetPath);
+                break;
+            case IMAGETYPE_GIF:
+                $success = imagegif($dst, $targetPath);
+                break;
+        }
+
+        imagedestroy($src);
+        imagedestroy($dst);
+
+        return $success;
+    }
 
     public function register(): void
     {
