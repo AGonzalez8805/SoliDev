@@ -16,7 +16,7 @@
                     </div>
                 </label>
             </form>
-            <h1><strong><?= htmlspecialchars(ucwords($user->getName())) ?> <?= htmlspecialchars(ucwords($user->getFirstName())) ?></strong></h1>
+            <h1 id="userFullName"><strong><?= htmlspecialchars(ucwords($user->getName())) ?> <?= htmlspecialchars(ucwords($user->getFirstName())) ?></strong></h1>
 
             <div class="social-links">
                 <a href="<?= htmlspecialchars($user->getGithubUrl() ?? '#') ?>" class="github-link <?= $user->getGithubUrl() ? '' : 'disabled' ?>" target="_blank">
@@ -106,45 +106,60 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="firstName" class="form-label">Prénom</label>
-                                            <input type="text" class="form-control" id="firstName" name="firstName" value="<?= htmlspecialchars($user->getFirstName()) ?>" required>
+                                            <input type="text" class="form-control" id="firstName" name="firstName"
+                                                value="<?= htmlspecialchars($user->getFirstName()) ?>" required>
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="lastName" class="form-label">Nom</label>
-                                            <input type="text" class="form-control" id="lastName" name="lastName" value="<?= htmlspecialchars($user->getName()) ?>">
+                                            <label for="name" class="form-label">Nom</label>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                value="<?= htmlspecialchars($user->getName()) ?>" required>
                                         </div>
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($user->getEmail()) ?>">
+                                        <input type="email" class="form-control" id="email" name="email"
+                                            value="<?= htmlspecialchars($user->getEmail()) ?>">
                                     </div>
+
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="githubUrl" class="form-label"><i class="fab fa-github me-2"></i>GitHub</label>
-                                            <input type="url" class="form-control" id="githubUrl" name="githubUrl" value="<?= htmlspecialchars($user->getGithubUrl() ?? '') ?>" placeholder="https://github.com/username">
+                                            <input type="url" class="form-control" id="githubUrl" name="github_url"
+                                                value="<?= htmlspecialchars($user->getGithubUrl() ?? '') ?>" placeholder="https://github.com/username">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="linkedinUrl" class="form-label"><i class="fab fa-linkedin me-2"></i>LinkedIn</label>
-                                            <input type="url" class="form-control" id="linkedinUrl" name="linkedinUrl" value="<?= htmlspecialchars($user->getLinkedinUrl() ?? '') ?>" placeholder="https://linkedin.com/in/username">
+                                            <input type="url" class="form-control" id="linkedinUrl" name="linkedin_url"
+                                                value="<?= htmlspecialchars($user->getLinkedinUrl() ?? '') ?>" placeholder="https://linkedin.com/in/username">
                                         </div>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="websiteUrl" class="form-label"><i class="fas fa-globe me-2"></i>Site web</label>
-                                            <input type="url" class="form-control" id="websiteUrl" name="websiteUrl" value="<?= htmlspecialchars($user->getWebsiteUrl() ?? '') ?>" placeholder="https://monsite.com">
+                                            <input type="url" class="form-control" id="websiteUrl" name="website_url"
+                                                value="<?= htmlspecialchars($user->getWebsiteUrl() ?? '') ?>" placeholder="https://monsite.com">
                                         </div>
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="bio" class="form-label">Bio</label>
-                                        <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="Parlez-nous de vous..."><?= htmlspecialchars($user->getBio() ?? '') ?></textarea>
+                                        <textarea class="form-control" id="bio" name="bio" rows="4"
+                                            placeholder="Parlez-nous de vous..."><?= htmlspecialchars($user->getBio() ?? '') ?></textarea>
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="skills" class="form-label">Compétences (séparées par des virgules)</label>
-                                        <input type="text" class="form-control" id="skills" name="skills" value="<?= htmlspecialchars($user->getSkills() ?? '') ?>" placeholder="JavaScript, PHP, React...">
+                                        <input type="text" class="form-control" id="skills" name="skills"
+                                            value="<?= htmlspecialchars($user->getSkills() ?? '') ?>" placeholder="JavaScript, PHP, React...">
                                     </div>
+
                                     <button type="submit" class="btn btn-primary-custom">
                                         <i class="fas fa-save me-2"></i>Enregistrer les modifications
                                     </button>
                                 </form>
+
                             </div>
                         </div>
 
@@ -192,7 +207,7 @@
                                         <i class="fas fa-plus me-2"></i>
                                         Nouvel article pour le blog
                                     </a>
-                                    <a href="/project" class="btn btn-primary-custom">
+                                    <a href="/?controller=project&action=create" class="btn btn-primary-custom">
                                         <i class="fas fa-project-diagram me-2"></i>
                                         Nouveau projet
                                     </a>
@@ -532,5 +547,17 @@
         </div>
     </div>
 </section>
+<!-- Toast container Bootstrap -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="profileToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage">
+                Profil mis à jour avec succès !
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+        </div>
+    </div>
+</div>
+
 
 <?php require_once APP_ROOT . '/views/footer.php'; ?>

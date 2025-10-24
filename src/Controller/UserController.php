@@ -16,12 +16,11 @@ class UserController extends Controller
                 case 'dashboard':
                     $this->dashboard();
                     break;
-                case 'uploadPhoto':
-                    $this->uploadPhoto();
-                    break;
                 case 'updateProfile':
                     $this->updateProfile();
                     break;
+                case 'uploadPhoto':
+                    $this->uploadPhoto();
                 case 'register':
                     $this->register();
                     break;
@@ -79,73 +78,80 @@ class UserController extends Controller
         ]);
     }
 
+    public function updateProfile(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        // Assure-toi que la session est démarrée
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
+            exit;
+        }
+
+        // Récupère les données POST ou JSON
+        $input = $_POST;
+
+        // Validation email
+        if (isset($input['email']) && !filter_var($input['email'], FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'message' => 'Adresse email invalide']);
+            exit;
+        }
+
+        $userRepo = new UserRepository();
+        $success = $userRepo->updateProfile($userId, $input);
+
+        if ($success) {
+            echo json_encode([
+                'success' => true,
+                'newFirstName' => $input['firstName'] ?? '',
+                'newName' => $input['name'] ?? ''
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour']);
+        }
+
+        exit;
+    }
+
     public function uploadPhoto(): void
     {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /?controller=auth&action=login');
+        header('Content-Type: application/json; charset=utf-8');
+
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
             exit;
         }
 
         if (!isset($_FILES['photo']) || $_FILES['photo']['error'] !== UPLOAD_ERR_OK) {
-            throw new \Exception("Erreur lors de l'upload de la photo");
-        }
-
-        $uploadDir = APP_ROOT . '/public/photos/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-
-        $extension = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
-        $fileName = uniqid('user_' . $_SESSION['user_id'] . '_') . '.' . $extension;
-        $filePath = $uploadDir . $fileName;
-
-        if (!move_uploaded_file($_FILES['photo']['tmp_name'], $filePath)) {
-            throw new \Exception("Impossible d'enregistrer la photo");
-        }
-
-        $userRepo = new UserRepository();
-        $userRepo->updatePhoto($_SESSION['user_id'], $fileName);
-
-        $photoUrl = '/photos/' . $fileName;
-
-        // 🔹 Si c’est AJAX → JSON
-        if (
-            isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
-        ) {
-            header('Content-Type: application/json');
-            echo json_encode([
-                'success' => true,
-                'photo' => $photoUrl
-            ]);
+            echo json_encode(['success' => false, 'message' => 'Aucun fichier reçu']);
             exit;
         }
 
-        // 🔹 Sinon → redirection classique
-        header('Location: /?controller=user&action=dashboard');
-        exit;
-    }
+        $file = $_FILES['photo'];
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $fileName = "user_{$userId}_" . time() . "." . $ext;
+        $target = __DIR__ . "/../../public/photos/" . $fileName;
 
-    public function updateProfile(): void
-    {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /?controller=auth&action=login');
+        if (!move_uploaded_file($file['tmp_name'], $target)) {
+            echo json_encode(['success' => false, 'message' => 'Impossible de sauvegarder le fichier']);
             exit;
         }
 
-        $github = $_POST['githubUrl'] ?? null;
-        $linkedin = $_POST['linkedinUrl'] ?? null;
-        $website = $_POST['websiteUrl'] ?? null;
-        $bio = $_POST['bio'] ?? null;
-        $skills = $_POST['skills'] ?? null;
-
         $userRepo = new UserRepository();
-        $userRepo->updateSocialLinks($_SESSION['user_id'], $github, $linkedin, $website);
-        $userRepo->updateProfileDetails($_SESSION['user_id'], $bio, $skills);
+        $userRepo->updatePhoto($userId, $fileName);
 
-        header('Location: /?controller=user&action=dashboard');
+        echo json_encode(['success' => true, 'photo' => "/photos/$fileName"]);
         exit;
     }
+
 
     public function register(): void
     {

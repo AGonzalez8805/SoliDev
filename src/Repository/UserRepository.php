@@ -82,37 +82,6 @@ class UserRepository
         ]);
     }
 
-    public function updateSocialLinks(int $userId, ?string $github, ?string $linkedin, ?string $website): bool
-    {
-        $sql = "UPDATE users
-            SET github_url = :github, linkedin_url = :linkedin, website_url = :website
-            WHERE users_id = :id";
-
-        $pdo = Mysql::getInstance()->getPDO();
-        $stmt = $pdo->prepare($sql);
-        return $stmt->execute([
-            ':github' => $github,
-            ':linkedin' => $linkedin,
-            ':website' => $website,
-            ':id' => $userId
-        ]);
-    }
-
-    public function updateProfileDetails(int $userId, ?string $bio, ?string $skills): bool
-    {
-        $pdo = Mysql::getInstance()->getPDO();
-        $stmt = $pdo->prepare("
-        UPDATE users
-        SET bio = :bio, skills = :skills
-        WHERE users_id = :id
-        ");
-        return $stmt->execute([
-            ':bio' => $bio,
-            ':skills' => $skills,
-            ':id' => $userId
-        ]);
-    }
-
     public function findRecentByUser(int $userId, int $limit = 5): array
     {
         $pdo = Mysql::getInstance()->getPDO();
@@ -249,9 +218,8 @@ class UserRepository
         $pdo = Mysql::getInstance()->getPDO();
         $stmt = $pdo->prepare("UPDATE users SET name = :name WHERE users_id = :id");
         return $stmt->execute([
-
-            'id' => $userId,
-            'name' => $data['name']
+            ':id' => $userId,
+            ':name' => $data['name']
         ]);
     }
 
@@ -259,11 +227,11 @@ class UserRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
         $stmt = $pdo->prepare("
-        SELECT users_id, name, firstName, email, role, registrationDate
-        FROM users
-        WHERE users_id != :excludeId
-        ORDER BY users_id DESC
-    ");
+            SELECT users_id, name, firstName, email, role, registrationDate
+            FROM users
+            WHERE users_id != :excludeId
+            ORDER BY users_id DESC
+        ");
         $stmt->execute(['excludeId' => $excludeUserId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -277,7 +245,7 @@ class UserRepository
         }
 
         // Requête pour récupérer le nombre d'utilisateurs inscrits par mois
-        $sql = "SELECT MONTH(registrationDate) AS month, COUNT(*) AS count 
+        $sql = "SELECT MONTH(registrationDate) AS month, COUNT(*) AS count
             FROM users
             WHERE YEAR(registrationDate) = YEAR(CURDATE())
             GROUP BY MONTH(registrationDate)";
@@ -291,5 +259,42 @@ class UserRepository
 
         // Retourner un tableau indexé de 0 à 11 pour les 12 mois
         return array_values($months);
+    }
+
+    public function updateProfile(int $userId, array $data): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        // Champs autorisés à être mis à jour
+        $allowedFields = [
+            'name',
+            'firstName',
+            'email',
+            'github_url',
+            'linkedin_url',
+            'website_url',
+            'bio',
+            'skills',
+            'photo'
+        ];
+
+        $setParts = [];
+        $params = [':userId' => $userId];
+
+        foreach ($allowedFields as $field) {
+            if (isset($data[$field])) {
+                $setParts[] = "$field = :$field";
+                $params[":$field"] = $data[$field];
+            }
+        }
+
+        if (empty($setParts)) {
+            return false; // rien à mettre à jour
+        }
+
+        $sql = "UPDATE users SET " . implode(', ', $setParts) . " WHERE users_id = :userId";
+        $stmt = $pdo->prepare($sql);
+
+        return $stmt->execute($params);
     }
 }
