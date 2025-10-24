@@ -118,7 +118,7 @@ class UserRepository
         $pdo = Mysql::getInstance()->getPDO();
         $stmt = $pdo->prepare("
             SELECT type, message, created_at
-            FROM users_activities
+            FROM user_activities
             WHERE users_id = :users_id
             ORDER BY created_at DESC
             LIMIT $limit
@@ -133,7 +133,7 @@ class UserRepository
         $pdo = Mysql::getInstance()->getPDO();
 
         // Messages Forum
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM users_activities WHERE users_id=:users_id AND type='forum_post'");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE users_id=:users_id AND type='forum_post'");
         $stmt->execute(['users_id' => $userId]);
         $forumPosts = (int) $stmt->fetchColumn();
 
@@ -195,7 +195,7 @@ class UserRepository
         $pdo = Mysql::getInstance()->getPDO();
 
         // Messages Forum
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM users_activities WHERE users_id=:users_id AND type='forum_post'");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE users_id=:users_id AND type='forum_post'");
         $stmt->execute(['users_id' => $userId]);
         $forumPosts = (int) $stmt->fetchColumn();
 

@@ -30,7 +30,7 @@ CREATE TABLE blog (
 
 CREATE TABLE user_activities (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    users_id INT NOT NULL,
     type ENUM('snippet','comment','project','like','other') NOT NULL,
     message VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
