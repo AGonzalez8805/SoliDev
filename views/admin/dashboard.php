@@ -60,11 +60,6 @@
                 <input type="text" id="searchUsers" placeholder="Rechercher par nom ou email..." class="search-input">
                 <span class="search-icon">🔍</span>
             </div>
-            <select id="statusFilter" class="filter-select">
-                <option value="">Tous les statuts</option>
-                <option value="active">Actif</option>
-                <option value="inactive">Inactif</option>
-            </select>
         </div>
 
         <div class="table-wrapper">
@@ -86,7 +81,6 @@
                                 <button class="btn-action btn-edit" data-id="<?= $user['users_id'] ?>" title="Modifier">✏️</button>
                                 <button class="btn-action btn-delete" data-id="<?= $user['users_id'] ?>" title="Supprimer">🗑️</button>
                             </td>
-
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
