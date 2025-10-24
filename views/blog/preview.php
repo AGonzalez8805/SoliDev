@@ -1,7 +1,7 @@
 <?php require_once APP_ROOT . '/views/header.php'; ?>
 <div class="container my-5">
     <div id="previewContainer">
-        <h2 id="previewTitle"></h2>
+        <h2 id="previewTitle" aria-live="polite">Titre de l'article</h2>
         <div class="text-muted mb-3">
             Par <strong>Utilisateur</strong> •
             <span id="previewDate"></span> •

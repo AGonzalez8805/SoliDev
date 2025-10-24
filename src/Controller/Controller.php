@@ -37,14 +37,13 @@ class Controller
     }
 
     /* Routeur principal (dispatch vers les autres contrôleurs) */
-    public function route(string $action = 'home'): void
+    public function route(): void
     {
         $this->handleRoute(function () {
             // 🟢 Valeurs par défaut
             $controllerName = $_GET['controller'] ?? 'page';
             $action = $_GET['action'] ?? 'home';
 
-            // ✅ Plus besoin de "if (isset($_GET['controller']))"
             switch ($controllerName) {
                 case 'page':
                     $controller = new PageController($this->mailer);

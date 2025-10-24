@@ -2,7 +2,7 @@ export class MyCharts {
     constructor() {
         // window.chartData doit contenir :
         // { distribution: { blog, projects, snippets }, monthlyUsers: [12,13,15,...], monthlyLabels: ['Jan',...] }
-        this.data = window.chartData || null;
+        this.data = globalThis.chartData ?? null;
         this.init();
     }
 

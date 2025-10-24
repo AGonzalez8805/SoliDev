@@ -65,10 +65,17 @@
         <div class="table-wrapper">
             <table class="users-table">
                 <thead>
+                    <tr>
+                        <th>Nom complet</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Date d'inscription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
                 <tbody id="usersTableBody">
                     <?php foreach ($users as $user): ?>
                         <tr>
-                            <td><input type="checkbox" class="checkbox-row"></td>
                             <td><?= htmlspecialchars($user['name'] . ' ' . $user['firstName']) ?></td>
                             <td><?= htmlspecialchars($user['email']) ?></td>
                             <td>
@@ -84,9 +91,9 @@
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
-                </thead>
             </table>
         </div>
+
 
         <div class="pagination">
             <button class="pagination-btn" id="prevBtn">← Précédent</button>

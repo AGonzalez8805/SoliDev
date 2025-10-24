@@ -106,8 +106,8 @@
                     <p>Rédigez votre article ici...</p>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="form-label">Options</label>
+            <fieldset class="form-group">
+                <legend class="form-label">Options</legend>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="status" id="draft" value="draft" checked>
                     <label class="form-check-label" for="draft">
@@ -120,7 +120,7 @@
                         Publier immédiatement
                     </label>
                 </div>
-            </div>
+            </fieldset>
 
             <!-- Boutons d'action -->
             <div class="action-buttons">

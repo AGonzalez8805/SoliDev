@@ -158,18 +158,29 @@ class UserRepository
         return $stmt->execute([':id' => $userId]);
     }
 
-    // Stats pour un utilisateur
+    // Stats pour un utilisateur (détaillés)
     public function getUserStats(int $userId): array
     {
         $pdo = Mysql::getInstance()->getPDO();
 
+        // Nombre total d'activités (toutes les activités de l'utilisateur)
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM activities WHERE users_id = :users_id");
+        $stmt->execute(['users_id' => $userId]);
+        $totalActivities = (int) $stmt->fetchColumn();
+
+        // Date de la dernière activité si elle existe
+        $stmt = $pdo->prepare("SELECT MAX(created_at) FROM activities WHERE users_id = :users_id");
+        $stmt->execute(['users_id' => $userId]);
+        $lastActivity = $stmt->fetchColumn();
+        $lastActivity = $lastActivity ?: null;
+
         // Messages Forum
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE users_id=:users_id AND type='forum_post'");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE users_id = :users_id AND type = 'forum_post'");
         $stmt->execute(['users_id' => $userId]);
         $forumPosts = (int) $stmt->fetchColumn();
 
         // Posts Blog
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE author_id=:users_id AND status='published'");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE author_id = :users_id AND status = 'published'");
         $stmt->execute(['users_id' => $userId]);
         $blogPosts = (int) $stmt->fetchColumn();
 
@@ -184,6 +195,8 @@ class UserRepository
             'blog_posts' => $blogPosts,
             'projects' => $projects,
             'snippets' => $snippets,
+            'total_activities' => $totalActivities,
+            'last_activity' => $lastActivity,
         ];
     }
 
