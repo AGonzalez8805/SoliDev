@@ -54,6 +54,10 @@
                     </div>
                     <!-- Zone à droite de la barre de navigation (connexion/inscription ou espace perso) -->
                     <div class="ms-auto">
+                        <!-- Bouton toggle Dark/Light Mode -->
+                        <button id="themeToggle" class="btn btn-outline-light me-3" title="Changer le thème">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                        </button>
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <!-- Affichage conditionnel selon le rôle de l'utilisateur -->
                             <?php if ($_SESSION['role'] === 'admin'): ?>

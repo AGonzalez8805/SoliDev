@@ -22,6 +22,21 @@ class UserController extends Controller
                 case 'uploadPhoto':
                     $this->uploadPhoto();
                     break;
+                case 'changePassword':
+                    $this->changePassword();
+                    break;
+                case 'updatePreferences':
+                    $this->updatePreferences();
+                    break;
+                case 'getNotifications':
+                    $this->getNotifications();
+                    break;
+                case 'markNotificationAsRead':
+                    $this->markNotificationAsRead();
+                    break;
+                case 'markAllNotificationsAsRead':
+                    $this->markAllNotificationsAsRead();
+                    break;
                 case 'register':
                     $this->register();
                     break;
@@ -69,13 +84,16 @@ class UserController extends Controller
             ->setSkills($userData['skills'] ?? null);
 
         $activities = $userRepo->findRecentByUser($_SESSION['user_id']);
-
         $stats = $userRepo->getStats($_SESSION['user_id']);
+        $preferences = $userRepo->getUserPreferences($_SESSION['user_id']);
+        $notifications = $userRepo->getNotifications($_SESSION['user_id'], 10);
 
         $this->render('user/dashboard', [
             'user' => $user,
             'activities' => $activities,
-            'stats' => $stats
+            'stats' => $stats,
+            'preferences' => $preferences,
+            'notifications' => $notifications
         ]);
     }
 
@@ -304,6 +322,203 @@ class UserController extends Controller
         }
 
         return $success;
+    }
+
+    public function changePassword(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
+            exit;
+        }
+
+        // Récupérer les données JSON
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        $currentPassword = $input['currentPassword'] ?? '';
+        $newPassword = $input['newPassword'] ?? '';
+        $confirmPassword = $input['confirmPassword'] ?? '';
+
+        // Validation des champs
+        if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
+            echo json_encode(['success' => false, 'message' => 'Tous les champs sont requis']);
+            exit;
+        }
+
+        // Vérifier que les mots de passe correspondent
+        if ($newPassword !== $confirmPassword) {
+            echo json_encode(['success' => false, 'message' => 'Les nouveaux mots de passe ne correspondent pas']);
+            exit;
+        }
+
+        // Validation de la force du mot de passe
+        if (strlen($newPassword) < 8) {
+            echo json_encode(['success' => false, 'message' => 'Le mot de passe doit contenir au moins 8 caractères']);
+            exit;
+        }
+
+        // Vérifier le mot de passe actuel
+        $userRepo = new UserRepository();
+        $user = $userRepo->findById($userId);
+
+        if (!$user || !password_verify($currentPassword, $user['password'])) {
+            echo json_encode(['success' => false, 'message' => 'Le mot de passe actuel est incorrect']);
+            exit;
+        }
+
+        // Hasher le nouveau mot de passe
+        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+
+        // Mettre à jour le mot de passe
+        if ($userRepo->updatePassword($userId, $hashedPassword)) {
+            echo json_encode(['success' => true, 'message' => 'Mot de passe modifié avec succès']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la modification du mot de passe']);
+        }
+
+        exit;
+    }
+
+    public function updatePreferences(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        $allowedPreferences = [
+            'theme',
+            'language',
+            'timezone',
+            'profile_public',
+            'show_online_status',
+            'allow_search_indexing',
+            'notify_comments',
+            'notify_likes',
+            'notify_followers',
+            'notify_newsletter'
+        ];
+
+        $data = [];
+        foreach ($allowedPreferences as $pref) {
+            if (isset($input[$pref])) {
+                $data[$pref] = $input[$pref];
+            }
+        }
+
+        if (empty($data)) {
+            echo json_encode(['success' => false, 'message' => 'Aucune préférence à mettre à jour']);
+            exit;
+        }
+
+        $userRepo = new UserRepository();
+        if ($userRepo->updatePreferences($userId, $data)) {
+            // Mettre à jour la session si le thème change
+            if (isset($data['theme'])) {
+                $_SESSION['theme'] = $data['theme'];
+            }
+            echo json_encode(['success' => true, 'message' => 'Préférences mises à jour']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de la mise à jour']);
+        }
+
+        exit;
+    }
+
+    public function getNotifications(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
+            exit;
+        }
+
+        $userRepo = new UserRepository();
+        $notifications = $userRepo->getNotifications($userId);
+
+        echo json_encode(['success' => true, 'notifications' => $notifications]);
+        exit;
+    }
+
+    public function markNotificationAsRead(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $notificationId = $input['notificationId'] ?? null;
+
+        if (!$notificationId) {
+            echo json_encode(['success' => false, 'message' => 'ID de notification manquant']);
+            exit;
+        }
+
+        $userRepo = new UserRepository();
+        if ($userRepo->markNotificationAsRead($notificationId, $userId)) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur']);
+        }
+
+        exit;
+    }
+
+    public function markAllNotificationsAsRead(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            echo json_encode(['success' => false, 'message' => 'Utilisateur non connecté']);
+            exit;
+        }
+
+        $userRepo = new UserRepository();
+        if ($userRepo->markAllNotificationsAsRead($userId)) {
+            echo json_encode(['success' => true, 'message' => 'Toutes les notifications marquées comme lues']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur']);
+        }
+
+        exit;
     }
 
     public function register(): void

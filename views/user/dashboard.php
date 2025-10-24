@@ -247,21 +247,36 @@
                                 <form id="passwordForm">
                                     <div class="mb-3">
                                         <label for="currentPassword" class="form-label">Mot de passe actuel</label>
-                                        <input type="password" class="form-control" id="currentPassword" required>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                            <button class="btn btn-outline-secondary" type="button" id="toggleCurrentPassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="newPassword" class="form-label">Nouveau mot de passe</label>
-                                        <input type="password" class="form-control" id="newPassword" required>
-                                        <div class="password-strength">
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                            <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="password-strength mt-2">
                                             <div class="password-strength-bar" id="passwordStrengthBar"></div>
                                         </div>
-                                        <small class="text-muted" id="passwordStrengthText">Entrez un nouveau mot de passe</small>
+                                        <small class="text-muted" id="passwordStrengthText">Entrez un nouveau mot de passe (min. 8 caractères)</small>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="confirmPassword" class="form-label">Confirmer le nouveau mot de passe</label>
-                                        <input type="password" class="form-control" id="confirmPassword" required>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                            <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary-custom">
@@ -271,72 +286,8 @@
                                 </form>
                             </div>
                         </div>
-
-                        <div class="col-lg-6">
-                            <div class="form-card">
-                                <h3 class="section-title">
-                                    <i class="fas fa-mobile-alt me-2"></i>
-                                    Authentification à deux facteurs
-                                </h3>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6>Authentification par SMS</h6>
-                                            <small class="text-muted">Recevez un code par SMS pour sécuriser votre compte</small>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="smsAuth">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6>Application d'authentification</h6>
-                                            <small class="text-muted">Utilisez Google Authenticator ou similaire</small>
-                                        </div>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="appAuth">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr style="border-color: rgba(255,255,255,0.2);">
-
-                                <h6>Sessions actives</h6>
-                                <div class="mb-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <i class="fas fa-desktop me-2"></i>
-                                            Windows - Chrome
-                                            <small class="d-block text-muted">Paris, France - Actuellement</small>
-                                        </div>
-                                        <span class="badge-custom">Actuelle</span>
-                                    </div>
-                                </div>
-
-                                <div class="mb-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <i class="fas fa-mobile me-2"></i>
-                                            iPhone - Safari
-                                            <small class="d-block text-muted">Paris, France - Il y a 2 heures</small>
-                                        </div>
-                                        <button class="btn btn-outline-custom btn-sm">Déconnecter</button>
-                                    </div>
-                                </div>
-
-                                <button class="btn btn-danger-custom btn-sm mt-3">
-                                    <i class="fas fa-sign-out-alt me-2"></i>
-                                    Déconnecter toutes les sessions
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
-
                 <!-- Onglet Notifications -->
                 <div class="tab-pane fade" id="notifications-tab">
                     <div class="row">
@@ -347,52 +298,60 @@
                                     Notifications récentes
                                 </h3>
 
-                                <div class="notification-item unread">
-                                    <div class="notification-icon">
-                                        <i class="fas fa-heart"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div><strong>Marie Dupont</strong> a aimé votre snippet "Validation de formulaire"</div>
-                                        <small class="text-muted">Il y a 30 minutes</small>
-                                    </div>
+                                <div id="notificationsList">
+                                    <?php if (!empty($notifications)): ?>
+                                        <?php foreach ($notifications as $notif): ?>
+                                            <div class="notification-item <?= !$notif['is_read'] ? 'unread' : '' ?>" data-notification-id="<?= $notif['id'] ?>">
+                                                <div class="notification-icon">
+                                                    <?php
+                                                    $icon = match ($notif['type']) {
+                                                        'like' => 'fas fa-heart',
+                                                        'comment' => 'fas fa-comment',
+                                                        'featured' => 'fas fa-star',
+                                                        'follow' => 'fas fa-user-plus',
+                                                        default => 'fas fa-bell',
+                                                    };
+                                                    ?>
+                                                    <i class="<?= $icon ?>"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div><?= htmlspecialchars($notif['message']) ?></div>
+                                                    <small class="text-muted">
+                                                        <?php
+                                                        $date = new DateTime($notif['created_at']);
+                                                        $now = new DateTime();
+                                                        $diff = $now->diff($date);
+
+                                                        if ($diff->days > 0) {
+                                                            echo "Il y a " . $diff->days . " jour" . ($diff->days > 1 ? 's' : '');
+                                                        } elseif ($diff->h > 0) {
+                                                            echo "Il y a " . $diff->h . " heure" . ($diff->h > 1 ? 's' : '');
+                                                        } elseif ($diff->i > 0) {
+                                                            echo "Il y a " . $diff->i . " minute" . ($diff->i > 1 ? 's' : '');
+                                                        } else {
+                                                            echo "À l'instant";
+                                                        }
+                                                        ?>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fas fa-bell-slash fa-3x mb-3"></i>
+                                            <p>Aucune notification pour le moment</p>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
 
-                                <div class="notification-item unread">
-                                    <div class="notification-icon">
-                                        <i class="fas fa-comment"></i>
+                                <?php if (!empty($notifications)): ?>
+                                    <div class="text-center mt-3">
+                                        <button class="btn btn-outline-custom" id="markAllAsRead">
+                                            <i class="fas fa-check-double me-2"></i>
+                                            Marquer tout comme lu
+                                        </button>
                                     </div>
-                                    <div class="flex-grow-1">
-                                        <div><strong>Jean Martin</strong> a commenté votre projet "API REST"</div>
-                                        <small class="text-muted">Il y a 1 heure</small>
-                                    </div>
-                                </div>
-
-                                <div class="notification-item">
-                                    <div class="notification-icon">
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div>Votre article a été mis en avant sur la page d'accueil</div>
-                                        <small class="text-muted">Il y a 2 heures</small>
-                                    </div>
-                                </div>
-
-                                <div class="notification-item">
-                                    <div class="notification-icon">
-                                        <i class="fas fa-user-plus"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <div><strong>Sophie Leroy</strong> a commencé à vous suivre</div>
-                                        <small class="text-muted">Il y a 1 jour</small>
-                                    </div>
-                                </div>
-
-                                <div class="text-center mt-3">
-                                    <button class="btn btn-outline-custom">
-                                        <i class="fas fa-check-double me-2"></i>
-                                        Marquer tout comme lu
-                                    </button>
-                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -409,7 +368,11 @@
                                         <small class="text-muted">Sur vos publications</small>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" checked>
+                                        <input class="form-check-input notification-setting"
+                                            type="checkbox"
+                                            id="notifyComments"
+                                            data-preference="notify_comments"
+                                            <?= $preferences['notify_comments'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
@@ -419,7 +382,11 @@
                                         <small class="text-muted">Sur vos publications</small>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" checked>
+                                        <input class="form-check-input notification-setting"
+                                            type="checkbox"
+                                            id="notifyLikes"
+                                            data-preference="notify_likes"
+                                            <?= $preferences['notify_likes'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
@@ -429,7 +396,11 @@
                                         <small class="text-muted">Quand quelqu'un vous suit</small>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" checked>
+                                        <input class="form-check-input notification-setting"
+                                            type="checkbox"
+                                            id="notifyFollowers"
+                                            data-preference="notify_followers"
+                                            <?= $preferences['notify_followers'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
@@ -439,7 +410,11 @@
                                         <small class="text-muted">Résumé de la semaine</small>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox">
+                                        <input class="form-check-input notification-setting"
+                                            type="checkbox"
+                                            id="notifyNewsletter"
+                                            data-preference="notify_newsletter"
+                                            <?= $preferences['notify_newsletter'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
                             </div>
@@ -463,27 +438,42 @@
                                         <small class="text-muted">Interface en mode sombre</small>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="darkMode">
+                                        <input class="form-check-input preference-setting"
+                                            type="checkbox"
+                                            id="darkMode"
+                                            data-preference="theme"
+                                            data-value-on="dark"
+                                            data-value-off="light"
+                                            <?= $preferences['theme'] === 'dark' ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="language" class="form-label">Langue</label>
-                                    <select class="form-control" id="language">
-                                        <option value="fr" selected>Français</option>
-                                        <option value="en">English</option>
-                                        <option value="es">Español</option>
+                                    <select class="form-control preference-setting"
+                                        id="language"
+                                        data-preference="language">
+                                        <option value="fr" <?= $preferences['language'] === 'fr' ? 'selected' : '' ?>>Français</option>
+                                        <option value="en" <?= $preferences['language'] === 'en' ? 'selected' : '' ?>>English</option>
+                                        <option value="es" <?= $preferences['language'] === 'es' ? 'selected' : '' ?>>Español</option>
                                     </select>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="timezone" class="form-label">Fuseau horaire</label>
-                                    <select class="form-control" id="timezone">
-                                        <option value="Europe/Paris" selected>Europe/Paris (GMT+1)</option>
-                                        <option value="America/New_York">America/New_York (GMT-5)</option>
-                                        <option value="Asia/Tokyo">Asia/Tokyo (GMT+9)</option>
+                                    <select class="form-control preference-setting"
+                                        id="timezone"
+                                        data-preference="timezone">
+                                        <option value="Europe/Paris" <?= $preferences['timezone'] === 'Europe/Paris' ? 'selected' : '' ?>>Europe/Paris (GMT+1)</option>
+                                        <option value="America/New_York" <?= $preferences['timezone'] === 'America/New_York' ? 'selected' : '' ?>>America/New_York (GMT-5)</option>
+                                        <option value="Asia/Tokyo" <?= $preferences['timezone'] === 'Asia/Tokyo' ? 'selected' : '' ?>>Asia/Tokyo (GMT+9)</option>
                                     </select>
                                 </div>
+
+                                <button type="button" class="btn btn-primary-custom" id="saveAppearanceSettings">
+                                    <i class="fas fa-save me-2"></i>
+                                    Enregistrer les modifications
+                                </button>
                             </div>
                         </div>
 
@@ -500,7 +490,11 @@
                                         <small class="text-muted">Votre profil est visible par tous</small>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" checked>
+                                        <input class="form-check-input privacy-setting"
+                                            type="checkbox"
+                                            id="profilePublic"
+                                            data-preference="profile_public"
+                                            <?= $preferences['profile_public'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
@@ -510,7 +504,11 @@
                                         <small class="text-muted">Les autres peuvent voir quand vous êtes en ligne</small>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" checked>
+                                        <input class="form-check-input privacy-setting"
+                                            type="checkbox"
+                                            id="showOnlineStatus"
+                                            data-preference="show_online_status"
+                                            <?= $preferences['show_online_status'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
@@ -520,7 +518,11 @@
                                         <small class="text-muted">Permettre l'indexation de votre profil</small>
                                     </div>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" checked>
+                                        <input class="form-check-input privacy-setting"
+                                            type="checkbox"
+                                            id="allowSearchIndexing"
+                                            data-preference="allow_search_indexing"
+                                            <?= $preferences['allow_search_indexing'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
@@ -528,13 +530,13 @@
 
                                 <h6 class="text-danger">Zone de danger</h6>
                                 <div class="mt-3">
-                                    <button class="btn btn-danger-custom">
+                                    <button class="btn btn-danger-custom" id="deactivateAccount">
                                         <i class="fas fa-user-times me-2"></i>
                                         Désactiver le compte
                                     </button>
                                 </div>
                                 <div class="mt-2">
-                                    <button class="btn btn-danger-custom">
+                                    <button class="btn btn-danger-custom" id="deleteAccount">
                                         <i class="fas fa-trash me-2"></i>
                                         Supprimer le compte
                                     </button>
@@ -544,8 +546,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 </section>
 <!-- Toast container Bootstrap -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
