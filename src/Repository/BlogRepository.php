@@ -158,12 +158,12 @@ class BlogRepository
         $pdo = Mysql::getInstance()->getPDO();
 
         $stmt = $pdo->prepare("
-            SELECT id, title, excerpt, category, updated_at 
-            FROM blog 
-            WHERE author_id = :userId AND status = 'draft'
+            SELECT id, title, excerpt, category, updated_at
+            FROM blog
+            WHERE author_id = :usersId AND status = 'draft'
             ORDER BY updated_at DESC
         ");
-        $stmt->execute(['userId' => $userId]);
+        $stmt->execute(['usersId' => $userId]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -118,12 +118,12 @@ class UserRepository
         $pdo = Mysql::getInstance()->getPDO();
         $stmt = $pdo->prepare("
             SELECT type, message, created_at
-            FROM user_activities
-            WHERE user_id = :user_id
+            FROM users_activities
+            WHERE users_id = :users_id
             ORDER BY created_at DESC
             LIMIT $limit
         ");
-        $stmt->bindValue(':user_id', $userId, \PDO::PARAM_INT);
+        $stmt->bindValue(':users_id', $userId, \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -133,13 +133,13 @@ class UserRepository
         $pdo = Mysql::getInstance()->getPDO();
 
         // Messages Forum
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id=:user_id AND type='forum_post'");
-        $stmt->execute(['user_id' => $userId]);
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM users_activities WHERE users_id=:users_id AND type='forum_post'");
+        $stmt->execute(['users_id' => $userId]);
         $forumPosts = (int) $stmt->fetchColumn();
 
         // Posts Blog
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE author_id=:user_id AND status='published'");
-        $stmt->execute(['user_id' => $userId]);
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE author_id=:users_id AND status='published'");
+        $stmt->execute(['users_id' => $userId]);
         $blogPosts = (int) $stmt->fetchColumn();
 
         // Projets Partagés → si tu as une table projects
@@ -159,10 +159,10 @@ class UserRepository
     public function addActivity(int $userId, string $type, string $message): bool
     {
         $pdo = Mysql::getInstance()->getPDO();
-        $sql = "INSERT INTO activities (user_id, type, message, created_at) VALUES (:user_id, :type, :message, NOW())";
+        $sql = "INSERT INTO activities (users_id, type, message, created_at) VALUES (:users_id, :type, :message, NOW())";
         $stmt = $pdo->prepare($sql);
         return $stmt->execute([
-            ':user_id' => $userId,
+            ':users_id' => $userId,
             ':type' => $type,
             ':message' => $message
         ]);
@@ -195,13 +195,13 @@ class UserRepository
         $pdo = Mysql::getInstance()->getPDO();
 
         // Messages Forum
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id=:user_id AND type='forum_post'");
-        $stmt->execute(['user_id' => $userId]);
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM users_activities WHERE users_id=:users_id AND type='forum_post'");
+        $stmt->execute(['users_id' => $userId]);
         $forumPosts = (int) $stmt->fetchColumn();
 
         // Posts Blog
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE author_id=:user_id AND status='published'");
-        $stmt->execute(['user_id' => $userId]);
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM blog WHERE author_id=:users_id AND status='published'");
+        $stmt->execute(['users_id' => $userId]);
         $blogPosts = (int) $stmt->fetchColumn();
 
         // Projets
@@ -234,5 +234,37 @@ class UserRepository
             'projects' => $projectsCount,
             'snippets' => $snippetsCount,
         ];
+    }
+
+    // Suppression & modification d'un utilisateur (AdminDashboard)
+    public function delete(int $userId): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("DELETE FROM users WHERE users_id = :id");
+        return $stmt->execute(['id' => $userId]);
+    }
+
+    public function update(int $userId, array $data): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("UPDATE users SET name = :name WHERE users_id = :id");
+        return $stmt->execute([
+
+            'id' => $userId,
+            'name' => $data['name']
+        ]);
+    }
+
+    public function findAllExcept(int $excludeUserId): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("
+        SELECT users_id, name, firstName, email, role, registrationDate
+        FROM users
+        WHERE users_id != :excludeId
+        ORDER BY users_id DESC
+    ");
+        $stmt->execute(['excludeId' => $excludeUserId]);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

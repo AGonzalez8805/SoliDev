@@ -25,6 +25,12 @@ class UserController extends Controller
                 case 'register':
                     $this->register();
                     break;
+                case 'delete':
+                    $this->delete();
+                    break;
+                case 'update':
+                    $this->update();
+                    break;
 
                 default:
                     throw new \Exception("Action utilisateur inconnue");
@@ -178,5 +184,41 @@ class UserController extends Controller
             header('Location: /?controller=user&action=registrationForm');
         }
         exit;
+    }
+
+    //Suppression et mise à jour d'un utilisateur via AJAX (AdminDashboard)
+    public function delete()
+    {
+        header('Content-Type: application/json');
+        $id = $_GET['id'] ?? null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && $id) {
+            $userRepository = new UserRepository();
+            $success = $userRepository->delete($id);
+
+            echo json_encode(['success' => $success]);
+            exit;
+        }
+
+        echo json_encode(['success' => false, 'message' => 'Requête invalide']);
+    }
+
+    public function update()
+    {
+        header('Content-Type: application/json');
+        $id = $_GET['id'] ?? null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id) {
+            $data = json_decode(file_get_contents('php://input'), true);
+            $name = $data['name'] ?? null;
+
+            $userRepository = new UserRepository();
+            $success = $userRepository->update($id, ['name' => $name]);
+
+            echo json_encode(['success' => $success]);
+            exit;
+        }
+
+        echo json_encode(['success' => false, 'message' => 'Requête invalide']);
     }
 }

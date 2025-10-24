@@ -83,9 +83,10 @@
                             </td>
                             <td><?= date('d/m/Y', strtotime($user['registrationDate'])) ?></td>
                             <td class="actions-cell">
-                                <button class="btn-action btn-edit" title="Modifier">✏️</button>
-                                <button class="btn-action btn-delete" title="Supprimer">🗑️</button>
+                                <button class="btn-action btn-edit" data-id="<?= $user['users_id'] ?>" title="Modifier">✏️</button>
+                                <button class="btn-action btn-delete" data-id="<?= $user['users_id'] ?>" title="Supprimer">🗑️</button>
                             </td>
+
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

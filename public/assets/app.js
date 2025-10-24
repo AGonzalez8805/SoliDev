@@ -6,6 +6,7 @@ import { DashboardUser } from "./Modules/DashboardUser.js";
 import { DashboardDrafts } from "./Modules/DashboardDrafts.js";
 import { CreateProject } from "./Modules/CreateProject.js";
 import { MyCharts } from "./Modules/MyCharts.js";
+import { DashboardAdmin } from "./Modules/DashboardAdmin.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("registrationForm")) {
@@ -38,5 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.getElementById('distributionChart')) {
     new MyCharts();
+  }
+
+  // --- Initialisation automatique ---
+  if (document.getElementById("usersTableBody")) {
+    new DashboardAdmin();
   }
 });

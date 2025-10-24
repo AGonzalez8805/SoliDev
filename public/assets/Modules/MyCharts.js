@@ -1,11 +1,14 @@
-import Chart from 'chart.js/auto';
-
 export class MyCharts {
     constructor() {
         this.init();
     }
 
     init() {
+        // Vérifie que Chart est chargé
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js n’est pas chargé.');
+            return;
+        }
         const distributionCanvas = document.getElementById('distributionChart');
         const userCanvas = document.getElementById('userChart');
 

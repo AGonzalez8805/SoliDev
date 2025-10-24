@@ -34,7 +34,6 @@ class AdminController extends Controller
     {
         // Vérifie que l'utilisateur est connecté ET que son rôle est "admin"
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-            // Redirige vers la page de login s'il n'est pas autorisé
             header('Location: /?controller=auth&action=login');
             exit;
         }
@@ -42,7 +41,7 @@ class AdminController extends Controller
         $userRepo = new UserRepository();
 
         $stats = $userRepo->getGlobalStats(); // Stats globales
-        $users = $userRepo->findAll(); // Liste de tous les utilisateurs
+        $users = $userRepo->findAllExcept($_SESSION['user_id']); // Exclut l'utilisateur connecté
 
         $this->render('admin/dashboard', [
             'stats' => $stats,
