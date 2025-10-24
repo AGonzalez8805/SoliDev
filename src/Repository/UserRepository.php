@@ -267,4 +267,29 @@ class UserRepository
         $stmt->execute(['excludeId' => $excludeUserId]);
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public function getMonthlyRegistrations(): array
+    {
+        $months = [];
+        // Initialisation des 12 mois à 0
+        for ($i = 1; $i <= 12; $i++) {
+            $months[$i] = 0;
+        }
+
+        // Requête pour récupérer le nombre d'utilisateurs inscrits par mois
+        $sql = "SELECT MONTH(registrationDate) AS month, COUNT(*) AS count 
+            FROM users
+            WHERE YEAR(registrationDate) = YEAR(CURDATE())
+            GROUP BY MONTH(registrationDate)";
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->query($sql);
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach ($results as $row) {
+            $months[(int)$row['month']] = (int)$row['count'];
+        }
+
+        // Retourner un tableau indexé de 0 à 11 pour les 12 mois
+        return array_values($months);
+    }
 }

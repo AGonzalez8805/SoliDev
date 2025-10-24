@@ -29,7 +29,17 @@
     integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
     crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script>
+    window.chartData = {
+        distribution: {
+            blog: <?= $stats['blogs'] ?>,
+            projects: <?= $stats['projects'] ?>,
+            snippets: <?= $stats['snippets'] ?>
+        },
+        monthlyUsers: <?= json_encode($monthlyUsers) ?>,
+        monthlyLabels: <?= json_encode($monthlyLabels) ?>
+    };
+</script>
 <!-- Script principal de l'application (JavaScript personnalisé) -->
 <script type="module" src="/assets/app.js"></script>
 

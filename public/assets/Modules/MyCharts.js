@@ -1,24 +1,30 @@
 export class MyCharts {
     constructor() {
+        // window.chartData doit contenir :
+        // { distribution: { blog, projects, snippets }, monthlyUsers: [12,13,15,...], monthlyLabels: ['Jan',...] }
+        this.data = window.chartData || null;
         this.init();
     }
 
     init() {
-        // Vérifie que Chart est chargé
         if (typeof Chart === 'undefined') {
             console.error('Chart.js n’est pas chargé.');
             return;
         }
+
         const distributionCanvas = document.getElementById('distributionChart');
         const userCanvas = document.getElementById('userChart');
 
+        // Graphique Répartition contenus
         if (distributionCanvas) {
             new Chart(distributionCanvas.getContext('2d'), {
                 type: 'doughnut',
                 data: {
                     labels: ['Blog', 'Projets', 'Snippets'],
                     datasets: [{
-                        data: [30, 50, 10],
+                        data: this.data?.distribution
+                            ? [this.data.distribution.blog, this.data.distribution.projects, this.data.distribution.snippets]
+                            : [30, 50, 10], // fallback
                         backgroundColor: ['#d95d30', '#f48703', '#0f1726'],
                         hoverOffset: 6
                     }]
@@ -28,10 +34,7 @@ export class MyCharts {
                     maintainAspectRatio: true,
                     aspectRatio: 1,
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { padding: 15, font: { size: 14 } }
-                        },
+                        legend: { position: 'bottom', labels: { padding: 15, font: { size: 14 } } },
                         title: {
                             display: true,
                             text: 'Répartition des contenus',
@@ -44,14 +47,15 @@ export class MyCharts {
             });
         }
 
+        // Graphique nouvelles inscriptions
         if (userCanvas) {
             new Chart(userCanvas.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    labels: this.data?.monthlyLabels || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                     datasets: [{
                         label: 'Nouvelles inscriptions',
-                        data: [12, 13, 13, 7, 17, 16],
+                        data: this.data?.monthlyUsers || [12, 13, 13, 7, 17, 16],
                         backgroundColor: '#f48703',
                         borderRadius: 8,
                         barPercentage: 0.6,

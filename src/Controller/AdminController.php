@@ -42,10 +42,14 @@ class AdminController extends Controller
 
         $stats = $userRepo->getGlobalStats(); // Stats globales
         $users = $userRepo->findAllExcept($_SESSION['user_id']); // Exclut l'utilisateur connecté
+        $monthlyUsers = $userRepo->getMonthlyRegistrations(); // Tableau [12, 15, 7,...]
+        $monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
         $this->render('admin/dashboard', [
             'stats' => $stats,
-            'users' => $users
+            'users' => $users,
+            'monthlyUsers' => $monthlyUsers,
+            'monthlyLabels' => $monthlyLabels
         ]);
     }
 }
