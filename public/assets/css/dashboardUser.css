@@ -1,6 +1,11 @@
+/* Dashboard User Styles */
 /* ===== HEADER ===== */
 .dashboard-header {
-  background: linear-gradient(135deg, #d95d30, #f48703);
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start),
+    var(--bg-gradient-end)
+  );
   border-radius: 50px 0 50px 0;
   color: white;
   padding: 2% 3%;
@@ -33,7 +38,7 @@
 
 .social-links a.disabled {
   pointer-events: none;
-  opacity: 0.5; /* rend l’icône grisée */
+  opacity: 0.5;
 }
 
 .dashboard-header .social-links a:hover {
@@ -86,29 +91,63 @@
 }
 
 /* ===== TABS ===== */
+.dashboard-tabs {
+  margin-bottom: 2rem;
+}
+
 .dashboard-tabs .nav-tabs {
   margin-bottom: 2rem;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  list-style: none;
+}
+
+.dashboard-tabs .nav-item {
+  margin-bottom: -2px;
 }
 
 .dashboard-tabs .nav-link {
-  color: #0f1726;
+  color: #0f1726 !important;
   font-weight: 600;
   transition: all 0.3s ease;
   border: 1px solid #e0e0e0;
-  border-bottom: none;
+  border-bottom: 2px solid transparent;
   border-radius: 0.5rem 0.5rem 0 0;
   margin-right: 0.25rem;
   background: #fff;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.dashboard-tabs .nav-link:hover {
+  color: #e67e22 !important;
+  border-color: #e0e0e0;
+  background: #f8f9fa;
 }
 
 .dashboard-tabs .nav-link.active {
   color: #bf2c53 !important;
-  border-bottom: 2px solid #fff;
+  background-color: #fff !important;
+  border-color: #e0e0e0 #e0e0e0 #fff !important;
+  border-bottom: 2px solid #fff !important;
+  position: relative;
+  z-index: 1;
 }
 
-.dashboard-tabs .nav-link:hover {
-  color: #e67e22;
+/* ===== TAB CONTENT ===== */
+.tab-content {
+  padding: 1rem 0;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.show.active {
+  display: block;
 }
 
 /* ===== CARDS ===== */
@@ -126,6 +165,13 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #0f1726;
+}
+
 /* ===== STATS ===== */
 .dashboard-content .stats-card {
   padding: 1rem;
@@ -135,6 +181,31 @@
 .dashboard-content .stats-number {
   font-size: 2rem;
   font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #bf2c53;
+}
+
+/* ===== FORM CONTROLS ===== */
+.form-control,
+.form-select {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: #0f1726;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #bf2c53;
+  box-shadow: 0 0 0 0.2rem rgba(191, 44, 83, 0.15);
+  outline: none;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #0f1726;
   margin-bottom: 0.5rem;
 }
 
@@ -146,6 +217,7 @@
   border-radius: 12px;
   font-weight: 600;
   font-size: 16px;
+  padding: 0.75rem 1.5rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -160,6 +232,21 @@
   color: #fff;
 }
 
+.btn-outline-custom {
+  border: 2px solid #bf2c53;
+  color: #bf2c53;
+  background: transparent;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-custom:hover {
+  background: #bf2c53;
+  color: #fff;
+}
+
 /* Danger buttons */
 .btn-danger-custom {
   background: linear-gradient(135deg, #dc3545, #c82333);
@@ -167,6 +254,7 @@
   border: none;
   border-radius: 12px;
   font-weight: 600;
+  padding: 0.75rem 1.5rem;
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -222,10 +310,100 @@
   border: 1px solid #e0e0e0;
 }
 
+.preference-item h6 {
+  margin: 0;
+  font-weight: 600;
+  color: #0f1726;
+}
+
+/* ===== PASSWORD STRENGTH ===== */
+.password-strength {
+  height: 5px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.password-strength-bar {
+  height: 100%;
+  width: 0;
+  transition: all 0.3s ease;
+  background: #dc3545;
+}
+
+.password-strength-bar.weak {
+  width: 33%;
+  background: #dc3545;
+}
+
+.password-strength-bar.medium {
+  width: 66%;
+  background: #ffc107;
+}
+
+.password-strength-bar.strong {
+  width: 100%;
+  background: #28a745;
+}
+
+/* ===== SWITCHES (Bootstrap Fix) ===== */
+/* Cibler spécifiquement les switches dans le dashboard */
+.dashboard-content .form-switch .form-check-input,
+.preference-item .form-check-input {
+  width: 3em !important;
+  height: 1.5em !important;
+  background-color: #e0e0e0 !important;
+  border: none !important;
+  cursor: pointer;
+  border-radius: 2em !important;
+  position: relative;
+  transition: background-color 0.3s ease;
+  opacity: 1 !important;
+  margin: 0 !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e") !important;
+  background-position: left center !important;
+  background-size: contain !important;
+}
+
+.dashboard-content .form-switch .form-check-input:checked,
+.preference-item .form-check-input:checked {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  background-position: right center !important;
+}
+
+.dashboard-content .form-switch .form-check-input:focus,
+.preference-item .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+  border-color: #86b7fe !important;
+  outline: none !important;
+}
+
+.dashboard-content .form-switch .form-check-input:hover,
+.preference-item .form-check-input:hover {
+  opacity: 0.9 !important;
+}
+
+/* Réinitialiser les styles des labels pour les switches */
+.preference-item .form-check-label {
+  padding-left: 0 !important;
+  cursor: default !important;
+}
+
+.preference-item .form-check-label::before,
+.preference-item .form-check-label::after {
+  display: none !important;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .dashboard-header {
     padding: 1.5rem;
+    border-radius: 30px 0 30px 0;
+  }
+
+  .dashboard-header h1 {
+    font-size: 2rem;
   }
 
   .dashboard-header .profile-avatar {
@@ -236,5 +414,26 @@
 
   .dashboard-tabs .nav-link {
     font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .stats-card {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-tabs .nav-tabs {
+    flex-direction: column;
+  }
+
+  .dashboard-tabs .nav-item {
+    width: 100%;
+  }
+
+  .dashboard-tabs .nav-link {
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    margin-right: 0;
   }
 }

@@ -526,7 +526,7 @@
                                     </div>
                                 </div>
 
-                                <hr style="border-color: rgba(255,255,255,0.2);">
+                                <hr>
 
                                 <h6 class="text-danger">Zone de danger</h6>
                                 <div class="mt-3">
