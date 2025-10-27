@@ -70,7 +70,7 @@
                         <a class="nav-link <?= $currentPage === 'snippets' ? 'active-link' : '' ?>" href="/?controller=snippets&action=snippets">Snippets</a>
                     </div>
                     <!-- Zone à droite de la barre de navigation (connexion/inscription ou espace perso) -->
-                    <div class="ms-auto">
+                    <div class="ms-auto d-flex align-items-center">
                         <!-- Bouton toggle Dark/Light Mode -->
                         <button id="themeToggle" class="btn btn-outline-light me-3" title="Changer le thème">
                             <i class="fas fa-moon" id="themeIcon"></i>

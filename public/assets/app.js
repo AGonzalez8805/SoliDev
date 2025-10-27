@@ -10,6 +10,7 @@ import { DashboardAdmin } from "./Modules/DashboardAdmin.js";
 import { ThemeToggle } from "./Modules/ThemeToggle.js";
 import { CreateSnippet } from "./Modules/CreateSnippet.js";
 import { SnippetFavorites } from "./Modules/SnippetFavorites.js";
+import { HomePage } from "./Modules/HomePage.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // Initialiser le thème toggle (disponible sur toutes les pages)
@@ -68,5 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const favButtons = document.querySelectorAll(".favorite-btn");
   if (favButtons.length > 0) {
     new SnippetFavorites(favButtons);
+  }
+
+  if (document.querySelector(".hero-section")) {
+    new HomePage();
   }
 });

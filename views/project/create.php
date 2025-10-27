@@ -39,7 +39,7 @@
                         </div>
                     <?php endif; ?>
 
-                    <form method="POST" action="/?controller=projects&action=store" enctype="multipart/form-data" class="project-form">
+                    <form method="POST" action="/?controller=project&action=store" enctype="multipart/form-data" class="project-form">
 
                         <!-- Informations principales -->
                         <div class="form-section">
@@ -291,7 +291,7 @@
 
                         <!-- Boutons d'action -->
                         <div class="form-actions">
-                            <a href="/?controller=projects&action=list" class="btn-cancel">
+                            <a href="/?controller=project&action=project" class="btn-cancel">
                                 <i class="fas fa-times me-2"></i>
                                 Annuler
                             </a>

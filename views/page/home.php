@@ -68,7 +68,7 @@
                     <p class="feature-description">
                         Présentez vos créations, découvrez des projets inspirants et collaborez avec d'autres développeurs.
                     </p>
-                    <a href="/project?action=" class="feature-link">
+                    <a href="/?controller=project&action=project" class="feature-link">
                         Voir les projets <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -82,7 +82,7 @@
                     <p class="feature-description">
                         Partagez et trouvez des extraits de code réutilisables pour optimiser votre productivité au quotidien.
                     </p>
-                    <a href="/snippets?action=" class="feature-link">
+                    <a href="/?controller=snippets&action=snippets" class="feature-link">
                         Parcourir les snippets <i class="fas fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -97,25 +97,25 @@
         <div class="row">
             <div class="col-md-3 col-6">
                 <div class="stat-item">
-                    <span class="stat-number">1,247</span>
+                    <span class="stat-number" data-target="<?= $stats['users'] ?>">0</span>
                     <span class="stat-label">Membres actifs</span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="stat-item">
-                    <span class="stat-number">3,891</span>
+                    <span class="stat-number" data-target="<?= $stats['blogs'] ?>">0</span>
                     <span class="stat-label">Messages postés</span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="stat-item">
-                    <span class="stat-number">156</span>
+                    <span class="stat-number" data-target="<?= $stats['projects'] ?>">0</span>
                     <span class="stat-label">Articles publiés</span>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="stat-item">
-                    <span class="stat-number">892</span>
+                    <span class="stat-number" data-target="<?= $stats['snippets'] ?>">0</span>
                     <span class="stat-label">Snippets partagés</span>
                 </div>
             </div>

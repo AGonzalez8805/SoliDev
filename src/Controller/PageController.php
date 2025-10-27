@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Config\Mailer;
+use App\Repository\UserRepository;
 
 class PageController extends Controller
 {
@@ -28,6 +29,7 @@ class PageController extends Controller
                     // Affiche la page de contact
                     $this->contact();
                     break;
+
                 case 'sendContact':
                     $this->sendContact();
                     break;
@@ -50,9 +52,14 @@ class PageController extends Controller
     /**
      * Affiche la page d'accueil
      */
-    protected function home()
+    public function home(): void
     {
-        $this->render('page/home');
+        $userRepo = new UserRepository();
+        $stats = $userRepo->getGlobalStats(); // récupère users, blogs, projects, snippets
+
+        $this->render('page/home', [
+            'stats' => $stats
+        ]);
     }
 
     /**

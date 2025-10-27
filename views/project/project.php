@@ -107,7 +107,7 @@
                             <div class="project-content">
                                 <!-- Titre -->
                                 <h2 class="project-title">
-                                    <a href="/?controller=projects&action=show&id=<?= $project->getId() ?>">
+                                    <a href="/?controller=project&action=show&id=<?= $project->getId() ?>">
                                         <?= htmlspecialchars($project->getTitle()) ?>
                                     </a>
                                 </h2>
@@ -145,12 +145,12 @@
 
                                 <!-- Actions -->
                                 <div class="project-actions">
-                                    <a href="/?controller=projects&action=show&id=<?= $project->getId() ?>" class="btn-view-project">
+                                    <a href="/?controller=project&action=view&id=<?= $project->getId() ?>" class="btn-view-project">
                                         Voir le projet
                                         <i class="fas fa-arrow-right ms-2"></i>
                                     </a>
                                     <?php if ($project->getStatus() === 'seeking'): ?>
-                                        <a href="/?controller=projects&action=join&id=<?= $project->getId() ?>" class="btn-join-project">
+                                        <a href="/?controller=project&action=join&id=<?= $project->getId() ?>" class="btn-join-project">
                                             <i class="fas fa-handshake me-1"></i>
                                             Rejoindre
                                         </a>
@@ -182,7 +182,7 @@
                 <ul class="pagination-list">
                     <!-- Page précédente -->
                     <li>
-                        <a href="/?controller=projects&action=list&page=<?= max(1, $page - 1) ?>&status=<?= urlencode($status ?? '') ?>&tech=<?= urlencode($tech ?? '') ?>&q=<?= urlencode($search ?? '') ?>"
+                        <a href="/?controller=&action=list&page=<?= max(1, $page - 1) ?>&status=<?= urlencode($status ?? '') ?>&tech=<?= urlencode($tech ?? '') ?>&q=<?= urlencode($search ?? '') ?>"
                             class="page-btn <?= $page <= 1 ? 'disabled' : '' ?>">
                             <i class="fas fa-chevron-left"></i>
                         </a>
@@ -191,7 +191,7 @@
                     <!-- Pages numérotées -->
                     <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                         <li>
-                            <a href="/?controller=projects&action=list&page=<?= $i ?>&status=<?= urlencode($status ?? '') ?>&tech=<?= urlencode($tech ?? '') ?>&q=<?= urlencode($search ?? '') ?>"
+                            <a href="/?controller=project&action=list&page=<?= $i ?>&status=<?= urlencode($status ?? '') ?>&tech=<?= urlencode($tech ?? '') ?>&q=<?= urlencode($search ?? '') ?>"
                                 class="page-btn <?= $i == $page ? 'active' : '' ?>">
                                 <?= $i ?>
                             </a>
@@ -200,7 +200,7 @@
 
                     <!-- Page suivante -->
                     <li>
-                        <a href="/?controller=projects&action=list&page=<?= min($totalPages, $page + 1) ?>&status=<?= urlencode($status ?? '') ?>&tech=<?= urlencode($tech ?? '') ?>&q=<?= urlencode($search ?? '') ?>"
+                        <a href="/?controller=project&action=list&page=<?= min($totalPages, $page + 1) ?>&status=<?= urlencode($status ?? '') ?>&tech=<?= urlencode($tech ?? '') ?>&q=<?= urlencode($search ?? '') ?>"
                             class="page-btn <?= $page >= $totalPages ? 'disabled' : '' ?>">
                             <i class="fas fa-chevron-right"></i>
                         </a>

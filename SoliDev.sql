@@ -70,6 +70,45 @@ CREATE TABLE favorites (
     FOREIGN KEY (snippet_id) REFERENCES snippets(id) ON DELETE CASCADE
 );
 
+CREATE TABLE projects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    short_description VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL,
+    status ENUM('planning','active','seeking','completed') DEFAULT 'planning',
+    technologies JSON DEFAULT NULL,
+    team_size ENUM('solo','small','medium','large') DEFAULT NULL,
+    looking_for TEXT DEFAULT NULL,
+    repository_url VARCHAR(255) DEFAULT NULL,
+    demo_url VARCHAR(255) DEFAULT NULL,
+    documentation_url VARCHAR(255) DEFAULT NULL,
+    cover_image VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (owner_id) REFERENCES users(users_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Index utiles
+CREATE INDEX idx_owner ON projects(owner_id);
+CREATE INDEX idx_status ON projects(status);
+CREATE INDEX idx_created ON projects(created_at);
+
+CREATE TABLE project_collaborators (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    project_id INT NOT NULL,
+    users_id INT NOT NULL,
+    role VARCHAR(50) DEFAULT NULL,
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Index pour accélérer les requêtes de comptage
+CREATE INDEX idx_project ON project_collaborators(project_id);
+CREATE INDEX idx_user ON project_collaborators(users_id);
+
+
 ALTER TABLE users ADD COLUMN photo VARCHAR(255) NULL AFTER email;
 ALTER TABLE users
 ADD COLUMN github_url VARCHAR(255) DEFAULT NULL,
@@ -85,20 +124,18 @@ ADD COLUMN email_verification_token VARCHAR(255) DEFAULT NULL,
 ADD COLUMN is_email_verified TINYINT(1) DEFAULT 0;
 
 
--- 1. Corriger la table user_activities (problème de clé étrangère)
--- Supprimer l'ancienne contrainte incorrecte
 ALTER TABLE user_activities DROP FOREIGN KEY user_activities_ibfk_1;
 
--- Modifier le type ENUM pour ajouter les nouvelles valeurs
+
 ALTER TABLE user_activities 
 MODIFY COLUMN type ENUM('snippet','comment','project','blog','forum_post','like','follow','other') NOT NULL;
 
--- Recréer la contrainte avec le bon nom de colonne
+
 ALTER TABLE user_activities 
 ADD CONSTRAINT user_activities_ibfk_1 
 FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE;
 
--- 2. Créer la table notifications
+
 CREATE TABLE IF NOT EXISTS notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -112,7 +149,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     INDEX idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 3. Ajouter les colonnes de préférences à la table users
+
 ALTER TABLE users 
 ADD COLUMN theme VARCHAR(10) DEFAULT 'light',
 ADD COLUMN language VARCHAR(5) DEFAULT 'fr',
@@ -125,7 +162,7 @@ ADD COLUMN notify_likes BOOLEAN DEFAULT TRUE,
 ADD COLUMN notify_followers BOOLEAN DEFAULT TRUE,
 ADD COLUMN notify_newsletter BOOLEAN DEFAULT FALSE;
 
--- 4. Ajouter des index pour améliorer les performances
+
 ALTER TABLE users 
 ADD INDEX idx_email (email),
 ADD INDEX idx_role (role),

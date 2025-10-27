@@ -204,12 +204,19 @@ class UserRepository
     public function getGlobalStats(): array
     {
         $pdo = Mysql::getInstance()->getPDO();
-        $stmtUsers = $pdo->query("SELECT COUNT(*) as count FROM users");
-        $usersCount = (int) $stmtUsers->fetch()['count'];
-        $stmtBlogs = $pdo->query("SELECT COUNT(*) as count FROM blog");
-        $blogsCount = (int) $stmtBlogs->fetch()['count'];
-        $projectsCount = 0;
-        $snippetsCount = 0;
+
+        // Users
+        $usersCount = (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+
+        // Blogs
+        $blogsCount = (int) $pdo->query("SELECT COUNT(*) FROM blog WHERE status = 'published'")->fetchColumn();
+
+        // Projects
+        $projectsCount = (int) $pdo->query("SELECT COUNT(*) FROM projects")->fetchColumn();
+
+        // Snippets
+        $snippetsCount = (int) $pdo->query("SELECT COUNT(*) FROM snippets")->fetchColumn();
+
         return [
             'users' => $usersCount,
             'blogs' => $blogsCount,
@@ -217,6 +224,7 @@ class UserRepository
             'snippets' => $snippetsCount,
         ];
     }
+
 
     // Suppression & modification d'un utilisateur (AdminDashboard)
     public function delete(int $userId): bool
