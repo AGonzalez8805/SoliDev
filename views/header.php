@@ -22,9 +22,24 @@
     <!-- Importation de Bootstrap 5 via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <!-- Lien vers la feuille de style personnalisée -->
+    <link rel="stylesheet" href="/assets/css/theme.css">
     <link rel="stylesheet" href="/assets/css/style.css">
     <!-- Titre de la page affiché dans l'onglet du navigateur -->
     <title>SoliDev - Votre Solution Web</title>
+    <!-- Chargement du thème utilisateur -->
+    <script>
+        // Charger le thème depuis la session PHP ou localStorage
+        <?php if (isset($_SESSION['user_id']) && isset($_SESSION['theme'])): ?>
+            localStorage.setItem('theme', '<?= $_SESSION['theme'] ?>');
+        <?php endif; ?>
+
+        // Appliquer le thème immédiatement pour éviter le flash
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add('dark-theme');
+            document.body.classList.add('dark-theme');
+        }
+    </script>
 </head>
 
 <body>
@@ -54,6 +69,10 @@
                     </div>
                     <!-- Zone à droite de la barre de navigation (connexion/inscription ou espace perso) -->
                     <div class="ms-auto">
+                        <!-- Bouton toggle Dark/Light Mode -->
+                        <button id="themeToggle" class="btn btn-outline-light me-3" title="Changer le thème">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                        </button>
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <!-- Affichage conditionnel selon le rôle de l'utilisateur -->
                             <?php if ($_SESSION['role'] === 'admin'): ?>

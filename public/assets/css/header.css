@@ -11,63 +11,162 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 main {
   flex: 1;
 }
 
-/* Navbar */
+/* ==========================================
+   NAVBAR
+   ========================================== */
+
 .navbar {
-  background-color: #d95d30;
+  background-color: var(--bg-navbar) !important;
   font-family: "Roboto", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
   font-size: 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
 }
 
 /* Style des liens dans la navbar */
 .nav-link {
-  color: #0f1726 !important;
+  color: var(--text-white) !important;
   display: inline-block;
-  transition: color 0.3s ease, border-bottom 0.3s ease;
+  transition: color 0.3s ease, border-bottom 0.3s ease, opacity 0.3s ease;
   border-bottom: 2px solid transparent;
+  opacity: 0.9;
 }
 
-nav a:hover {
-  color: #ffffff;
-  border-bottom: 2px solid #ffffff;
+.nav-link:hover {
+  color: var(--text-white) !important;
+  border-bottom: 2px solid var(--text-white);
+  opacity: 1;
 }
 
 .nav-link.active-link {
-  border-bottom: 2px solid #ffffff;
+  border-bottom: 2px solid var(--text-white);
+  opacity: 1;
 }
 
-/* les boutons de la navbar */
+/* ==========================================
+   BOUTONS DE LA NAVBAR
+   ========================================== */
+
+/* Bouton d'inscription */
 .btn-registration {
-  background: linear-gradient(135deg, #f48703, #f2a444);
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
   border: none;
-  color: #0f1726;
+  color: var(--text-white);
   font-weight: bold;
-  transition: 0.3s ease;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
 }
 
 .btn-registration:hover {
   background: transparent;
-  border: 2px solid #0f1726;
-  color: #0f1726;
+  border: 2px solid var(--text-white);
+  color: var(--text-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Bouton de connexion */
 .btn-login {
-  border: 2px solid #0f1726;
-  color: #0f1726;
+  border: 2px solid var(--text-white);
+  background: transparent;
+  color: var(--text-white);
   font-weight: bold;
-  transition: 0.3s ease;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
 }
 
 .btn-login:hover {
-  background-color: #f2a444;
-  color: #0f1726;
+  background: linear-gradient(
+    135deg,
+    var(--accent-primary),
+    var(--accent-secondary)
+  );
+  border-color: var(--accent-primary);
+  color: var(--text-white);
   transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Bouton toggle thème */
+#themeToggle {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: var(--text-white);
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#themeToggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+#themeToggle i {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+#themeToggle:hover i {
+  transform: rotate(20deg);
+}
+
+body.dark-theme #themeToggle {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================
+   RESPONSIVE NAVBAR
+   ========================================== */
+
+@media (max-width: 992px) {
+  .navbar {
+    font-size: 1rem;
+  }
+
+  .navbar-collapse {
+    background-color: var(--bg-navbar);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .nav-link {
+    padding: 0.75rem 1rem;
+  }
+
+  .btn-registration,
+  .btn-login,
+  #themeToggle {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    font-size: 0.95rem;
+  }
 }

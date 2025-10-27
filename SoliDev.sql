@@ -52,7 +52,102 @@ ADD COLUMN email_verification_token VARCHAR(255) DEFAULT NULL,
 ADD COLUMN is_email_verified TINYINT(1) DEFAULT 0;
 
 
+-- 1. Corriger la table user_activities (problème de clé étrangère)
+-- Supprimer l'ancienne contrainte incorrecte
+ALTER TABLE user_activities DROP FOREIGN KEY user_activities_ibfk_1;
 
+-- Modifier le type ENUM pour ajouter les nouvelles valeurs
+ALTER TABLE user_activities 
+MODIFY COLUMN type ENUM('snippet','comment','project','blog','forum_post','like','follow','other') NOT NULL;
+
+-- Recréer la contrainte avec le bon nom de colonne
+ALTER TABLE user_activities 
+ADD CONSTRAINT user_activities_ibfk_1 
+FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE;
+
+-- 2. Créer la table notifications
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    message TEXT NOT NULL,
+    link VARCHAR(255) DEFAULT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    INDEX idx_user_read (user_id, is_read),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 3. Ajouter les colonnes de préférences à la table users
+ALTER TABLE users 
+ADD COLUMN theme VARCHAR(10) DEFAULT 'light',
+ADD COLUMN language VARCHAR(5) DEFAULT 'fr',
+ADD COLUMN timezone VARCHAR(50) DEFAULT 'Europe/Paris',
+ADD COLUMN profile_public BOOLEAN DEFAULT TRUE,
+ADD COLUMN show_online_status BOOLEAN DEFAULT TRUE,
+ADD COLUMN allow_search_indexing BOOLEAN DEFAULT TRUE,
+ADD COLUMN notify_comments BOOLEAN DEFAULT TRUE,
+ADD COLUMN notify_likes BOOLEAN DEFAULT TRUE,
+ADD COLUMN notify_followers BOOLEAN DEFAULT TRUE,
+ADD COLUMN notify_newsletter BOOLEAN DEFAULT FALSE;
+
+-- 4. Ajouter des index pour améliorer les performances
+ALTER TABLE users 
+ADD INDEX idx_email (email),
+ADD INDEX idx_role (role),
+ADD INDEX idx_theme (theme);
+
+ALTER TABLE blog 
+ADD INDEX idx_status (status),
+ADD INDEX idx_category (category),
+ADD INDEX idx_featured (featured),
+ADD INDEX idx_created (created_at);
+
+ALTER TABLE user_activities 
+ADD INDEX idx_user (users_id),
+ADD INDEX idx_type (type),
+ADD INDEX idx_created (created_at);
+
+
+SELECT 'Structure de user_activities' AS Info;
+DESCRIBE user_activities;
+
+SELECT 'Structure de notifications' AS Info;
+DESCRIBE notifications;
+
+SELECT 'Colonnes ajoutées à users' AS Info;
+SELECT 
+    COLUMN_NAME, 
+    COLUMN_TYPE, 
+    COLUMN_DEFAULT 
+FROM INFORMATION_SCHEMA.COLUMNS 
+WHERE TABLE_SCHEMA = 'SoliDev' 
+    AND TABLE_NAME = 'users' 
+    AND COLUMN_NAME IN (
+        'theme', 'language', 'timezone', 
+        'profile_public', 'show_online_status', 'allow_search_indexing',
+        'notify_comments', 'notify_likes', 'notify_followers', 'notify_newsletter'
+    );
+
+SELECT 'Clés étrangères' AS Info;
+SELECT 
+    TABLE_NAME,
+    COLUMN_NAME,
+    CONSTRAINT_NAME,
+    REFERENCED_TABLE_NAME,
+    REFERENCED_COLUMN_NAME
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE TABLE_SCHEMA = 'SoliDev'
+    AND REFERENCED_TABLE_NAME IS NOT NULL;
+
+-- Insertion de données de test dans la table notifications
+INSERT INTO notifications (user_id, type, message, link, is_read, created_at) 
+VALUES
+(4, 'like', 'Marie Dupont a aimé votre snippet "Validation de formulaire"', '/snippets/123', FALSE, DATE_SUB(NOW(), INTERVAL 30 MINUTE)),
+(4, 'comment', 'Jean Martin a commenté votre projet "API REST"', '/projects/456', FALSE, DATE_SUB(NOW(), INTERVAL 1 HOUR)),
+(4, 'featured', 'Votre article a été mis en avant sur la page d\'accueil', '/blog/789', TRUE, DATE_SUB(NOW(), INTERVAL 2 HOUR)),
+(4, 'follow', 'Sophie Leroy a commencé à vous suivre', '/users/42', TRUE, DATE_SUB(NOW(), INTERVAL 1 DAY));
 
 
 

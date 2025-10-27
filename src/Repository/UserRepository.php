@@ -310,4 +310,92 @@ class UserRepository
 
         return $stmt->execute($params);
     }
+
+    public function updatePassword(int $userId, string $hashedPassword): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("UPDATE users SET password = :password WHERE users_id = :id");
+        return $stmt->execute([
+            ':password' => $hashedPassword,
+            ':id' => $userId
+        ]);
+    }
+
+    public function updatePreferences(int $userId, array $data): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        $setParts = [];
+        $params = [':userId' => $userId];
+
+        foreach ($data as $key => $value) {
+            $setParts[] = "$key = :$key";
+            $params[":$key"] = $value;
+        }
+
+        if (empty($setParts)) {
+            return false;
+        }
+
+        $sql = "UPDATE users SET " . implode(', ', $setParts) . " WHERE users_id = :userId";
+        $stmt = $pdo->prepare($sql);
+
+        return $stmt->execute($params);
+    }
+
+    public function getNotifications(int $userId, int $limit = 50): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("
+        SELECT id, type, message, link, is_read, created_at
+        FROM notifications
+        WHERE user_id = :userId
+        ORDER BY created_at DESC
+        LIMIT :limit
+    ");
+        $stmt->bindValue(':userId', $userId, \PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function markNotificationAsRead(int $notificationId, int $userId): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("
+        UPDATE notifications 
+        SET is_read = TRUE 
+        WHERE id = :id AND user_id = :userId
+    ");
+        return $stmt->execute([
+            ':id' => $notificationId,
+            ':userId' => $userId
+        ]);
+    }
+
+    public function markAllNotificationsAsRead(int $userId): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("
+        UPDATE notifications 
+        SET is_read = TRUE 
+        WHERE user_id = :userId AND is_read = FALSE
+    ");
+        return $stmt->execute([':userId' => $userId]);
+    }
+
+    public function getUserPreferences(int $userId): ?array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+        $stmt = $pdo->prepare("
+        SELECT theme, language, timezone,
+               profile_public, show_online_status, allow_search_indexing,
+               notify_comments, notify_likes, notify_followers, notify_newsletter
+        FROM users
+        WHERE users_id = :id
+    ");
+        $stmt->execute(['id' => $userId]);
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result ?: null;
+    }
 }

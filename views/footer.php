@@ -1,8 +1,8 @@
 </main>
 <!-- === Pied de page (footer) du site === -->
-<footer style="background-color: #D95D30;">
+<footer class="footer">
     <!-- Menu de navigation secondaire centré dans le footer -->
-    <ul class="nav justify-content-center border-bottom border-black pb-3 mb-3">
+    <ul class="justify-content-center border-bottom border-black pb-3 mb-3">
         <li class="nav-item">
             <!-- Lien vers la page Mentions légales -->
             <a href="#" class="nav-link px-2 text-body-secondary">Mentions Légales</a>
@@ -21,7 +21,7 @@
         </li>
     </ul>
     <!-- Texte de copyright centré -->
-    <p class="text-center text-body-secondary">© 2025 SoliDev. Tous droits réservés.</p>
+    <p class="footer-copyright">© 2025 SoliDev. Tous droits réservés.</p>
 </footer>
 <!-- === Scripts JavaScript === -->
 <!-- Script Bootstrap (fonctionnalités comme les menus déroulants, le responsive, etc.) -->
