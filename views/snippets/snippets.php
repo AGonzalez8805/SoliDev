@@ -93,10 +93,12 @@
                                     <?= htmlspecialchars($snippet->getLanguage()) ?>
                                 </div>
                                 <div class="snippet-actions">
-                                    <button class="action-btn" title="Copier">
+                                    <button class="action-btn" title="Favorie">
                                         <i class="fas fa-copy"></i>
                                     </button>
-                                    <button class="action-btn favorite-btn" title="Ajouter aux favoris">
+                                    <button class="action-btn favorite-btn"
+                                        data-snippet-id="<?= $snippet->getId() ?>"
+                                        title="Ajouter aux favoris">
                                         <i class="far fa-heart"></i>
                                     </button>
                                 </div>

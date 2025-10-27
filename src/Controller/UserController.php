@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use App\Models\User;
 use App\Service\UserService;
 use App\Config\Mailer;
+use App\Repository\FavoriteRepository;
 
 class UserController extends Controller
 {
@@ -88,13 +89,17 @@ class UserController extends Controller
         $preferences = $userRepo->getUserPreferences($_SESSION['user_id']);
         $_SESSION['theme'] = $preferences['theme'] ?? 'light';
         $notifications = $userRepo->getNotifications($_SESSION['user_id'], 10);
+        $favoriteRepository = new FavoriteRepository();
+        $favorites = $favoriteRepository->getFavoritesByUser($_SESSION['user_id']);
+
 
         $this->render('user/dashboard', [
             'user' => $user,
             'activities' => $activities,
             'stats' => $stats,
             'preferences' => $preferences,
-            'notifications' => $notifications
+            'notifications' => $notifications,
+            'favorites' => $favorites
         ]);
     }
 

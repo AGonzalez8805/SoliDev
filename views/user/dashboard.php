@@ -88,6 +88,12 @@
                             <i class="fas fa-cog me-2"></i>Préférences
                         </button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#favorites-tab" type="button">
+                            <i class="fas fa-heart me-2"></i>Favoris
+                        </button>
+                    </li>
+
                 </ul>
             </div>
 
@@ -234,7 +240,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Onglet Sécurité -->
                 <div class="tab-pane fade" id="security-tab">
                     <div class="row">
@@ -421,7 +426,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Onglet Préférences -->
                 <div class="tab-pane fade" id="preferences-tab">
                     <div class="row">
@@ -545,6 +549,74 @@
                         </div>
                     </div>
                 </div>
+                <!-- Onglet Favoris -->
+                <div class="tab-pane fade" id="favorites-tab">
+                    <div class="row">
+                        <?php if (!empty($favorites) && is_array($favorites)): ?>
+                            <?php foreach ($favorites as $snippet): ?>
+                                <div class="col-lg-6 col-xl-4 mb-4">
+                                    <article class="snippet-card">
+                                        <!-- En-tête du snippet -->
+                                        <div class="snippet-header">
+                                            <div class="snippet-language">
+                                                <i class="fas fa-code"></i>
+                                                <?= htmlspecialchars($snippet->getLanguage()) ?>
+                                            </div>
+                                            <div class="snippet-actions">
+                                                <button class="action-btn" title="Copier">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                                <button class="action-btn favorite-btn active" title="Retirer des favoris" data-snippet-id="<?= $snippet->getId() ?>">
+                                                    <i class="fas fa-heart"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Titre et description -->
+                                        <div class="snippet-content">
+                                            <h3 class="snippet-title">
+                                                <a href="/?controller=snippets&action=show&id=<?= $snippet->getId() ?>">
+                                                    <?= htmlspecialchars($snippet->getTitle()) ?>
+                                                </a>
+                                            </h3>
+                                            <p class="snippet-description">
+                                                <?= htmlspecialchars($snippet->getDescription()) ?>
+                                            </p>
+                                        </div>
+
+                                        <!-- Footer -->
+                                        <div class="snippet-footer">
+                                            <div class="snippet-author">
+                                                <div class="author-avatar">
+                                                    <?= strtoupper(substr($snippet->getAuthorName(), 0, 2)) ?>
+                                                </div>
+                                                <span class="author-name"><?= htmlspecialchars($snippet->getAuthorName()) ?></span>
+                                            </div>
+                                            <div class="snippet-stats">
+                                                <span class="stat-item" title="Vues">
+                                                    <i class="fas fa-eye"></i>
+                                                    <?= $snippet->getViews() ?? 0 ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="col-12">
+                                <div class="no-snippets">
+                                    <i class="fas fa-heart-broken"></i>
+                                    <h3>Vous n'avez aucun favori</h3>
+                                    <p>Ajoutez des snippets à vos favoris pour les retrouver ici !</p>
+                                    <a href="/?controller=snippets&action=snippets" class="btn-add-snippet">
+                                        <i class="fas fa-code me-2"></i>Voir tous les snippets
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
             </div>
 </section>
 <!-- Toast container Bootstrap -->

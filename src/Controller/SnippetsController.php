@@ -132,24 +132,50 @@ class SnippetsController extends Controller
         $this->render('snippets/show', ['snippet' => $snippet]);
     }
 
-    public function toggleFavorite(): void
+    public function toggleFavorite()
     {
+        // Log pour debug
+        error_log("=== DEBUG toggleFavorite ===");
+        error_log("Session user_id: " . ($_SESSION['user_id'] ?? 'NON DÉFINI'));
+        error_log("Input raw: " . file_get_contents('php://input'));
+
+        header('Content-Type: application/json');
+
         if (!isset($_SESSION['user_id'])) {
-            http_response_code(403);
-            echo json_encode(['success' => false, 'message' => 'Non autorisé']);
-            return;
+            error_log("Erreur: utilisateur non connecté");
+            echo json_encode(['success' => false, 'error' => 'Non authentifié']);
+            exit;
         }
 
-        $snippetId = (int)($_POST['snippet_id'] ?? 0);
-        if (!$snippetId) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'ID invalide']);
-            return;
+        $userId = $_SESSION['user_id'];
+        $input = json_decode(file_get_contents('php://input'), true);
+        $snippetId = $input['snippetId'] ?? null;
+
+        error_log("User ID: $userId, Snippet ID: $snippetId");
+
+        if (!$snippetId || !is_numeric($snippetId)) {
+            error_log("Erreur: ID invalide");
+            echo json_encode(['success' => false, 'error' => 'ID invalide']);
+            exit;
         }
 
-        $repo = new FavoriteRepository();
-        $isFavorite = $repo->toggleFavorite($_SESSION['users_id'], $snippetId);
+        try {
+            $favRepo = new FavoriteRepository();
+            $favorited = $favRepo->toggleFavorite($userId, (int)$snippetId);
 
-        echo json_encode(['success' => true, 'isFavorite' => $isFavorite]);
+            error_log("Résultat: " . ($favorited ? 'AJOUTÉ' : 'RETIRÉ'));
+
+            echo json_encode([
+                'success' => true,
+                'favorited' => $favorited
+            ]);
+        } catch (\Exception $e) {
+            error_log("Exception: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]);
+        }
+        exit;
     }
 }
