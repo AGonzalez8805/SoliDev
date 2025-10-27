@@ -26,9 +26,9 @@ $Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant
 <!-- Contrôles des projets -->
 <section class="projects-controls">
     <div class="container">
-        <form method="GET" action="/">
-            <input type="hidden" name="controller" value="projects">
-            <input type="hidden" name="action" value="list">
+        <form method="GET" action="/?controller=project&action=list">
+            <input type="hidden" name="controller" value="project">
+            <input type="hidden" name="action" value="project">
             <div class="controls-wrapper">
                 <!-- Section recherche et filtres -->
                 <div class="search-filters">

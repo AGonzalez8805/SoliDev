@@ -29,13 +29,23 @@ class ProjectController extends Controller
 
     protected function project(): void
     {
+        $status = $_GET['status'] ?? '';
+        $tech = $_GET['tech'] ?? '';
+        $search = $_GET['q'] ?? '';
+        $sort = $_GET['sort'] ?? 'recent';
+
         $repo = new \App\Repository\ProjectsRepository();
-        $projects = $repo->findAll();
+        $projects = $repo->findAll($status, $tech, $search, $sort);
 
         $this->render('project/project', [
-            'projects' => $projects
+            'projects' => $projects,
+            'status' => $status,
+            'tech' => $tech,
+            'search' => $search,
+            'sort' => $sort
         ]);
     }
+
 
     protected function create(): void
     {

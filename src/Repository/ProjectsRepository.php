@@ -7,23 +7,58 @@ use App\Models\Project;
 
 class ProjectsRepository
 {
-    public function findAll(): array
+    public function findAll(?string $status = null, ?string $tech = null, ?string $search = null, ?string $sort = 'recent'): array
     {
         $pdo = Mysql::getInstance()->getPDO();
 
-        // Requête avec JOIN pour récupérer le nom du propriétaire
-        $stmt = $pdo->query("
-        SELECT p.*, u.firstName AS owner_firstname,
-        (SELECT COUNT(*) FROM project_collaborators pc WHERE pc.project_id = p.id) AS collaborators_count
-        FROM projects p
-        JOIN users u ON p.owner_id = u.users_id
-        ORDER BY p.created_at DESC
-    ");
+        $sql = "
+            SELECT p.*, u.firstName AS owner_firstname,
+            (SELECT COUNT(*) FROM project_collaborators pc WHERE pc.project_id = p.id) AS collaborators_count
+            FROM projects p
+            JOIN users u ON p.owner_id = u.users_id
+            WHERE 1=1
+        ";
+
+        $params = [];
+
+        // Filtre par statut
+        if ($status) {
+            $sql .= " AND p.status = :status";
+            $params['status'] = $status;
+        }
+
+        // Filtre par technologie (JSON)
+        if ($tech) {
+            $sql .= " AND JSON_CONTAINS(p.technologies, :tech_json)";
+            $params['tech_json'] = json_encode($tech);
+        }
+
+        // Filtre par recherche
+        if ($search) {
+            $sql .= " AND (p.title LIKE :search OR p.description LIKE :search)";
+            $params['search'] = "%$search%";
+        }
+
+        // Tri
+        switch ($sort) {
+            case 'contributors':
+                $sql .= " ORDER BY (SELECT COUNT(*) FROM project_collaborators pc WHERE pc.project_id = p.id) DESC";
+                break;
+            case 'popular':
+                $sql .= " ORDER BY p.views DESC"; // si tu as un champ views
+                break;
+            default:
+                $sql .= " ORDER BY p.created_at DESC";
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
 
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         return array_map(fn($data) => new Project($data), $results);
     }
+
 
 
     public function findById(int $id): ?Project
