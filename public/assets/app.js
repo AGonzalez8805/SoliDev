@@ -8,6 +8,7 @@ import { CreateProject } from "./Modules/CreateProject.js";
 import { MyCharts } from "./Modules/MyCharts.js";
 import { DashboardAdmin } from "./Modules/DashboardAdmin.js";
 import { ThemeToggle } from "./Modules/ThemeToggle.js";
+import { CreateSnippet } from "./Modules/CreateSnippet.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   // Initialiser le thème toggle (disponible sur toutes les pages)
@@ -55,8 +56,11 @@ document.addEventListener("DOMContentLoaded", () => {
     new MyCharts();
   }
 
-  // --- Initialisation automatique ---
   if (document.getElementById("usersTableBody")) {
     new DashboardAdmin();
+  }
+
+  if (document.querySelector(".snippet-form")) {
+    new CreateSnippet();
   }
 });

@@ -143,10 +143,6 @@
                                     <span class="author-name"><?= htmlspecialchars($snippet->getAuthorName()) ?></span>
                                 </div>
                                 <div class="snippet-stats">
-                                    <span class="stat-item" title="Favoris">
-                                        <i class="fas fa-heart"></i>
-                                        <?= $snippet->getFavorites() ?? 0 ?>
-                                    </span>
                                     <span class="stat-item" title="Vues">
                                         <i class="fas fa-eye"></i>
                                         <?= $snippet->getViews() ?? 0 ?>

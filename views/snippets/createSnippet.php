@@ -99,11 +99,8 @@
                                         <option value="html">HTML</option>
                                         <option value="sql">SQL</option>
                                         <option value="typescript">TypeScript</option>
-                                        <option value="ruby">Ruby</option>
-                                        <option value="go">Go</option>
-                                        <option value="rust">Rust</option>
-                                        <option value="swift">Swift</option>
-                                        <option value="kotlin">Kotlin</option>
+                                        <option value="symfony">Symfony</option>
+                                        <option value="mongodb">MongoDB</option>
                                     </select>
                                 </div>
                             </div>
@@ -157,10 +154,10 @@
                                     name="code"
                                     rows="15"
                                     placeholder="// Collez votre code ici...
-function exemple() {
-    console.log('Hello World!');
-}"
-                                    required></textarea>
+                                                    function exemple() {
+                                                        console.log('Hello World!');
+                                                    }">
+                                </textarea>
                             </div>
                             <small class="form-text">
                                 <i class="fas fa-lightbulb me-1"></i>
@@ -178,8 +175,9 @@ function exemple() {
                                 name="usage"
                                 rows="6"
                                 placeholder="// Exemple d'utilisation
-const resultat = exemple();
-console.log(resultat);"></textarea>
+                                                const resultat = exemple();
+                                                console.log(resultat);">
+                            </textarea>
                             <small class="form-text">Montrez comment utiliser votre snippet</small>
                         </div>
                     </div>
@@ -246,25 +244,29 @@ console.log(resultat);"></textarea>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">
-                                        <i class="fas fa-shield-alt me-1"></i>Options
+                                        <i class="fas fa-shield-alt me-1"></i> Options
                                     </label>
+
                                     <div class="form-check">
                                         <input
                                             class="form-check-input"
                                             type="checkbox"
                                             name="allow_comments"
                                             id="allow_comments"
+                                            value="1"
                                             checked>
                                         <label class="form-check-label" for="allow_comments">
                                             Autoriser les commentaires
                                         </label>
                                     </div>
+
                                     <div class="form-check">
                                         <input
                                             class="form-check-input"
                                             type="checkbox"
                                             name="allow_fork"
                                             id="allow_fork"
+                                            value="1"
                                             checked>
                                         <label class="form-check-label" for="allow_fork">
                                             Autoriser les forks/modifications
@@ -272,6 +274,7 @@ console.log(resultat);"></textarea>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
 

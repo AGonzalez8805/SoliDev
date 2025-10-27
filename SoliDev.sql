@@ -37,6 +37,30 @@ CREATE TABLE user_activities (
     FOREIGN KEY (user_id) REFERENCES users(users_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS snippets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    author_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    language VARCHAR(50) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    code LONGTEXT NOT NULL,
+    usage_example LONGTEXT DEFAULT NULL,
+    tags VARCHAR(200) DEFAULT NULL,
+    visibility ENUM('public','private') DEFAULT 'public',
+    allow_comments TINYINT(1) DEFAULT 1,
+    allow_fork TINYINT(1) DEFAULT 1,
+    views INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_snippet_author FOREIGN KEY (author_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    INDEX idx_author (author_id),
+    INDEX idx_language (language),
+    INDEX idx_category (category),
+    INDEX idx_visibility (visibility),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 ALTER TABLE users ADD COLUMN photo VARCHAR(255) NULL AFTER email;
 ALTER TABLE users
 ADD COLUMN github_url VARCHAR(255) DEFAULT NULL,

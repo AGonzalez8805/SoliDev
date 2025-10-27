@@ -23,7 +23,12 @@
     <!-- Texte de copyright centré -->
     <p class="footer-copyright">© 2025 SoliDev. Tous droits réservés.</p>
 </footer>
-<!-- === Scripts JavaScript === -->
+<!-- Prism JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/prism.min.js"></script>
+<!-- Si tu veux la coloration pour plusieurs langages : -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/components/prism-python.min.js"></script>
 <!-- Script Bootstrap (fonctionnalités comme les menus déroulants, le responsive, etc.) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
