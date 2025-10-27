@@ -243,6 +243,16 @@ export class DashboardUser {
     }
 
     async updatePreference(preferenceData) {
+        // Convertir les booléens en entiers (0 ou 1) pour MySQL
+        const convertedData = {};
+        for (const [key, value] of Object.entries(preferenceData)) {
+            if (typeof value === 'boolean') {
+                convertedData[key] = value ? 1 : 0;
+            } else {
+                convertedData[key] = value;
+            }
+        }
+
         try {
             const res = await fetch('/?controller=user&action=updatePreferences', {
                 method: 'POST',
@@ -250,7 +260,7 @@ export class DashboardUser {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify(preferenceData)
+                body: JSON.stringify(convertedData)
             });
 
             const data = await res.json();
