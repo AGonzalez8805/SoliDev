@@ -1,3 +1,6 @@
+/* ===========================
+   EN-TÊTE DU FORUM
+   =========================== */
 .forum-header {
   background: linear-gradient(
     135deg,
@@ -33,6 +36,9 @@
   margin-top: 1rem;
 }
 
+/* ===========================
+   CARTES DE CATÉGORIES
+   =========================== */
 .category-card {
   background-color: white;
   border-radius: 10px;
@@ -71,6 +77,9 @@
   color: #888;
 }
 
+/* ===========================
+   BOUTONS
+   =========================== */
 .btn-new-topic {
   background: linear-gradient(
     135deg,
@@ -96,6 +105,30 @@
   color: white;
 }
 
+.btn-reply {
+  background-color: transparent;
+  border: 1px solid #0f1726;
+  color: #0f1726;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.btn-reply:hover {
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+  border-color: var(--accent-primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* ===========================
+   SUJETS RÉCENTS
+   =========================== */
 .recent-topics {
   background-color: white;
   border-radius: 10px;
@@ -105,47 +138,87 @@
 }
 
 .topic-item {
-  border-bottom: 1px solid #eee;
-  padding: 1rem 0;
-  transition: background-color 0.3s ease;
-}
-
-.topic-item:last-child {
-  border-bottom: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
 }
 
 .topic-item:hover {
   background-color: #f8f9fa;
+  transform: translateX(5px);
 }
 
+/* ===========================
+   TITRE ET CONTENU DU TOPIC
+   =========================== */
 .topic-title {
   color: #0f1726;
   font-weight: 600;
-  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
 }
 
 .topic-title:hover {
   color: #d95d30;
-  text-decoration: none;
 }
 
 .topic-meta {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: #888;
 }
 
+.topic-meta strong {
+  color: #0f1726;
+}
+
+.topic-content {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-height: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===========================
+   ACTIONS DU TOPIC
+   =========================== */
+.topic-actions {
+  border-top: 1px solid #eee;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.comment-count {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.comment-count i {
+  color: #d95d30;
+}
+
+/* ===========================
+   AVATAR UTILISATEUR
+   =========================== */
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f48703, #d95d30);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* ===========================
+   BREADCRUMB (FIL D'ARIANE)
+   =========================== */
 .breadcrumb {
   background-color: transparent;
   padding: 0;
@@ -155,8 +228,64 @@
 .breadcrumb-item a {
   color: #0f1726;
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .breadcrumb-item a:hover {
   color: #d95d30;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 768px) {
+  .forum-header h1 {
+    font-size: 2rem;
+  }
+
+  .forum-header p {
+    font-size: 1rem;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 0.9rem;
+  }
+
+  .topic-title {
+    font-size: 1rem;
+  }
+
+  .btn-new-topic {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .topic-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start !important;
+  }
+
+  .btn-reply {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .forum-header {
+    border-radius: 25px 0 25px 0;
+    padding: 5% 4%;
+  }
+
+  .recent-topics {
+    padding: 1rem;
+  }
+
+  .topic-item {
+    padding: 1rem !important;
+  }
 }

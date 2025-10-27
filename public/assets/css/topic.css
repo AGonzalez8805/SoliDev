@@ -1,0 +1,280 @@
+/* ===========================
+   TOPIC DÉTAILLÉ
+   =========================== */
+.topic-detail-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #d95d30;
+}
+
+.topic-detail-title {
+  color: #0f1726;
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.topic-detail-meta {
+  color: #666;
+  font-size: 0.9rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.topic-detail-meta i {
+  color: #d95d30;
+}
+
+.topic-detail-content {
+  color: #333;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-top: 1.5rem;
+}
+
+/* ===========================
+   AVATAR GRANDE TAILLE
+   =========================== */
+.user-avatar-large {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ===========================
+   SECTION COMMENTAIRES
+   =========================== */
+.comments-section {
+  background-color: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.comments-title {
+  color: #0f1726;
+  font-weight: 600;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+/* ===========================
+   ITEM COMMENTAIRE
+   =========================== */
+.comment-item {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.comment-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.comment-header {
+  margin-bottom: 0.75rem;
+}
+
+.comment-author {
+  color: #0f1726;
+  font-size: 1rem;
+}
+
+.comment-date {
+  font-size: 0.85rem;
+}
+
+.comment-edited {
+  font-style: italic;
+}
+
+.comment-content {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* ===========================
+   BOUTON SUPPRIMER COMMENTAIRE
+   =========================== */
+.btn-delete-comment {
+  background-color: transparent;
+  border: none;
+  color: #dc3545;
+  padding: 0.25rem 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-delete-comment:hover {
+  color: #fff;
+  background-color: #dc3545;
+  border-radius: 5px;
+}
+
+/* ===========================
+   FORMULAIRE AJOUT COMMENTAIRE
+   =========================== */
+.add-comment-form {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 1.5rem;
+  border: 2px dashed #dee2e6;
+}
+
+.add-comment-form h5 {
+  color: #0f1726;
+  font-weight: 600;
+}
+
+.comment-textarea {
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 120px;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.comment-textarea:focus {
+  border-color: #d95d30;
+  box-shadow: 0 0 0 0.2rem rgba(217, 93, 48, 0.1);
+}
+
+.btn-submit-comment {
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+  border: none;
+  color: white;
+  padding: 0.7rem 2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-submit-comment:hover {
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-tertiary)
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(217, 93, 48, 0.3);
+  color: white;
+}
+
+/* ===========================
+   ALERTES
+   =========================== */
+.alert {
+  border-radius: 10px;
+  border: none;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 768px) {
+  .topic-detail-card {
+    padding: 1.5rem;
+  }
+
+  .topic-detail-title {
+    font-size: 1.4rem;
+  }
+
+  .user-avatar-large {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    font-size: 1.2rem;
+  }
+
+  .comments-section {
+    padding: 1.5rem;
+  }
+
+  .comment-item {
+    padding: 1rem;
+  }
+
+  .add-comment-form {
+    padding: 1rem;
+  }
+
+  .btn-submit-comment {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .topic-detail-card {
+    padding: 1rem;
+    border-left-width: 3px;
+  }
+
+  .topic-detail-title {
+    font-size: 1.2rem;
+  }
+
+  .topic-detail-meta {
+    font-size: 0.8rem;
+  }
+
+  .topic-detail-meta span {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .user-avatar-large {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 1rem;
+  }
+
+  .comments-section {
+    padding: 1rem;
+  }
+
+  .comment-item {
+    padding: 0.75rem;
+  }
+}

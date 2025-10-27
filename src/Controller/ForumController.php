@@ -4,18 +4,19 @@ namespace App\Controller;
 
 use App\Repository\TopicRepository;
 use App\Repository\UserRepository;
+use App\Repository\CommentRepository;
+use App\Models\Comment;
 
 class ForumController extends Controller
 {
     private TopicRepository $topicRepository;
+    private CommentRepository $commentRepository;
 
     public function __construct()
     {
-        // Instancie ton UserRepository MySQL
         $mysqlUserRepo = new UserRepository();
-
-        // Passe l'instance à TopicRepository pour récupérer les noms depuis MySQL
         $this->topicRepository = new TopicRepository($mysqlUserRepo);
+        $this->commentRepository = new CommentRepository($mysqlUserRepo);
     }
 
     /** Route principal */
@@ -35,6 +36,15 @@ class ForumController extends Controller
                 case 'category':
                     $this->category();
                     break;
+                case 'topic':
+                    $this->topic();
+                    break;
+                case 'addComment':
+                    $this->addComment();
+                    break;
+                case 'deleteComment':
+                    $this->deleteComment();
+                    break;
                 default:
                     throw new \Exception("Cette action n'existe pas : " . $action);
             }
@@ -44,16 +54,18 @@ class ForumController extends Controller
     public function forum(): void
     {
         $categories = $this->buildCategoriesWithStats();
-
-        // Vérifie si une catégorie est demandée
         $selectedCategory = $_GET['category'] ?? null;
 
         if ($selectedCategory && $this->isValidCategory($selectedCategory)) {
-            // On récupère seulement les topics de cette catégorie
             $recentTopics = $this->topicRepository->getTopicsByCategory($selectedCategory, 20, 0);
         } else {
-            // Sinon on récupère tous les topics
             $recentTopics = $this->topicRepository->findAll();
+        }
+
+        // Ajouter le nombre de commentaires à chaque topic
+        foreach ($recentTopics as $topic) {
+            $commentCount = $this->commentRepository->countByTopicId($topic->getId());
+            $topic->setCommentCount($commentCount); // ✅ Utilisation du setter
         }
 
         $this->render('forum/forum', [
@@ -114,13 +126,105 @@ class ForumController extends Controller
 
         $this->incrementTopicViews($topicId);
 
+        // Récupérer les commentaires
+        $comments = $this->commentRepository->getCommentsByTopicId($topicId);
+
         $this->render('forum/topic', [
             'topic' => $topic,
+            'comments' => $comments,
+            'commentCount' => count($comments),
             'pageTitle' => $topic->getTitle(),
             'canReply' => $this->isAuthenticated(),
             'isAuthor' => $this->isTopicAuthor($topic),
-            'breadcrumb' => $this->buildTopicBreadcrumb($topic)
+            'breadcrumb' => $this->buildTopicBreadcrumb($topic),
+            'successMessage' => $_SESSION['success_message'] ?? null,
+            'errors' => $_SESSION['form_errors'] ?? []
         ]);
+
+        $this->clearFormSession();
+    }
+
+    public function addComment(): void
+    {
+        $this->requireAuthentication();
+        $this->requirePostMethod();
+
+        $topicId = $_POST['topic_id'] ?? null;
+        $content = trim($_POST['content'] ?? '');
+
+        $errors = [];
+
+        if (!$topicId) {
+            $errors['topic'] = 'Topic non spécifié';
+        }
+
+        if (empty($content)) {
+            $errors['content'] = 'Le commentaire ne peut pas être vide';
+        } elseif (strlen($content) < 3) {
+            $errors['content'] = 'Le commentaire doit contenir au moins 3 caractères';
+        } elseif (strlen($content) > 5000) {
+            $errors['content'] = 'Le commentaire ne peut pas dépasser 5000 caractères';
+        }
+
+        if (!empty($errors)) {
+            $_SESSION['form_errors'] = $errors;
+            header('Location: /?controller=forum&action=topic&id=' . $topicId);
+            exit;
+        }
+
+        // Déterminer le nom de l'auteur
+        $authorName = 'Anonyme';
+        if (!empty($_SESSION['firstName']) && !empty($_SESSION['name'])) {
+            $authorName = $_SESSION['firstName'] . ' ' . $_SESSION['name'];
+        } elseif (!empty($_SESSION['name'])) {
+            $authorName = $_SESSION['name'];
+        } elseif (!empty($_SESSION['username'])) {
+            $authorName = $_SESSION['username'];
+        }
+
+        $comment = new Comment(
+            id: null,
+            topicId: $topicId,
+            content: htmlspecialchars($content, ENT_QUOTES, 'UTF-8'),
+            authorId: $_SESSION['user_id'],
+            authorName: $authorName,
+            createdAt: new \DateTime()
+        );
+
+        $this->commentRepository->create($comment);
+
+        $_SESSION['success_message'] = 'Votre commentaire a été ajouté avec succès !';
+        header('Location: /?controller=forum&action=topic&id=' . $topicId);
+        exit;
+    }
+
+    public function deleteComment(): void
+    {
+        $this->requireAuthentication();
+
+        $commentId = $_GET['comment_id'] ?? null;
+        $topicId = $_GET['topic_id'] ?? null;
+
+        if (!$commentId || !$topicId) {
+            throw new \Exception('Paramètres manquants', 400);
+        }
+
+        $comment = $this->commentRepository->findById($commentId);
+
+        if (!$comment) {
+            throw new \Exception('Commentaire introuvable', 404);
+        }
+
+        // Vérifier que l'utilisateur est l'auteur du commentaire
+        if ($comment->getAuthorId() !== $_SESSION['user_id']) {
+            throw new \Exception('Action non autorisée', 403);
+        }
+
+        $this->commentRepository->delete($commentId);
+
+        $_SESSION['success_message'] = 'Commentaire supprimé avec succès';
+        header('Location: /?controller=forum&action=topic&id=' . $topicId);
+        exit;
     }
 
     public function category(): void
@@ -139,6 +243,12 @@ class ForumController extends Controller
         $totalPages = ceil($totalTopics / $perPage);
         $categoryInfo = $this->getCategoryInfo($categorySlug);
 
+        // Ajouter le nombre de commentaires
+        foreach ($categoryTopics as $topic) {
+            $commentCount = $this->commentRepository->countByTopicId($topic->getId());
+            $topic->commentCount = $commentCount;
+        }
+
         $this->render('forum/category', [
             'topics' => $categoryTopics,
             'category' => $categorySlug,
@@ -156,7 +266,6 @@ class ForumController extends Controller
 
     // ==================== MÉTHODES PRIVÉES ====================
 
-    /** Construit les catégories avec statistiques */
     private function buildCategoriesWithStats(): array
     {
         $categoriesConfig = [
@@ -171,7 +280,7 @@ class ForumController extends Controller
         $stats = [];
         foreach ($categoriesConfig as $slug => $cat) {
             $stats[$slug]['topics'] = $this->topicRepository->countTopicsByCategory($slug);
-            $stats[$slug]['messages'] = 0; // À remplacer par le nombre de réponses si collection messages
+            $stats[$slug]['messages'] = 0;
         }
 
         foreach ($categoriesConfig as $key => &$category) {
@@ -183,7 +292,6 @@ class ForumController extends Controller
         return $categoriesConfig;
     }
 
-    /** Validation et sécurisation des données */
     private function validatePostData(array $data): array
     {
         $errors = [];
@@ -216,7 +324,6 @@ class ForumController extends Controller
         ];
     }
 
-    /** Traitement des tags */
     private function processTags(string $tagsString): array
     {
         if (empty(trim($tagsString))) return [];
@@ -224,13 +331,11 @@ class ForumController extends Controller
         return array_slice($tags, 0, 5);
     }
 
-    /** Vérifie si l'utilisateur est l'auteur du topic */
     private function isTopicAuthor($topic): bool
     {
         return $this->isAuthenticated() && ($_SESSION['user_id'] ?? 0) == $topic->getAuthorId();
     }
 
-    /** Construit le breadcrumb pour un topic */
     private function buildTopicBreadcrumb($topic): array
     {
         $categoryInfo = $this->getCategoryInfo($topic->getCategory());
@@ -241,7 +346,6 @@ class ForumController extends Controller
         ];
     }
 
-    /** Construit le breadcrumb pour une catégorie */
     private function buildCategoryBreadcrumb(array $categoryInfo): array
     {
         return [
@@ -250,7 +354,6 @@ class ForumController extends Controller
         ];
     }
 
-    /** Récupère les informations d'une catégorie */
     private function getCategoryInfo(string $categorySlug): array
     {
         $categories = $this->buildCategoriesWithStats();
@@ -262,13 +365,11 @@ class ForumController extends Controller
         ];
     }
 
-    /** Vérifie si une catégorie est valide */
     private function isValidCategory(string $category): bool
     {
         return in_array($category, ['web', 'mobile', 'backend', 'devops', 'help', 'general']);
     }
 
-    /** Récupère les catégories pour les formulaires */
     private function getAvailableCategories(): array
     {
         return [
@@ -281,7 +382,6 @@ class ForumController extends Controller
         ];
     }
 
-    /** Vérifie l'authentification */
     private function requireAuthentication(): void
     {
         if (!$this->isAuthenticated()) {
@@ -294,27 +394,23 @@ class ForumController extends Controller
         }
     }
 
-    /** Vérifie si l'utilisateur est connecté */
     private function isAuthenticated(): bool
     {
         return isset($_SESSION['user_id']) && is_numeric($_SESSION['user_id']);
     }
 
-    /** Vérifie la méthode POST */
     private function requirePostMethod(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') throw new \Exception('Méthode non autorisée', 405);
     }
 
-    /** Nettoie les données de session après affichage */
     private function clearFormSession(): void
     {
         unset($_SESSION['form_errors'], $_SESSION['old_input'], $_SESSION['success_message']);
     }
 
-    /** Incrémente le compteur de vues d'un topic (à implémenter selon tes besoins) */
     private function incrementTopicViews(string $topicId): void
     {
-        // À implémenter si tu souhaites suivre les vues
+        // À implémenter si souhaité
     }
 }

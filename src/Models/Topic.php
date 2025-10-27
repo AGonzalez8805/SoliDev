@@ -16,6 +16,8 @@ class Topic
     private array $tags;
     private string $topicType;
     private \DateTime $createdAt;
+    private ?\DateTime $updatedAt;
+    private int $commentCount = 0; // ✅ Ajout de la propriété
 
     public function __construct(
         ?string $id,
@@ -24,9 +26,10 @@ class Topic
         int $authorId,
         string $authorName,
         string $category,
-        array $tags,
-        string $topicType,
-        \DateTime $createdAt
+        array $tags = [],
+        string $topicType = 'discussion',
+        \DateTime $createdAt = new \DateTime(),
+        ?\DateTime $updatedAt = null
     ) {
         $this->id = $id;
         $this->title = $title;
@@ -37,28 +40,93 @@ class Topic
         $this->tags = $tags;
         $this->topicType = $topicType;
         $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
     }
 
-    public static function fromMongo(array $data): Topic
+    // Getters
+    public function getId(): ?string
     {
-        return new Topic(
-            (string)($data['_id'] ?? ''),
-            $data['title'] ?? '',
-            $data['content'] ?? '',
-            (int)($data['author_id'] ?? 0),
-            $data['author_name'] ?? 'Anonyme',
-            $data['category'] ?? 'general',
-            isset($data['tags']) ? (array)$data['tags'] : [],
-            $data['topic_type'] ?? 'discussion',
-            isset($data['created_at']) && $data['created_at'] instanceof UTCDateTime
-                ? $data['created_at']->toDateTime()
-                : new \DateTime()
-        );
+        return $this->id;
     }
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+    public function getAuthorId(): int
+    {
+        return $this->authorId;
+    }
+    public function getAuthorName(): string
+    {
+        return $this->authorName;
+    }
+    public function getCategory(): string
+    {
+        return $this->category;
+    }
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+    public function getTopicType(): string
+    {
+        return $this->topicType;
+    }
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+    public function getCommentCount(): int
+    {
+        return $this->commentCount;
+    } // ✅ Getter
 
+    // Setters
+    public function setId(string $id): void
+    {
+        $this->id = $id;
+    }
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
+    }
+    public function setAuthorName(string $name): void
+    {
+        $this->authorName = $name;
+    }
+    public function setCategory(string $category): void
+    {
+        $this->category = $category;
+    }
+    public function setTags(array $tags): void
+    {
+        $this->tags = $tags;
+    }
+    public function setUpdatedAt(\DateTime $date): void
+    {
+        $this->updatedAt = $date;
+    }
+    public function setCommentCount(int $count): void
+    {
+        $this->commentCount = $count;
+    } // ✅ Setter
+
+    /** Convertit en document MongoDB */
     public function toMongo(): array
     {
-        return [
+        $doc = [
             'title' => $this->title,
             'content' => $this->content,
             'author_id' => $this->authorId,
@@ -66,89 +134,51 @@ class Topic
             'category' => $this->category,
             'tags' => $this->tags,
             'topic_type' => $this->topicType,
-            'created_at' => new UTCDateTime($this->createdAt),
+            'created_at' => new UTCDateTime($this->createdAt->getTimestamp() * 1000)
         ];
+
+        if ($this->id) {
+            $doc['_id'] = new ObjectId($this->id);
+        }
+
+        if ($this->updatedAt) {
+            $doc['updated_at'] = new UTCDateTime($this->updatedAt->getTimestamp() * 1000);
+        }
+
+        return $doc;
     }
 
-    /**
-     * Get the value of id
-     */
-    public function getId(): ?string
+    /** Crée depuis un document MongoDB */
+    public static function fromMongo(array $doc): self
     {
-        return $this->id;
-    }
+        $id = isset($doc['_id']) ? (string)$doc['_id'] : null;
 
-    /**
-     * Get the value of title
-     */
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
+        $createdAt = $doc['created_at'] instanceof UTCDateTime
+            ? $doc['created_at']->toDateTime()
+            : new \DateTime();
 
-    /**
-     * Get the value of content
-     */
-    public function getContent(): string
-    {
-        return $this->content;
-    }
+        $updatedAt = null;
+        if (isset($doc['updated_at']) && $doc['updated_at'] instanceof UTCDateTime) {
+            $updatedAt = $doc['updated_at']->toDateTime();
+        }
 
-    /**
-     * Get the value of authorId
-     */
-    public function getAuthorId(): int
-    {
-        return $this->authorId;
-    }
+        // Conversion du BSONArray en tableau PHP
+        $tags = [];
+        if (isset($doc['tags'])) {
+            $tags = is_array($doc['tags']) ? $doc['tags'] : $doc['tags']->getArrayCopy();
+        }
 
-    /**
-     * Get the value of authorName
-     */
-    public function getAuthorName(): string
-    {
-        return $this->authorName;
-    }
-
-    /**
-     * Get the value of category
-     */
-    public function getCategory(): string
-    {
-        return $this->category;
-    }
-
-    /**
-     * Get the value of tags
-     */
-    public function getTags(): array
-    {
-        return $this->tags;
-    }
-
-    /**
-     * Get the value of topicType
-     */
-    public function getTopicType(): string
-    {
-        return $this->topicType;
-    }
-
-    /**
-     * Get the value of createdAt
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Set the value of authorName
-     */
-    public function setAuthorName(string $authorName): self
-    {
-        $this->authorName = $authorName;
-
-        return $this;
+        return new self(
+            id: $id,
+            title: $doc['title'] ?? '',
+            content: $doc['content'] ?? '',
+            authorId: $doc['author_id'] ?? 0,
+            authorName: $doc['author_name'] ?? 'Anonyme',
+            category: $doc['category'] ?? 'general',
+            tags: $tags, // maintenant c’est bien un array PHP
+            topicType: $doc['topic_type'] ?? 'discussion',
+            createdAt: $createdAt,
+            updatedAt: $updatedAt
+        );
     }
 }
