@@ -86,6 +86,7 @@ class UserController extends Controller
         $activities = $userRepo->findRecentByUser($_SESSION['user_id']);
         $stats = $userRepo->getStats($_SESSION['user_id']);
         $preferences = $userRepo->getUserPreferences($_SESSION['user_id']);
+        $_SESSION['theme'] = $preferences['theme'] ?? 'light';
         $notifications = $userRepo->getNotifications($_SESSION['user_id'], 10);
 
         $this->render('user/dashboard', [

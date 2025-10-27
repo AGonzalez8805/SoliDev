@@ -7,8 +7,12 @@ import { DashboardDrafts } from "./Modules/DashboardDrafts.js";
 import { CreateProject } from "./Modules/CreateProject.js";
 import { MyCharts } from "./Modules/MyCharts.js";
 import { DashboardAdmin } from "./Modules/DashboardAdmin.js";
+import { ThemeToggle } from "./Modules/ThemeToggle.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Initialiser le thème toggle (disponible sur toutes les pages)
+  new ThemeToggle();
+
   if (document.getElementById("registrationForm")) {
     new Registration();
   }
@@ -26,7 +30,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (document.getElementById("photoForm")) {
-    new DashboardUser();
+    const dashboard = new DashboardUser();
+
+    // Appliquer le thème sauvegardé au chargement
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      dashboard.applyTheme(savedTheme);
+      const darkModeToggle = document.getElementById('darkMode');
+      if (darkModeToggle) {
+        darkModeToggle.checked = savedTheme === 'dark';
+      }
+    }
   }
 
   if (document.querySelector('#drafts-tab .form-card')) {
