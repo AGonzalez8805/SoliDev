@@ -3,6 +3,11 @@
 <!-- En-tête de création -->
 <section class="create-header">
     <div class="container">
+        <div class="back-link">
+            <a href="/?controller=project&action=project">
+                <i class="fas fa-arrow-left me-2"></i>Retour aux projets
+            </a>
+        </div>
         <h1 class="mb-3">
             <i class="fas fa-plus-circle me-3"></i>
             Créer un nouveau projet

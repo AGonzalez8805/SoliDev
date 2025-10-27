@@ -1,6 +1,11 @@
 <?php require_once APP_ROOT . '/views/header.php'; ?>
 <section class="create-header">
     <div class="container">
+        <div class="back-link">
+            <a href="/?controller=blog&action=list">
+                <i class="fas fa-arrow-left me-2"></i>Retour aux blog
+            </a>
+        </div>
         <h1>
             <i class="fas fa-pen me-2"></i>
             Écrire un article

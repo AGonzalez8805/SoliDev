@@ -1,0 +1,590 @@
+/* ==========================================
+   SNIPPETS HEADER
+   ========================================== */
+
+.snippets-header {
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start),
+    var(--bg-gradient-end)
+  );
+  border-radius: 50px 0 50px 0;
+  color: var(--text-white);
+  padding: 2% 3%;
+  text-align: center;
+  margin: 10px auto;
+  max-width: 90%;
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition);
+}
+
+.snippets-header h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-white);
+}
+
+.snippets-header p {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  max-width: 800px;
+  margin: 0 auto;
+  color: var(--text-white);
+}
+
+/* ==========================================
+   SNIPPETS CONTROLS
+   ========================================== */
+
+.snippets-controls {
+  padding: 2rem 0;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.controls-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.search-filters {
+  flex: 1;
+  min-width: 300px;
+}
+
+.search-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 3rem;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 1rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(217, 93, 48, 0.1);
+}
+
+.filter-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 150px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.btn-filter {
+  padding: 0.6rem 1.5rem;
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+  color: var(--text-white);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-filter:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.action-section {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-add-snippet {
+  padding: 0.8rem 2rem;
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+  color: var(--text-white);
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+}
+
+.btn-add-snippet:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-white);
+}
+
+/* ==========================================
+   SNIPPETS CONTENT
+   ========================================== */
+
+.snippets-content {
+  padding: 3rem 0;
+  background: var(--bg-primary);
+}
+
+/* ==========================================
+   SNIPPET CARD
+   ========================================== */
+
+.snippet-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: var(--transition);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.snippet-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent-primary);
+}
+
+.snippet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(
+    135deg,
+    rgba(217, 93, 48, 0.1),
+    rgba(244, 135, 3, 0.1)
+  );
+  border-bottom: 1px solid var(--border-color);
+}
+
+.snippet-language {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: var(--accent-primary);
+  color: var(--text-white);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.snippet-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  background: var(--accent-primary);
+  color: var(--text-white);
+  transform: scale(1.1);
+}
+
+.favorite-btn.active {
+  background: var(--accent-primary);
+  color: var(--text-white);
+}
+
+.favorite-btn.active i {
+  font-weight: 900;
+}
+
+.snippet-content {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.snippet-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.snippet-title a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.snippet-title a:hover {
+  color: var(--accent-primary);
+}
+
+.snippet-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.snippet-preview {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.snippet-preview pre {
+  margin: 0;
+  overflow-x: auto;
+}
+
+.snippet-preview code {
+  font-family: "Courier New", monospace;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.snippet-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.snippet-tag {
+  padding: 0.3rem 0.8rem;
+  background: rgba(217, 93, 48, 0.1);
+  color: var(--accent-primary);
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.snippet-footer {
+  padding: 1rem 1.25rem;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.snippet-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.author-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-white);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.author-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.snippet-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.stat-item i {
+  color: var(--accent-primary);
+}
+
+/* ==========================================
+   NO SNIPPETS STATE
+   ========================================== */
+
+.no-snippets {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-card);
+  border-radius: 15px;
+  border: 2px dashed var(--border-color);
+}
+
+.no-snippets i {
+  font-size: 4rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.no-snippets h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.no-snippets p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+/* ==========================================
+   PAGINATION
+   ========================================== */
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.pagination-list {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 1rem;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.page-btn:hover:not(.disabled) {
+  background: var(--accent-primary);
+  color: var(--text-white);
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.page-btn.active {
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+  color: var(--text-white);
+  border-color: transparent;
+}
+
+.page-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 992px) {
+  .snippets-header h1 {
+    font-size: 2.2rem;
+  }
+
+  .controls-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-filters,
+  .action-section {
+    width: 100%;
+  }
+
+  .action-section {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .snippets-header {
+    padding: 1.5rem 2rem;
+    border-radius: 30px 0 30px 0;
+  }
+
+  .snippets-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .snippets-header p {
+    font-size: 1rem;
+  }
+
+  .filter-group {
+    flex-direction: column;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .btn-filter,
+  .btn-add-snippet {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .snippet-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .snippet-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .snippet-stats {
+    width: 100%;
+    justify-content: space-around;
+  }
+}
+
+@media (max-width: 576px) {
+  .snippets-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .snippet-title {
+    font-size: 1.1rem;
+  }
+
+  .snippet-preview code {
+    font-size: 0.75rem;
+  }
+
+  .pagination-list {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.snippet-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.snippet-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.snippet-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.snippet-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.snippet-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.snippet-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.snippet-card:nth-child(6) {
+  animation-delay: 0.3s;
+}

@@ -80,6 +80,11 @@ class Controller
                     $controller->route($action);
                     break;
 
+                case 'snippets':
+                    $controller = new SnippetsController($this->mailer);
+                    $controller->route($action);
+                    break;
+
                 default:
                     throw new \Exception("Le contrôleur '{$controllerName}' n'existe pas", 404);
             }

@@ -2,6 +2,11 @@
 
 <section class="form-header">
     <div class="container">
+        <div class="back-link">
+            <a href="/?controller=forum&action=forum">
+                <i class="fas fa-arrow-left me-2"></i>Retour au forum
+            </a>
+        </div>
         <h1 class="mb-2">
             <i class="fas fa-plus-circle me-3"></i>
             Créer un nouveau sujet
