@@ -61,6 +61,15 @@ CREATE TABLE IF NOT EXISTS snippets (
     INDEX idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE favorites (
+    users_id INT NOT NULL,
+    snippet_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (users_id, snippet_id),
+    FOREIGN KEY (users_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    FOREIGN KEY (snippet_id) REFERENCES snippets(id) ON DELETE CASCADE
+);
+
 ALTER TABLE users ADD COLUMN photo VARCHAR(255) NULL AFTER email;
 ALTER TABLE users
 ADD COLUMN github_url VARCHAR(255) DEFAULT NULL,

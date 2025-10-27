@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\SnippetRepository;
 use App\Models\Snippet;
+use App\Repository\FavoriteRepository;
 
 class SnippetsController extends Controller
 {
@@ -22,6 +23,9 @@ class SnippetsController extends Controller
                     break;
                 case 'show':
                     $this->show();
+                    break;
+                case 'toggleFavorite':
+                    $this->toggleFavorite();
                     break;
                 default:
                     throw new \Exception("Cette action n'existe pas: " . $action);
@@ -126,5 +130,26 @@ class SnippetsController extends Controller
 
         // Affiche la vue
         $this->render('snippets/show', ['snippet' => $snippet]);
+    }
+
+    public function toggleFavorite(): void
+    {
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Non autorisé']);
+            return;
+        }
+
+        $snippetId = (int)($_POST['snippet_id'] ?? 0);
+        if (!$snippetId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID invalide']);
+            return;
+        }
+
+        $repo = new FavoriteRepository();
+        $isFavorite = $repo->toggleFavorite($_SESSION['users_id'], $snippetId);
+
+        echo json_encode(['success' => true, 'isFavorite' => $isFavorite]);
     }
 }
