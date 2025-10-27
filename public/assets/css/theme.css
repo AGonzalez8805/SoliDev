@@ -1,0 +1,542 @@
+/* ==========================================
+   VARIABLES CSS POUR LES THÈMES
+   ========================================== */
+
+:root {
+  /* Thème Clair */
+  --bg-primary: #ffffff;
+  --bg-secondary: #fef2f2;
+  --bg-gradient-start: #dc2626;
+  --bg-gradient-end: #b91c1c;
+  --bg-card: #ffffff;
+  --bg-navbar: #991b1b;
+
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-white: #ffffff;
+
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+
+  --accent-primary: #dc2626;
+  --accent-secondary: #ef4444;
+  --accent-tertiary: #f97316;
+
+  --shadow-sm: 0 2px 4px rgba(220, 38, 38, 0.1);
+  --shadow-md: 0 4px 15px rgba(220, 38, 38, 0.15);
+  --shadow-lg: 0 10px 30px rgba(220, 38, 38, 0.2);
+
+  --transition: all 0.3s ease;
+}
+
+/* Thème Sombre */
+body.dark-theme {
+  --bg-primary: #1c1917;
+  --bg-secondary: #292524;
+  --bg-gradient-start: #991b1b;
+  --bg-gradient-end: #7f1d1d;
+  --bg-card: #292524;
+  --bg-navbar: #1c1917;
+
+  --text-primary: #fafaf9;
+  --text-secondary: #a8a29e;
+  --text-muted: #78716c;
+  --text-white: #ffffff;
+
+  --border-color: #44403c;
+  --border-light: #292524;
+
+  --accent-primary: #ec3434;
+  --accent-secondary: #d96859;
+  --accent-tertiary: #fbbf24;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================
+   STYLES GLOBAUX
+   ========================================== */
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+
+/* ==========================================
+   NAVBAR
+   ========================================== */
+
+.navbar {
+  background-color: var(--bg-navbar) !important;
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.nav-link {
+  color: var(--text-primary) !important;
+  transition: var(--transition);
+}
+
+.nav-link:hover {
+  color: var(--text-white) !important;
+}
+
+.nav-link.active-link {
+  color: var(--text-white) !important;
+  border-bottom-color: var(--text-white);
+}
+
+body.dark-theme .navbar {
+  background-color: var(--bg-navbar) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================
+   CARDS & CONTAINERS
+   ========================================== */
+
+.form-card,
+.stats-card,
+.feature-card,
+.activity-item,
+.notification-item,
+.draft-item,
+.preference-item,
+.chart-card,
+.stat-card,
+.form-container {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.form-card:hover,
+.feature-card:hover,
+.activity-item:hover,
+.stat-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ==========================================
+   HEADERS & SECTIONS
+   ========================================== */
+
+.hero-section,
+.dashboard-header,
+.create-header,
+.form-header,
+.stats-section {
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start),
+    var(--bg-gradient-end)
+  );
+  color: var(--text-white);
+}
+
+.section-title h2,
+.form-title,
+.hero-title {
+  color: var(--text-primary);
+}
+
+body.dark-theme .section-title h2,
+body.dark-theme .form-title {
+  color: var(--text-primary);
+}
+
+/* ==========================================
+   FORMS
+   ========================================== */
+
+.form-control,
+.form-select,
+.search-input,
+.filter-select {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+  transition: var(--transition);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.search-input:focus {
+  background-color: var(--bg-card) !important;
+  border-color: var(--accent-primary) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 0 3px rgba(217, 93, 48, 0.15) !important;
+}
+
+body.dark-theme .form-control:focus,
+body.dark-theme .form-select:focus {
+  box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.25) !important;
+}
+
+.form-label,
+label {
+  color: var(--text-primary) !important;
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+.btn-primary,
+.btn-submit,
+.btn-primary-custom,
+.solidev-btn {
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start),
+    var(--bg-gradient-end)
+  );
+  color: var(--text-white) !important;
+  border: none;
+  transition: var(--transition);
+}
+
+.btn-primary:hover,
+.btn-submit:hover,
+.btn-primary-custom:hover,
+.solidev-btn:hover {
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-end),
+    var(--bg-gradient-start)
+  );
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary,
+.btn-cancel,
+.btn-outline-custom {
+  background-color: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover,
+.btn-cancel:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+.btn-registration,
+.btn-hero-primary {
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+  color: var(--text-primary);
+}
+
+body.dark-theme .btn-registration,
+body.dark-theme .btn-hero-primary {
+  color: var(--text-white);
+}
+
+.btn-login,
+.btn-hero-secondary {
+  border: 2px solid var(--text-primary);
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.btn-login:hover,
+.btn-hero-secondary:hover {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* ==========================================
+   TABLES
+   ========================================== */
+
+.users-table,
+.table {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.users-table thead,
+.table thead {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.users-table th,
+.users-table td,
+.table th,
+.table td {
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+
+.users-table tbody tr:hover,
+.table tbody tr:hover {
+  background-color: var(--bg-secondary);
+}
+
+/* ==========================================
+   NOTIFICATIONS & BADGES
+   ========================================== */
+
+.notification-item {
+  background-color: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+.notification-item.unread {
+  border-left-color: var(--accent-primary);
+  background-color: rgba(217, 93, 48, 0.05);
+}
+
+body.dark-theme .notification-item.unread {
+  background-color: rgba(230, 126, 34, 0.1);
+}
+
+.notification-icon {
+  background-color: var(--bg-secondary);
+}
+
+.badge-custom,
+.status-badge {
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-tertiary)
+  );
+  color: var(--text-white);
+}
+
+/* ==========================================
+   FEATURES & STATS
+   ========================================== */
+
+.features-section {
+  background-color: var(--bg-secondary);
+}
+
+.feature-icon {
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start),
+    var(--bg-gradient-end)
+  );
+}
+
+.feature-title,
+.stat-number {
+  color: var(--text-primary);
+}
+
+.feature-description,
+.stat-label {
+  color: var(--text-secondary);
+}
+
+/* ==========================================
+   ACTIVITY & CTA
+   ========================================== */
+
+.activity-section {
+  background-color: var(--bg-primary);
+}
+
+.activity-item {
+  background-color: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+.activity-item:hover {
+  border-color: var(--accent-primary);
+}
+
+.cta-section {
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
+}
+
+/* ==========================================
+   MODALS
+   ========================================== */
+
+.modal-content {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.modal-header {
+  border-bottom-color: var(--border-color);
+}
+
+/* ==========================================
+   EDITORS
+   ========================================== */
+
+.editor-toolbar {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.editor-btn {
+  color: var(--text-secondary);
+}
+
+.editor-btn:hover,
+.editor-btn.active {
+  background-color: var(--accent-primary);
+  color: var(--text-white);
+}
+
+.editor-content,
+#message {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.preview-container {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.preview-content {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* ==========================================
+   BREADCRUMBS & LINKS
+   ========================================== */
+
+.breadcrumb-item a,
+.feature-link,
+.forgot-link {
+  color: var(--accent-primary);
+}
+
+.breadcrumb-item a:hover,
+.feature-link:hover,
+.forgot-link:hover {
+  color: var(--accent-secondary);
+}
+
+/* ==========================================
+   AUTHENTICATION PAGES
+   ========================================== */
+
+.login {
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary) 0%,
+    var(--accent-primary) 30%,
+    var(--accent-tertiary) 70%,
+    var(--bg-navbar) 100%
+  );
+}
+
+.solidev-card {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+body.dark-theme .solidev-card {
+  background: rgba(15, 52, 96, 0.95);
+}
+
+/* ==========================================
+   CATEGORY INFO & TIPS
+   ========================================== */
+
+.category-info {
+  background: linear-gradient(
+    135deg,
+    rgba(217, 93, 48, 0.1),
+    rgba(244, 135, 3, 0.1)
+  );
+  border-color: rgba(217, 93, 48, 0.2);
+}
+
+body.dark-theme .category-info {
+  background: linear-gradient(
+    135deg,
+    rgba(230, 126, 34, 0.15),
+    rgba(243, 156, 18, 0.15)
+  );
+  border-color: rgba(230, 126, 34, 0.3);
+}
+
+.category-info h6 {
+  color: var(--accent-primary);
+}
+
+.form-tips {
+  background-color: var(--bg-secondary);
+  border-left-color: var(--accent-primary);
+}
+
+/* ==========================================
+   SCROLLBARS (WEBKIT)
+   ========================================== */
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  .dashboard-header,
+  .hero-section,
+  .create-header {
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* ==========================================
+   TRANSITIONS DOUCES
+   ========================================== */
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Désactiver les transitions pour certains éléments */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}

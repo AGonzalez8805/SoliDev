@@ -1,5 +1,9 @@
 .forum-header {
-  background: linear-gradient(135deg, #d95d30, #f48703);
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start),
+    var(--bg-gradient-end)
+  );
   border-radius: 50px 0 50px 0;
   color: white;
   padding: 2% 3%;
@@ -68,7 +72,11 @@
 }
 
 .btn-new-topic {
-  background: linear-gradient(135deg, #f48703, #d95d30);
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-primary)
+  );
   border: none;
   color: white;
   padding: 0.8rem 2rem;
@@ -78,7 +86,11 @@
 }
 
 .btn-new-topic:hover {
-  background: linear-gradient(135deg, #d95d30, #f48703);
+  background: linear-gradient(
+    135deg,
+    var(--accent-secondary),
+    var(--accent-tertiary)
+  );
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(217, 93, 48, 0.3);
   color: white;

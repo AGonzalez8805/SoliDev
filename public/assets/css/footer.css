@@ -1,0 +1,172 @@
+.footer {
+  background: linear-gradient(
+    135deg,
+    var(--bg-gradient-start),
+    var(--bg-gradient-end)
+  );
+  color: var(--text-white);
+  padding: 3rem 2rem 2rem;
+  margin-top: 4rem;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+  min-height: 200px; /* Pour s'assurer qu'il est visible */
+}
+
+/* Effet de fond animé subtil */
+.footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.03) 10px,
+    rgba(255, 255, 255, 0.03) 20px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Liste de navigation du footer */
+.footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.footer .nav-item {
+  margin: 0;
+}
+
+/* Liens du footer */
+.footer .nav-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+  text-decoration: none;
+  padding: 0.5rem 1.5rem;
+  transition: var(--transition);
+  position: relative;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+
+.footer .nav-link:hover {
+  color: rgba(255, 255, 255, 1) !important;
+  border-bottom-color: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+}
+
+.footer .nav-link.active-link {
+  color: rgba(255, 255, 255, 1) !important;
+  border-bottom-color: rgba(255, 255, 255, 1);
+  font-weight: 600;
+}
+
+/* Bordure supérieure de la section copyright */
+.footer .border-bottom {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Texte de copyright - VERSION CORRIGÉE */
+.footer-copyright {
+  color: #ffffff !important;
+  background-color: transparent !important;
+  text-align: center;
+  margin: 0 !important;
+  padding: 1rem 0 0 0 !important;
+  font-size: 0.95rem !important;
+  position: relative;
+  z-index: 2;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Sécurité supplémentaire */
+.footer p {
+  color: #ffffff !important;
+  position: relative;
+  z-index: 2;
+  display: block !important;
+}
+
+/* Variante pour le thème sombre */
+body.dark-theme .footer {
+  background: linear-gradient(135deg, #1c1917, #292524);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .footer-copyright,
+body.dark-theme .footer p {
+  color: #fafaf9 !important;
+}
+
+/* ==========================================
+   FOOTER RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 2rem 1rem 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .footer ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer .nav-link {
+    padding: 0.75rem 1rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .footer-copyright {
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .footer {
+    padding: 1.5rem 1rem 1rem;
+  }
+
+  .footer .nav-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* ==========================================
+   ANIMATION DU FOOTER
+   ========================================== */
+
+@keyframes fadeInFooter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer {
+  animation: fadeInFooter 0.6s ease-out;
+}
