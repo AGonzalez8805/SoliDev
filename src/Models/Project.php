@@ -21,6 +21,7 @@ class Project
     private string $updatedAt;
     private ?string $ownerName = null;
     private int $collaboratorsCount = 0;
+    private ?string $ownerFirstName = null;
 
     public function __construct(array $data)
     {
@@ -53,6 +54,7 @@ class Project
         $this->createdAt = $data['created_at'] ?? date('Y-m-d H:i:s');
         $this->updatedAt = $data['updated_at'] ?? date('Y-m-d H:i:s');
         $this->ownerName = $data['owner_name'] ?? null;
+        $this->ownerFirstName = $data['owner_firstname'] ?? null;
     }
 
 
@@ -358,6 +360,24 @@ class Project
     public function setCollaboratorsCount(int $collaboratorsCount): self
     {
         $this->collaboratorsCount = $collaboratorsCount;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of ownerFirstName
+     */
+    public function getOwnerFirstName(): ?string
+    {
+        return $this->ownerFirstName;
+    }
+
+    /**
+     * Set the value of ownerFirstName
+     */
+    public function setOwnerFirstName(?string $ownerFirstName): self
+    {
+        $this->ownerFirstName = $ownerFirstName;
 
         return $this;
     }

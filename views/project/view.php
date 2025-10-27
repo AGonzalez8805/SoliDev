@@ -1,4 +1,8 @@
 <?php require_once APP_ROOT . '/views/header.php'; ?>
+<?php
+$Parsedown = new \Parsedown();
+$Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant 
+?>
 
 <section class="project-view">
     <div class="container">
@@ -23,7 +27,8 @@
             <div class="project-meta mt-4 mb-3">
                 <span class="meta-item me-4">
                     <i class="fas fa-user"></i>
-                    Propriétaire ID #<?= htmlspecialchars($project->getOwnerId()) ?>
+                    Propriétaire <?= htmlspecialchars($project->getOwnerFirstName()) ?>
+
                 </span>
                 <span class="meta-item me-4">
                     <i class="fas fa-calendar"></i>
@@ -41,7 +46,9 @@
             <!-- Description -->
             <article class="project-description mb-5">
                 <h3><i class="fas fa-info-circle me-2"></i>Description complète</h3>
-                <p><?= nl2br(htmlspecialchars($project->getDescription())) ?></p>
+                <div class="project-description">
+                    <?= $Parsedown->text($project->getDescription()) ?>
+                </div>
             </article>
 
             <!-- Technologies -->

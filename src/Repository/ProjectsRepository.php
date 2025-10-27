@@ -13,7 +13,7 @@ class ProjectsRepository
 
         // Requête avec JOIN pour récupérer le nom du propriétaire
         $stmt = $pdo->query("
-        SELECT p.*, u.name AS owner_name,
+        SELECT p.*, u.firstName AS owner_firstname,
         (SELECT COUNT(*) FROM project_collaborators pc WHERE pc.project_id = p.id) AS collaborators_count
         FROM projects p
         JOIN users u ON p.owner_id = u.users_id
@@ -29,11 +29,17 @@ class ProjectsRepository
     public function findById(int $id): ?Project
     {
         $pdo = Mysql::getInstance()->getPDO();
-        $stmt = $pdo->prepare("SELECT * FROM projects WHERE id = :id");
+        $stmt = $pdo->prepare("
+            SELECT p.*, u.firstName AS owner_firstname
+            FROM projects p
+            JOIN users u ON p.owner_id = u.users_id
+            WHERE p.id = :id
+        ");
         $stmt->execute(['id' => $id]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $data ? new Project($data) : null;
     }
+
 
     public function create(array $data): bool
     {

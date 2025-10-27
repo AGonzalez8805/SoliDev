@@ -1,4 +1,12 @@
-<?php require_once APP_ROOT . '/views/header.php'; ?>
+<?php
+require_once APP_ROOT . '/views/header.php';
+
+?>
+
+<?php
+$Parsedown = new \Parsedown();
+$Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant 
+?>
 
 <!-- En-tête des projets -->
 <section class="projects-header">
@@ -107,7 +115,7 @@
                             <div class="project-content">
                                 <!-- Titre -->
                                 <h2 class="project-title">
-                                    <a href="/?controller=project&action=show&id=<?= $project->getId() ?>">
+                                    <a href="/?controller=project&action=view&id=<?= $project->getId() ?>">
                                         <?= htmlspecialchars($project->getTitle()) ?>
                                     </a>
                                 </h2>
@@ -116,7 +124,7 @@
                                 <div class="project-meta">
                                     <span class="meta-item">
                                         <i class="fas fa-user"></i>
-                                        <strong><?= htmlspecialchars($project->getOwnerName()) ?></strong>
+                                        <strong><?= htmlspecialchars($project->getOwnerFirstName()) ?></strong>
                                     </span>
                                     <span class="meta-item">
                                         <i class="fas fa-calendar"></i>
@@ -129,9 +137,9 @@
                                 </div>
 
                                 <!-- Description -->
-                                <p class="project-description">
-                                    <?= nl2br(htmlspecialchars($project->getDescription())) ?>
-                                </p>
+                                <div class="project-description">
+                                    <?= $Parsedown->text($project->getDescription()) ?>
+                                </div>
 
                                 <!-- Technologies -->
                                 <div class="project-technologies">

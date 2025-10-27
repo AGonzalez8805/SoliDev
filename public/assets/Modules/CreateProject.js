@@ -33,11 +33,7 @@ export class CreateProject {
 
             this.shortDesc.addEventListener("input", () => {
                 counter.textContent = `${this.shortDesc.value.length} / ${this.shortDesc.maxLength}`;
-                if (this.shortDesc.value.length > this.shortDesc.maxLength) {
-                    counter.style.color = "red";
-                } else {
-                    counter.style.color = "";
-                }
+                counter.style.color = this.shortDesc.value.length > this.shortDesc.maxLength ? "red" : "";
             });
         }
 
@@ -65,7 +61,6 @@ export class CreateProject {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            // Affiche un aperçu (optionnel : tu peux ajouter une zone <img>)
             let preview = document.querySelector(".cover-preview");
             if (!preview) {
                 preview = document.createElement("img");
@@ -87,30 +82,67 @@ export class CreateProject {
         const selected = textarea.value.substring(start, end);
 
         let insertText = "";
+        let cursorStart = start;
+        let cursorEnd = end;
+
         switch (action) {
             case "bold":
-                insertText = `**${selected || "texte en gras"}**`;
+                if (selected) {
+                    insertText = `**${selected}**`;
+                    cursorEnd = start + insertText.length;
+                } else {
+                    insertText = `**texte en gras**`;
+                    cursorStart = start + 2;
+                    cursorEnd = start + 2 + "texte en gras".length;
+                }
                 break;
+
             case "italic":
-                insertText = `*${selected || "texte en italique"}*`;
+                if (selected) {
+                    insertText = `*${selected}*`;
+                    cursorEnd = start + insertText.length;
+                } else {
+                    insertText = `*texte en italique*`;
+                    cursorStart = start + 1;
+                    cursorEnd = start + 1 + "texte en italique".length;
+                }
                 break;
+
             case "list":
                 insertText = selected
                     ? selected.split("\n").map(line => `- ${line}`).join("\n")
-                    : "- Élément 1\n- Élément 2";
+                    : "- Élément 1";
+                cursorEnd = start + insertText.length;
                 break;
-            case "link":
-                insertText = `[${selected || "texte du lien"}](https://exemple.com)`;
+
+            case "link": {
+                const url = prompt("Entrez l'URL du lien :");
+                if (!url) return;
+                insertText = `[${selected || "texte du lien"}](${url})`;
+                cursorEnd = start + insertText.length;
                 break;
+            }
+
+
             case "code":
-                insertText = `\`${selected || "code"}\``;
+                if (selected) {
+                    insertText = `\`${selected}\``;
+                    cursorEnd = start + insertText.length;
+                } else {
+                    insertText = "`code`";
+                    cursorStart = start + 1;
+                    cursorEnd = start + 5;
+                }
                 break;
+
             default:
                 return;
         }
 
         textarea.setRangeText(insertText, start, end, "end");
         textarea.focus();
+        textarea.selectionStart = cursorStart;
+        textarea.selectionEnd = cursorEnd;
     }
 
     /** Validation basique du formulaire */
@@ -130,7 +162,6 @@ export class CreateProject {
             return false;
         }
 
-        // ✅ tu peux ajouter d’autres validations ici
         return true;
     }
 }
