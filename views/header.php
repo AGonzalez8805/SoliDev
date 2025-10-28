@@ -2,40 +2,34 @@
 <html lang="fr">
 
 <head>
-    <!-- Définition du jeu de caractères -->
     <meta charset="UTF-8">
-    <!-- Configuration du viewport pour le responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Description de la page (utile pour le SEO) -->
-    <meta name="description" content="SoliDev est une plateforme collaborative pour développeurs : forum d'entraide, présentation de projets, partage de snippets et articles de blog techniques.">
-    <!-- Mots-clés (optionnel, certains moteurs de recherche ne les utilisent plus) -->
-    <meta name="keywords" content="développement, code, forum, projets, snippets, blog, développeurs, SoliDev">
+    <meta name="description" content="<?= $data['description'] ?? 'SoliDev est une plateforme collaborative pour développeurs : forum d\'entraide, présentation de projets, partage de snippets et articles de blog techniques.' ?>">
+    <meta name="keywords" content="<?= $data['keywords'] ?? 'développement, code, forum, projets, snippets, blog, développeurs, SoliDev' ?>">
+
     <!-- Robots (indexation et suivi des liens) -->
-    <meta name="robots" content="index, follow">
+    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+        <meta name="robots" content="noindex, nofollow">
+    <?php else: ?>
+        <meta name="robots" content="index, follow">
+    <?php endif; ?>
 
     <link rel="shortcut icon" href="/assets/images/logo-png.jpg" type="image/x-icon">
-    <!-- Préconnexion pour améliorer le chargement des polices Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Importation des polices Google (Open Sans, Poppins, Roboto) -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <!-- Importation de Bootstrap 5 via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-    <!-- Prism CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300..800&family=Poppins:wght@100..900&family=Roboto:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.30.0/themes/prism.min.css" rel="stylesheet" />
-    <!-- Lien vers la feuille de style personnalisée -->
     <link rel="stylesheet" href="/assets/css/theme.css">
     <link rel="stylesheet" href="/assets/css/style.css">
-    <!-- Titre de la page affiché dans l'onglet du navigateur -->
-    <title>SoliDev - Votre Solution Web</title>
-    <!-- Chargement du thème utilisateur -->
+
+    <title><?= $data['title'] ?? 'SoliDev - Votre Solution Web' ?></title>
+
     <script>
-        // Charger le thème depuis la session PHP ou localStorage
         <?php if (isset($_SESSION['user_id']) && isset($_SESSION['theme'])): ?>
             localStorage.setItem('theme', '<?= $_SESSION['theme'] ?>');
         <?php endif; ?>
 
-        // Appliquer le thème immédiatement pour éviter le flash
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark-theme');
@@ -43,6 +37,7 @@
         }
     </script>
 </head>
+
 
 <body>
     <header>

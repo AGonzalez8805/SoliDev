@@ -44,12 +44,27 @@ class SnippetsController extends Controller
             0
         );
 
-        $this->render('snippets/snippets', ['snippets' => $snippets]);
+        $data = [
+            'title' => 'Snippets - SoliDev',
+            'description' => "Découvrez, partagez et réutilisez des extraits de code utiles pour vos projets de développement sur SoliDev.",
+            'keywords' => 'snippets, code, exemples, développeurs, partage, SoliDev',
+            'snippets' => $snippets,
+            'pageTitle' => 'Bibliothèque de snippets',
+        ];
+
+        $this->render('snippets/snippets', $data, ['snippets' => $snippets]);
     }
 
     public function createSnippet(): void
     {
-        $this->render('snippets/createSnippet');
+        $data = [
+            'title' => 'Créer un Snippet - SoliDev',
+            'description' => "Ajoutez un nouvel extrait de code dans la communauté SoliDev. Partagez vos astuces et facilitez la vie d’autres développeurs.",
+            'keywords' => 'ajouter snippet, créer code, partage développeur, SoliDev',
+            'pageTitle' => 'Créer un nouveau snippet'
+        ];
+
+        $this->render('snippets/createSnippet', $data);
     }
 
     public function store(): void
@@ -128,8 +143,16 @@ class SnippetsController extends Controller
         // Incrémente le compteur de vues
         $repo->incrementViews((int)$id);
 
+        $data = [
+            'title' => $snippet->getTitle() . ' - Snippet - SoliDev',
+            'description' => substr(strip_tags($snippet->getDescription()), 0, 160),
+            'keywords' => 'snippet, code, ' . strtolower($snippet->getLanguage()) . ', SoliDev',
+            'snippet' => $snippet,
+            'pageTitle' => $snippet->getTitle()
+        ];
+
         // Affiche la vue
-        $this->render('snippets/show', ['snippet' => $snippet]);
+        $this->render('snippets/show', $data, ['snippet' => $snippet]);
     }
 
     public function toggleFavorite()

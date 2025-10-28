@@ -57,7 +57,14 @@ class PageController extends Controller
         $userRepo = new UserRepository();
         $stats = $userRepo->getGlobalStats(); // récupère users, blogs, projects, snippets
 
-        $this->render('page/home', [
+        $data = [
+            'title' => "Accueil - SoliDev",
+            'description' => "Bienvenue sur SoliDev, la plateforme collaborative pour développeurs...",
+            'keywords' => "développement, code, forum, projets, snippets, blog",
+            'stats' => $stats
+        ];
+
+        $this->render('page/home', $data, [
             'stats' => $stats
         ]);
     }

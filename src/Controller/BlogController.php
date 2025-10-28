@@ -38,11 +38,11 @@ class BlogController extends Controller
 
                 default:
                     throw new \Exception("Cette action n'existe pas : " . $action);
-                    break;
             }
         });
     }
 
+    /** 📰 Page liste des articles */
     protected function list(): void
     {
         $category = $_GET['category'] ?? null;
@@ -59,7 +59,15 @@ class BlogController extends Controller
         $totalBlogs = $blogRepository->countFiltered($category, $search);
         $totalPages = (int) ceil($totalBlogs / $limit);
 
-        $this->render('blog/show', [
+        // ✅ Données SEO
+        $metaData = [
+            'title' => "Blog des Développeurs - SoliDev",
+            'description' => "Lisez et partagez des articles techniques, astuces et retours d'expérience entre développeurs sur SoliDev.",
+            'keywords' => "blog développeur, articles, programmation, code, astuces, SoliDev",
+            'pageTitle' => "Blog - Accueil"
+        ];
+
+        $this->render('blog/show', array_merge($metaData, [
             'blogs'      => $blogs,
             'page'       => $page,
             'totalPages' => $totalPages,
@@ -67,14 +75,14 @@ class BlogController extends Controller
             'search'     => $search,
             'sort'       => $sort,
             'Parsedown'  => new \Parsedown()
-        ]);
+        ]));
     }
 
+    /** 🧾 Page article individuel */
     protected function show(): void
     {
         try {
             if (!isset($_GET['id'])) {
-                // Redirige vers la liste si aucun id
                 header("Location: /?controller=blog&action=list");
                 exit;
             }
@@ -87,10 +95,18 @@ class BlogController extends Controller
                 throw new \Exception("Blog introuvable pour l'id : $id");
             }
 
-            $this->render('blog/show_single', [
+            // ✅ Données SEO dynamiques selon l’article
+            $metaData = [
+                'title' => $blog->getTitle() . " - SoliDev",
+                'description' => $blog->getExcerpt() ?: "Découvrez un nouvel article technique sur SoliDev.",
+                'keywords' => "développement, programmation, blog, " . strtolower($blog->getCategory()) . ", SoliDev",
+                'pageTitle' => $blog->getTitle()
+            ];
+
+            $this->render('blog/show_single', array_merge($metaData, [
                 'blog' => $blog,
                 'Parsedown' => new \Parsedown()
-            ]);
+            ]));
         } catch (\Exception $e) {
             $this->render('errors/default', [
                 'errors' => $e->getMessage()
@@ -100,7 +116,14 @@ class BlogController extends Controller
 
     protected function createBlog(): void
     {
-        $this->render('blog/createBlog');
+        $metaData = [
+            'title' => "Créer un article - SoliDev",
+            'description' => "Rédigez et publiez vos articles techniques sur SoliDev pour partager vos connaissances avec la communauté.",
+            'keywords' => "rédaction, blog développeur, création article, SoliDev",
+            'pageTitle' => "Créer un article"
+        ];
+
+        $this->render('blog/createBlog', $metaData);
     }
 
     protected function store(): void
@@ -147,23 +170,9 @@ class BlogController extends Controller
             $blogRepository = new BlogRepository();
             $lastId = $blogRepository->insert($blog);
 
-            // Retour JSON si AJAX
-            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => true, 'id' => $lastId]);
-                exit;
-            }
-
-            // Sinon redirection normale
             header("Location: /?controller=blog&action=show&id=" . $lastId);
             exit;
         } catch (\Exception $e) {
-            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-                exit;
-            }
-
             $this->render('errors/default', ['errors' => $e->getMessage()]);
         }
     }

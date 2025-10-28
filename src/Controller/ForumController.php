@@ -65,10 +65,20 @@ class ForumController extends Controller
         // Ajouter le nombre de commentaires à chaque topic
         foreach ($recentTopics as $topic) {
             $commentCount = $this->commentRepository->countByTopicId($topic->getId());
-            $topic->setCommentCount($commentCount); // ✅ Utilisation du setter
+            $topic->setCommentCount($commentCount);
         }
 
-        $this->render('forum/forum', [
+        $data = [
+            'title' => "Forum - SoliDev",
+            'description' => "Participez au forum SoliDev : échangez sur le développement web, mobile, backend, cloud et plus encore.",
+            'keywords' => "forum développeurs, entraide, questions, programmation, SoliDev",
+            'pageTitle' => "Forum - Accueil",
+            'categories' => $categories,
+            'recentTopics' => array_slice($recentTopics, 0, 5),
+            'selectedCategory' => $selectedCategory
+        ];
+
+        $this->render('forum/forum', $data, [
             'categories' => $categories,
             'recentTopics' => array_slice($recentTopics, 0, 5),
             'pageTitle' => 'Forum - Accueil',
@@ -80,7 +90,18 @@ class ForumController extends Controller
     {
         $this->requireAuthentication();
 
-        $this->render('forum/createPost', [
+        $data = [
+            'title' => "Créer un sujet - Forum SoliDev",
+            'description' => "Créez un nouveau sujet sur le forum SoliDev et échangez avec d'autres développeurs.",
+            'keywords' => "forum développeurs, créer sujet, entraide, SoliDev",
+            'pageTitle' => "Créer un sujet",
+            'categories' => $this->getAvailableCategories(),
+            'errors' => $_SESSION['form_errors'] ?? [],
+            'oldInput' => $_SESSION['old_input'] ?? [],
+            'successMessage' => $_SESSION['success_message'] ?? null
+        ];
+
+        $this->render('forum/createPost', $data, [
             'categories' => $this->getAvailableCategories(),
             'pageTitle' => 'Créer un nouveau sujet',
             'errors' => $_SESSION['form_errors'] ?? [],
@@ -129,7 +150,22 @@ class ForumController extends Controller
         // Récupérer les commentaires
         $comments = $this->commentRepository->getCommentsByTopicId($topicId);
 
-        $this->render('forum/topic', [
+        $data = [
+            'title' => $topic->getTitle() . " - Forum SoliDev",
+            'description' => substr(strip_tags($topic->getContent()), 0, 160),
+            'keywords' => "forum, " . $topic->getCategory() . ", discussion, développeur, SoliDev",
+            'pageTitle' => $topic->getTitle(),
+            'topic' => $topic,
+            'comments' => $comments,
+            'commentCount' => count($comments),
+            'canReply' => $this->isAuthenticated(),
+            'isAuthor' => $this->isTopicAuthor($topic),
+            'breadcrumb' => $this->buildTopicBreadcrumb($topic),
+            'successMessage' => $_SESSION['success_message'] ?? null,
+            'errors' => $_SESSION['form_errors'] ?? []
+        ];
+
+        $this->render('forum/topic', $data, [
             'topic' => $topic,
             'comments' => $comments,
             'commentCount' => count($comments),
@@ -249,7 +285,25 @@ class ForumController extends Controller
             $topic->commentCount = $commentCount;
         }
 
-        $this->render('forum/category', [
+        $data = [
+            'title' => "Forum " . $categoryInfo['title'] . " - SoliDev",
+            'description' => $categoryInfo['description'] . " | Rejoignez la discussion sur SoliDev.",
+            'keywords' => strtolower($categoryInfo['title']) . ", forum développeurs, SoliDev",
+            'pageTitle' => "Catégorie : " . $categoryInfo['title'],
+            'topics' => $categoryTopics,
+            'category' => $categorySlug,
+            'categoryInfo' => $categoryInfo,
+            'pagination' => [
+                'current' => $page,
+                'total' => $totalPages,
+                'perPage' => $perPage,
+                'totalItems' => $totalTopics
+            ],
+            'breadcrumb' => $this->buildCategoryBreadcrumb($categoryInfo)
+        ];
+
+
+        $this->render('forum/category', $data, [
             'topics' => $categoryTopics,
             'category' => $categorySlug,
             'categoryInfo' => $categoryInfo,

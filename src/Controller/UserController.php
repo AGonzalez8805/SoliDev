@@ -92,8 +92,14 @@ class UserController extends Controller
         $favoriteRepository = new FavoriteRepository();
         $favorites = $favoriteRepository->getFavoritesByUser($_SESSION['user_id']);
 
+        $data = [
+            'title' => "Tableau de bord de {$user->getFirstName()} - SoliDev",
+            'description' => "Gérez votre profil, vos préférences, vos favoris et vos activités récentes sur SoliDev.",
+            'keywords' => "profil utilisateur, tableau de bord, préférences, favoris, SoliDev",
+            'pageTitle' => "Mon espace personnel"
+        ];
 
-        $this->render('user/dashboard', [
+        $this->render('user/dashboard', $data, [
             'user' => $user,
             'activities' => $activities,
             'stats' => $stats,

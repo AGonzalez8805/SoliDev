@@ -44,7 +44,13 @@ class AuthController extends Controller
      */
     public function login()
     {
-        $this->render('auth/login');
+        $data = [
+            'title' => 'Connexion - SoliDev',
+            'description' => 'Connecte-toi à ton compte SoliDev pour accéder à ton tableau de bord, poster sur le forum et partager tes projets.',
+            'keywords' => 'connexion, login, SoliDev, compte utilisateur, développeur'
+        ];
+
+        $this->render('auth/login', $data);
     }
 
     /**
@@ -52,7 +58,13 @@ class AuthController extends Controller
      */
     public function registration()
     {
-        $this->render('auth/registration');
+        $data = [
+            'title' => 'Inscription - SoliDev',
+            'description' => 'Rejoins SoliDev, la plateforme collaborative pour développeurs : partage tes projets, participe au forum et échange du code.',
+            'keywords' => 'inscription, registre, développeur, SoliDev, projets web'
+        ];
+
+        $this->render('auth/registration', $data);
     }
 
     /**
@@ -193,8 +205,14 @@ class AuthController extends Controller
     public function confirmEmail()
     {
         $token = $_GET['token'] ?? null;
+
+        $data = [
+            'title' => 'Confirmation d’email - SoliDev',
+            'description' => 'Valide ton adresse e-mail pour activer ton compte SoliDev et accéder à toutes les fonctionnalités de la plateforme.',
+            'keywords' => 'confirmation email, validation compte, SoliDev'
+        ];
         if (!$token) {
-            $this->render('auth/confirmation', ['message' => 'Lien invalide.']);
+            $this->render('auth/confirmation', array_merge($data, ['message' => 'Lien invalide.']));
             return;
         }
 

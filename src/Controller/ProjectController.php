@@ -37,13 +37,21 @@ class ProjectController extends Controller
         $repo = new \App\Repository\ProjectsRepository();
         $projects = $repo->findAll($status, $tech, $search, $sort);
 
-        $this->render('project/project', [
+        $metaData = [
+            'title' => "Projets - SoliDev",
+            'description' => "Découvrez et partagez les projets de la communauté SoliDev. Trouvez des collaborateurs et développez vos idées.",
+            'keywords' => "projets, développement, collaboration, SoliDev",
+            'pageTitle' => "Projets SoliDev"
+        ];
+
+
+        $this->render('project/project', array_merge($metaData, [
             'projects' => $projects,
             'status' => $status,
             'tech' => $tech,
             'search' => $search,
             'sort' => $sort
-        ]);
+        ]));
     }
 
 
