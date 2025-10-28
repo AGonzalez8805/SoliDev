@@ -45,14 +45,18 @@ class AdminController extends Controller
         $monthlyUsers = $userRepo->getMonthlyRegistrations(); // Tableau [12, 15, 7,...]
         $monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-        $data = [
+        $viewData = [
             'title' => 'Tableau de bord administrateur - SoliDev',
             'description' => "Accédez à la console d’administration de SoliDev pour gérer les utilisateurs, consulter les statistiques et superviser l’activité de la communauté.",
             'keywords' => 'admin, tableau de bord, gestion utilisateurs, statistiques, SoliDev',
-            'pageTitle' => 'Dashboard administrateur'
+            'pageTitle' => 'Dashboard administrateur',
+            'stats' => $stats,
+            'users' => $users,
+            'monthlyUsers' => $monthlyUsers,
+            'monthlyLabels' => $monthlyLabels
         ];
 
-        $this->render('admin/dashboard', $data, [
+        $this->render('admin/dashboard', $viewData, [
             'stats' => $stats,
             'users' => $users,
             'monthlyUsers' => $monthlyUsers,
