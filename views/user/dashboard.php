@@ -242,8 +242,8 @@
                 </div>
                 <!-- Onglet Sécurité -->
                 <div class="tab-pane fade" id="security-tab">
-                    <div class="row">
-                        <div class="col-lg-6">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6 col-md-8 col-sm-12">
                             <div class="form-card">
                                 <h3 class="section-title">
                                     <i class="fas fa-key me-2"></i>

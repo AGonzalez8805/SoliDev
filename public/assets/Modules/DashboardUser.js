@@ -1,3 +1,5 @@
+// En haut de DashboardUser.js
+import * as bootstrap from 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.esm.min.js';
 export class DashboardUser {
     constructor() {
         console.log("DashboardUser initialisé");
@@ -25,6 +27,11 @@ export class DashboardUser {
         this.privacySettings = document.querySelectorAll(".privacy-setting");
         this.saveAppearanceBtn = document.getElementById("saveAppearanceSettings");
 
+        // Nouveaux : Favoris et actions dangereuses
+        this.favoriteButtons = document.querySelectorAll(".favorite-btn");
+        this.deactivateBtn = document.getElementById("deactivateAccount");
+        this.deleteBtn = document.getElementById("deleteAccount");
+
         this.init();
     }
 
@@ -42,17 +49,105 @@ export class DashboardUser {
             this.initPasswordForm();
         }
 
-        // Initialisation des boutons toggle pour afficher/masquer les mots de passe
+        // Toggle password visibility
         this.initPasswordToggles();
 
-        // Initialisation des notifications
+        // Notifications
         this.initNotifications();
 
-        // Initialisation des préférences
+        // Préférences
         this.initPreferences();
 
-        // Charger les notifications au chargement de l'onglet
+        // Favoris
+        this.initFavorites();
+
+        // Actions dangereuses
+        this.initDangerActions();
+
+        // Onglet notifications
         this.initTabListeners();
+    }
+
+    // ------------------- FAVORIS -------------------
+    initFavorites() {
+        if (!this.favoriteButtons) return;
+
+        this.favoriteButtons.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const snippetId = btn.dataset.snippetId;
+                const isActive = btn.classList.contains('active');
+
+                try {
+                    const res = await fetch('/?controller=user&action=toggleFavorite', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ snippetId })
+                    });
+
+                    const data = await res.json();
+                    if (data.success) {
+                        btn.classList.toggle('active', !isActive);
+                        this.showToast(data.message || (isActive ? "Retiré des favoris" : "Ajouté aux favoris"), true);
+                    } else {
+                        this.showToast(data.message || "Erreur favoris", false);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    this.showToast("Erreur réseau", false);
+                }
+            });
+        });
+    }
+    // ------------------- ACTIONS DANGEREUSES -------------------
+    initDangerActions() {
+        if (this.deactivateBtn) {
+            this.deactivateBtn.addEventListener('click', async () => {
+                if (!confirm("Êtes-vous sûr de vouloir désactiver votre compte ?")) return;
+
+                try {
+                    const res = await fetch('/?controller=user&action=deactivateAccount', {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        this.showToast("Compte désactivé !", true);
+                        setTimeout(() => window.location.href = '/', 1500);
+                    } else {
+                        this.showToast(data.message || "Erreur", false);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    this.showToast("Erreur réseau", false);
+                }
+            });
+        }
+
+        if (this.deleteBtn) {
+            this.deleteBtn.addEventListener('click', async () => {
+                if (!confirm("Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible !")) return;
+
+                try {
+                    const res = await fetch('/?controller=user&action=deleteAccount', {
+                        method: 'POST',
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        this.showToast("Compte supprimé !", true);
+                        setTimeout(() => window.location.href = '/', 1500);
+                    } else {
+                        this.showToast(data.message || "Erreur", false);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    this.showToast("Erreur réseau", false);
+                }
+            });
+        }
     }
 
     initTabListeners() {
