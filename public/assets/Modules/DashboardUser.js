@@ -203,10 +203,16 @@ export class DashboardUser {
         // Mode sombre - application immédiate
         const darkModeToggle = document.getElementById('darkMode');
         if (darkModeToggle) {
+            // Appliquer le thème enregistré au chargement
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            this.applyTheme(savedTheme);
+            darkModeToggle.checked = savedTheme === 'dark';
+
+            // Écoute du toggle
             darkModeToggle.addEventListener('change', (e) => {
                 const theme = e.target.checked ? 'dark' : 'light';
                 this.applyTheme(theme);
-                this.updatePreference({ theme: theme });
+                this.updatePreference({ theme: theme }); // persistance côté serveur
             });
         }
     }
@@ -403,26 +409,28 @@ export class DashboardUser {
     }
 
     applyTheme(theme) {
+        const html = document.documentElement;
+        const body = document.body;
+
         if (theme === 'dark') {
-            document.body.classList.add('dark-theme');
+            html.classList.add('dark-theme');
+            body.classList.add('dark-theme');
         } else {
-            document.body.classList.remove('dark-theme');
+            html.classList.remove('dark-theme');
+            body.classList.remove('dark-theme');
         }
-        // Sauvegarder dans localStorage pour persistance
+
+        // Sauvegarder localement
         localStorage.setItem('theme', theme);
 
         // Mettre à jour l'icône dans la navbar
         const themeIcon = document.getElementById('themeIcon');
         if (themeIcon) {
-            if (theme === 'dark') {
-                themeIcon.classList.remove('fa-moon');
-                themeIcon.classList.add('fa-sun');
-            } else {
-                themeIcon.classList.remove('fa-sun');
-                themeIcon.classList.add('fa-moon');
-            }
+            themeIcon.classList.remove('fa-moon', 'fa-sun');
+            themeIcon.classList.add(theme === 'dark' ? 'fa-sun' : 'fa-moon');
         }
     }
+
 
     initPasswordForm() {
         // Indicateur de force du mot de passe

@@ -92,20 +92,8 @@ class UserController extends Controller
         $favoriteRepository = new FavoriteRepository();
         $favorites = $favoriteRepository->getFavoritesByUser($_SESSION['user_id']);
 
-        $viewData = [
-            'title' => "Tableau de bord de {$user->getFirstName()} - SoliDev",
-            'description' => "Gérez votre profil, vos préférences, vos favoris et vos activités récentes sur SoliDev.",
-            'keywords' => "profil utilisateur, tableau de bord, préférences, favoris, SoliDev",
-            'pageTitle' => "Mon espace personnel",
-            'user' => $user,
-            'activities' => $activities,
-            'stats' => $stats,
-            'preferences' => $preferences,
-            'notifications' => $notifications,
-            'favorites' => $favorites
-        ];
 
-        $this->render('user/dashboard', $viewData, [
+        $this->render('user/dashboard', [
             'user' => $user,
             'activities' => $activities,
             'stats' => $stats,
@@ -423,15 +411,16 @@ class UserController extends Controller
 
         $allowedPreferences = [
             'theme',
-            'language',
-            'timezone',
-            'profile_public',
-            'show_online_status',
-            'allow_search_indexing',
+            'profile_email',
+            'profile_description',
+            'profile_competence',
+            'profile_sociaux',
             'notify_comments',
             'notify_likes',
-            'notify_followers',
-            'notify_newsletter'
+            'notify_forum',
+            'notify_blog',
+            'notify_projet',
+            'notify_snippet'
         ];
 
         $data = [];

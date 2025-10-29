@@ -217,7 +217,7 @@
                                         <i class="fas fa-project-diagram me-2"></i>
                                         Nouveau projet
                                     </a>
-                                    <a href="/snippets" class="btn btn-primary-custom">
+                                    <a href="/?controller=snippets&action=createSnippet" class="btn btn-primary-custom">
                                         <i class="fas fa-code me-2"></i>
                                         Nouveau snippet
                                     </a>
@@ -397,29 +397,57 @@
 
                                 <div class="preference-item">
                                     <div>
-                                        <h6>Nouveaux followers</h6>
-                                        <small class="text-muted">Quand quelqu'un vous suit</small>
+                                        <h6>Forum</h6>
+                                        <small class="text-muted">Nouveau poste</small>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input notification-setting"
                                             type="checkbox"
-                                            id="notifyFollowers"
-                                            data-preference="notify_followers"
-                                            <?= $preferences['notify_followers'] ? 'checked' : '' ?>>
+                                            id="notifyForum"
+                                            data-preference="notify_forum"
+                                            <?= $preferences['notify_forum'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
                                 <div class="preference-item">
                                     <div>
-                                        <h6>Newsletter hebdomadaire</h6>
-                                        <small class="text-muted">Résumé de la semaine</small>
+                                        <h6>Blog</h6>
+                                        <small class="text-muted">Nouveau poste</small>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input notification-setting"
                                             type="checkbox"
-                                            id="notifyNewsletter"
-                                            data-preference="notify_newsletter"
-                                            <?= $preferences['notify_newsletter'] ? 'checked' : '' ?>>
+                                            id="notifyBlog"
+                                            data-preference="notify_blog"
+                                            <?= $preferences['notify_blog'] ? 'checked' : '' ?>>
+                                    </div>
+                                </div>
+
+                                <div class="preference-item">
+                                    <div>
+                                        <h6>Projet</h6>
+                                        <small class="text-muted">Nouveau poste</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input notification-setting"
+                                            type="checkbox"
+                                            id="notifyProjet"
+                                            data-preference="notify_projet"
+                                            <?= $preferences['notify_projet'] ? 'checked' : '' ?>>
+                                    </div>
+                                </div>
+
+                                <div class="preference-item">
+                                    <div>
+                                        <h6>Snippet</h6>
+                                        <small class="text-muted">Nouveau poste</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input notification-setting"
+                                            type="checkbox"
+                                            id="notifySnippet"
+                                            data-preference="notify_snippet"
+                                            <?= $preferences['notify_snippet'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
                             </div>
@@ -451,29 +479,6 @@
                                             <?= $preferences['theme'] === 'dark' ? 'checked' : '' ?>>
                                     </div>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="language" class="form-label">Langue</label>
-                                    <select class="form-control preference-setting"
-                                        id="language"
-                                        data-preference="language">
-                                        <option value="fr" <?= $preferences['language'] === 'fr' ? 'selected' : '' ?>>Français</option>
-                                        <option value="en" <?= $preferences['language'] === 'en' ? 'selected' : '' ?>>English</option>
-                                        <option value="es" <?= $preferences['language'] === 'es' ? 'selected' : '' ?>>Español</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="timezone" class="form-label">Fuseau horaire</label>
-                                    <select class="form-control preference-setting"
-                                        id="timezone"
-                                        data-preference="timezone">
-                                        <option value="Europe/Paris" <?= $preferences['timezone'] === 'Europe/Paris' ? 'selected' : '' ?>>Europe/Paris (GMT+1)</option>
-                                        <option value="America/New_York" <?= $preferences['timezone'] === 'America/New_York' ? 'selected' : '' ?>>America/New_York (GMT-5)</option>
-                                        <option value="Asia/Tokyo" <?= $preferences['timezone'] === 'Asia/Tokyo' ? 'selected' : '' ?>>Asia/Tokyo (GMT+9)</option>
-                                    </select>
-                                </div>
-
                                 <button type="button" class="btn btn-primary-custom" id="saveAppearanceSettings">
                                     <i class="fas fa-save me-2"></i>
                                     Enregistrer les modifications
@@ -490,43 +495,57 @@
 
                                 <div class="preference-item">
                                     <div>
-                                        <h6>Profil public</h6>
-                                        <small class="text-muted">Votre profil est visible par tous</small>
+                                        <h6>Email</h6>
+                                        <small class="text-muted">Afficher votre adresse email</small>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input privacy-setting"
                                             type="checkbox"
-                                            id="profilePublic"
-                                            data-preference="profile_public"
-                                            <?= $preferences['profile_public'] ? 'checked' : '' ?>>
+                                            id="profileEmail"
+                                            data-preference="profile_email"
+                                            <?= $preferences['profile_email'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
                                 <div class="preference-item">
                                     <div>
-                                        <h6>Afficher l'activité en ligne</h6>
-                                        <small class="text-muted">Les autres peuvent voir quand vous êtes en ligne</small>
+                                        <h6>Biographie</h6>
+                                        <small class="text-muted">Afficher votre description</small>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input privacy-setting"
                                             type="checkbox"
-                                            id="showOnlineStatus"
-                                            data-preference="show_online_status"
-                                            <?= $preferences['show_online_status'] ? 'checked' : '' ?>>
+                                            id="profilDescription"
+                                            data-preference="profile_description"
+                                            <?= $preferences['profile_description'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 
                                 <div class="preference-item">
                                     <div>
-                                        <h6>Indexation par les moteurs de recherche</h6>
-                                        <small class="text-muted">Permettre l'indexation de votre profil</small>
+                                        <h6>Compétences</h6>
+                                        <small class="text-muted">Afficher vos compétences</small>
                                     </div>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input privacy-setting"
                                             type="checkbox"
-                                            id="allowSearchIndexing"
-                                            data-preference="allow_search_indexing"
-                                            <?= $preferences['allow_search_indexing'] ? 'checked' : '' ?>>
+                                            id="profileCompetence"
+                                            data-preference="profile_competence"
+                                            <?= $preferences['profile_competence'] ? 'checked' : '' ?>>
+                                    </div>
+                                </div>
+
+                                <div class="preference-item">
+                                    <div>
+                                        <h6>Liens sociaux</h6>
+                                        <small class="text-muted">GitHub, Linkedin, Portfolio</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input privacy-setting"
+                                            type="checkbox"
+                                            id="profileSociaux"
+                                            data-preference="profile_sociaux"
+                                            <?= $preferences['profile_sociaux'] ? 'checked' : '' ?>>
                                     </div>
                                 </div>
 

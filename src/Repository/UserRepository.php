@@ -225,7 +225,6 @@ class UserRepository
         ];
     }
 
-
     // Suppression & modification d'un utilisateur (AdminDashboard)
     public function delete(int $userId): bool
     {
@@ -355,12 +354,12 @@ class UserRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
         $stmt = $pdo->prepare("
-        SELECT id, type, message, link, is_read, created_at
-        FROM notifications
-        WHERE user_id = :userId
-        ORDER BY created_at DESC
-        LIMIT :limit
-    ");
+            SELECT id, type, message, link, is_read, created_at
+            FROM notifications
+            WHERE user_id = :userId
+            ORDER BY created_at DESC
+            LIMIT :limit
+        ");
         $stmt->bindValue(':userId', $userId, \PDO::PARAM_INT);
         $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
         $stmt->execute();
@@ -371,10 +370,10 @@ class UserRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
         $stmt = $pdo->prepare("
-        UPDATE notifications 
-        SET is_read = TRUE 
-        WHERE id = :id AND user_id = :userId
-    ");
+            UPDATE notifications 
+            SET is_read = TRUE 
+            WHERE id = :id AND user_id = :userId
+        ");
         return $stmt->execute([
             ':id' => $notificationId,
             ':userId' => $userId
@@ -385,10 +384,10 @@ class UserRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
         $stmt = $pdo->prepare("
-        UPDATE notifications 
-        SET is_read = TRUE 
-        WHERE user_id = :userId AND is_read = FALSE
-    ");
+            UPDATE notifications 
+            SET is_read = TRUE 
+            WHERE user_id = :userId AND is_read = FALSE
+        ");
         return $stmt->execute([':userId' => $userId]);
     }
 
@@ -396,14 +395,42 @@ class UserRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
         $stmt = $pdo->prepare("
-        SELECT theme, language, timezone,
-               profile_public, show_online_status, allow_search_indexing,
-               notify_comments, notify_likes, notify_followers, notify_newsletter
-        FROM users
-        WHERE users_id = :id
-    ");
+            SELECT theme,
+                profile_email, profile_description, profile_competence, profile_sociaux,
+                notify_comments, notify_likes, notify_forum, notify_blog, notify_projet, notify_snippet
+            FROM users
+            WHERE users_id = :id
+        ");
         $stmt->execute(['id' => $userId]);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $result ?: null;
+    }
+
+    public function updateNotificationPreference(int $userId, string $preference, bool $value): bool
+    {
+        // Liste des préférences de notification autorisées
+        $allowedPreferences = [
+            'notify_comments',
+            'notify_likes',
+            'notify_forum',
+            'notify_blog',
+            'notify_projet',
+            'notify_snippet'
+        ];
+
+        if (!in_array($preference, $allowedPreferences)) {
+            return false;
+        }
+
+        $pdo = Mysql::getInstance()->getPDO();
+
+        // Utiliser une requête préparée sécurisée
+        $sql = "UPDATE users SET {$preference} = :value WHERE users_id = :userId";
+        $stmt = $pdo->prepare($sql);
+
+        return $stmt->execute([
+            ':value' => $value ? 1 : 0,
+            ':userId' => $userId
+        ]);
     }
 }
