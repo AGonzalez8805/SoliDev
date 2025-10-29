@@ -160,7 +160,7 @@
                         <i class="fas fa-code-branch"></i>
                         <h3>Aucun snippet trouvé</h3>
                         <p>Soyez le premier à partager un snippet de code !</p>
-                        <a href="/?controller=snippets&action=create" class="btn-add-snippet">
+                        <a href="/?controller=snippets&action=createSnippet" class="btn-add-snippet">
                             <i class="fas fa-plus me-2"></i>Créer un snippet
                         </a>
                     </div>
