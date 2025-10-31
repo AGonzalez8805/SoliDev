@@ -44,34 +44,106 @@ class BlogRepository
         return array_map([$this, 'mapRowToBlog'], $rows);
     }
 
+    /**
+     * Insère un nouvel article de blog
+     * @param Blog $blog L'objet blog à insérer
+     * @return int L'ID du blog inséré
+     * @throws \Exception En cas d'erreur
+     */
     public function insert(Blog $blog): int
     {
         $pdo = Mysql::getInstance()->getPDO();
 
-        $stmt = $pdo->prepare("
-            INSERT INTO blog (author_id, title, category, content, status, cover_image, excerpt)
-            VALUES (:author_id, :title, :category, :content, :status, :cover_image, :excerpt)
-        ");
+        try {
+            $stmt = $pdo->prepare("
+                INSERT INTO blog (
+                    author_id, 
+                    title, 
+                    category, 
+                    content, 
+                    excerpt,
+                    status, 
+                    cover_image,
+                    created_at,
+                    updated_at
+                )
+                VALUES (
+                    :author_id, 
+                    :title, 
+                    :category, 
+                    :content, 
+                    :excerpt,
+                    :status, 
+                    :cover_image,
+                    NOW(),
+                    NOW()
+                )
+            ");
 
-        $stmt->execute([
-            ':author_id'   => $blog->getAuthorId(),
-            ':title'       => $blog->getTitle(),
-            ':category'    => $blog->getCategory(),
-            ':content'     => $blog->getContent(),
-            ':status'      => $blog->getStatus(),
-            ':cover_image' => $blog->getCoverImage(),
-            ':excerpt'     => $blog->getExcerpt(),
-        ]);
+            $result = $stmt->execute([
+                ':author_id'   => $blog->getAuthorId(),
+                ':title'       => $blog->getTitle(),
+                ':category'    => $blog->getCategory(),
+                ':content'     => $blog->getContent(),
+                ':excerpt'     => $blog->getExcerpt(),
+                ':status'      => $blog->getStatus(),
+                ':cover_image' => $blog->getCoverImage(),
+            ]);
 
+            if (!$result) {
+                throw new \Exception("Erreur lors de l'insertion du blog");
+            }
 
-        return (int)$pdo->lastInsertId();
+            return (int)$pdo->lastInsertId();
+        } catch (\PDOException $e) {
+            error_log("Erreur SQL dans BlogRepository::insert - " . $e->getMessage());
+            throw new \Exception("Erreur lors de la sauvegarde de l'article : " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Met à jour un article de blog existant
+     * @param Blog $blog L'objet blog à mettre à jour
+     * @return bool True si la mise à jour a réussi
+     */
+    public function update(Blog $blog): bool
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        try {
+            $stmt = $pdo->prepare("
+                UPDATE blog 
+                SET 
+                    title = :title,
+                    category = :category,
+                    content = :content,
+                    excerpt = :excerpt,
+                    status = :status,
+                    cover_image = :cover_image,
+                    updated_at = NOW()
+                WHERE id = :id
+            ");
+
+            return $stmt->execute([
+                ':id'          => $blog->getId(),
+                ':title'       => $blog->getTitle(),
+                ':category'    => $blog->getCategory(),
+                ':content'     => $blog->getContent(),
+                ':excerpt'     => $blog->getExcerpt(),
+                ':status'      => $blog->getStatus(),
+                ':cover_image' => $blog->getCoverImage(),
+            ]);
+        } catch (\PDOException $e) {
+            error_log("Erreur SQL dans BlogRepository::update - " . $e->getMessage());
+            return false;
+        }
     }
 
     public function findFilteredPaginated(?string $category, ?string $search, string $sort, int $limit, int $offset): array
     {
         $pdo = Mysql::getInstance()->getPDO();
 
-        $sql = "SELECT b.*, u.firstName, u.name FROM blog b JOIN users u ON b.author_id = u.users_id WHERE 1=1";
+        $sql = "SELECT b.*, u.firstName, u.name FROM blog b JOIN users u ON b.author_id = u.users_id WHERE b.status = 'published'";
         $params = [];
 
         if ($category) {
@@ -106,7 +178,7 @@ class BlogRepository
     {
         $pdo = Mysql::getInstance()->getPDO();
 
-        $sql = "SELECT COUNT(*) FROM blog WHERE 1=1";
+        $sql = "SELECT COUNT(*) FROM blog WHERE status = 'published'";
         $params = [];
 
         if ($category) {
@@ -132,39 +204,48 @@ class BlogRepository
         return (int)$stmt->fetchColumn();
     }
 
+    /**
+     * Mappe une ligne de résultat SQL vers un objet Blog
+     * @param array $row La ligne de données
+     * @return Blog L'objet Blog créé
+     */
     private function mapRowToBlog(array $row): Blog
     {
         $blog = new Blog();
+
+        // Champs obligatoires
         $blog->setId((int)$row['id']);
         $blog->setTitle($row['title']);
         $blog->setCategory($row['category']);
         $blog->setContent($row['content']);
         $blog->setStatus($row['status']);
-        $blog->setCoverImage($row['cover_image']);
-        $blog->setAllowComments((bool)$row['allow_comments']);
-        $blog->setFeatured((bool)$row['featured']);
-        $blog->setExcerpt($row['excerpt']);
+        $blog->setExcerpt($row['excerpt'] ?? '');
+        $blog->setAuthorId($row['author_id']);
 
-        // Ajouter l'auteur
-        $authorName = $row['firstName'] ?? $row['name'] ?? 'Anonyme';
+        // Champs optionnels
+        $blog->setCoverImage($row['cover_image'] ?? null);
+
+        if (isset($row['allow_comments'])) {
+            $blog->setAllowComments((bool)$row['allow_comments']);
+        }
+
+        if (isset($row['featured'])) {
+            $blog->setFeatured((bool)$row['featured']);
+        }
+
+        if (isset($row['created_at'])) {
+            $blog->setCreatedAt($row['created_at']);
+        }
+
+        if (isset($row['updated_at'])) {
+            $blog->setUpdatedAt($row['updated_at']);
+        }
+
+        // Nom de l'auteur (jointure avec users)
+        $authorName = ($row['firstName'] ?? '') . ' ' . ($row['name'] ?? '');
+        $authorName = trim($authorName) ?: 'Anonyme';
         $blog->setAuthorName($authorName);
 
         return $blog;
-    }
-
-
-    public function findDraftsByUser(int $userId): array
-    {
-        $pdo = Mysql::getInstance()->getPDO();
-
-        $stmt = $pdo->prepare("
-            SELECT id, title, excerpt, category, updated_at
-            FROM blog
-            WHERE author_id = :usersId AND status = 'draft'
-            ORDER BY updated_at DESC
-        ");
-        $stmt->execute(['usersId' => $userId]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -111,35 +111,12 @@
                     <p>Rédigez votre article ici...</p>
                 </div>
             </div>
-            <fieldset class="form-group">
-                <legend class="form-label">Options</legend>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="status" id="draft" value="draft" checked>
-                    <label class="form-check-label" for="draft">
-                        Sauvegarder en brouillon (vous pourrez le publier plus tard)
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="status" id="publish" value="published">
-                    <label class="form-check-label" for="publish">
-                        Publier immédiatement
-                    </label>
-                </div>
-            </fieldset>
 
             <!-- Boutons d'action -->
             <div class="action-buttons">
                 <div>
-                    <span class="autosave-status" id="autosaveStatus">
-                        <i class="fas fa-check-circle"></i> Sauvegardé automatiquement
-                    </span>
-                </div>
-                <div>
                     <button type="button" class="btn btn-outline-primary" id="previewBtn">
                         <i class="fas fa-eye me-2"></i>Aperçu
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="saveDraftBtn">
-                        <i class="fas fa-save me-2"></i>Sauvegarder
                     </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane me-2"></i>Publier l'article
@@ -152,6 +129,7 @@
     <div class="preview-container" id="previewContainer">
         <div class="preview-header">
             <h2 class="preview-title" id="previewTitle">Titre de l'article</h2>
+            <p class="preview-excerpt" id="previewExcerpt"></p>
             <div class="preview-meta" id="previewMeta">
                 Par Utilisateur • <span id="previewDate"></span> • <span id="previewCategory">Catégorie</span>
             </div>
