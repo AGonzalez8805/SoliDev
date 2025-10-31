@@ -16,7 +16,6 @@
 
 <!-- Formulaire de création -->
 <div class="create-container">
-    <textarea name="content" id="content" style="display:none;"></textarea>
 
     <form class="create-form" id="articleForm" method="POST" action="/?controller=blog&action=store" enctype="multipart/form-data">
         <!-- Informations générales -->

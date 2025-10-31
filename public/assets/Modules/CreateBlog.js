@@ -25,14 +25,11 @@ export class CreateBlog {
         this.coverInput = document.getElementById("coverImage");
         this.imagePreview = document.getElementById("imagePreview");
 
-        // Récupérer ou créer le textarea caché pour le contenu
+        // Récupérer le textarea caché pour le contenu (doit exister dans le HTML)
         this.hiddenContent = document.getElementById("content");
         if (!this.hiddenContent) {
-            this.hiddenContent = document.createElement("textarea");
-            this.hiddenContent.id = "content";
-            this.hiddenContent.name = "content";
-            this.hiddenContent.style.display = "none";
-            this.form.appendChild(this.hiddenContent);
+            console.error("Le textarea #content est introuvable dans le formulaire !");
+            return;
         }
 
         this.buttons = document.querySelectorAll(".editor-btn");
@@ -131,18 +128,38 @@ export class CreateBlog {
     initFormSubmit() {
         this.form.addEventListener("submit", (e) => {
             // Récupérer le contenu de l'éditeur
-            const content = this.editor.innerHTML.trim();
+            let content = this.editor.innerHTML.trim();
 
-            // Si le contenu est vide ou contient seulement le placeholder
-            if (!content || content === "<p>Rédigez votre article ici...</p>") {
+            // Nettoyer le placeholder par défaut
+            if (content === "<p>Rédigez votre article ici...</p>") {
+                content = "";
+            }
+
+            // Vérifier si le contenu est vide
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            const textContent = tempDiv.textContent || tempDiv.innerText || '';
+
+            if (!textContent.trim()) {
                 e.preventDefault();
                 alert("Veuillez rédiger le contenu de votre article.");
                 this.editor.focus();
                 return false;
             }
 
-            // Copier le contenu dans le textarea caché
+            // IMPORTANT : Copier le contenu dans le textarea caché
+            console.log("Contenu copié vers le textarea:", content);
             this.hiddenContent.value = content;
+
+            // Vérifier que la valeur a bien été assignée
+            if (!this.hiddenContent.value) {
+                e.preventDefault();
+                alert("Erreur: le contenu n'a pas pu être sauvegardé. Veuillez réessayer.");
+                return false;
+            }
+
+            // Le formulaire peut être soumis
+            return true;
         });
     }
 
