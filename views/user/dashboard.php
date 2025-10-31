@@ -69,11 +69,6 @@
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#drafts-tab" type="button">
-                            <i class="fas fa-file-alt me-2"></i>Brouillons
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#security-tab" type="button">
                             <i class="fas fa-shield-alt me-2"></i>Sécurité
                         </button>
@@ -227,19 +222,6 @@
                     </div>
                 </div>
 
-                <!-- Onglet Brouillons -->
-                <div class="tab-pane fade" id="drafts-tab">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-card">
-                                <h3 class="section-title">
-                                    <i class="fas fa-file-alt me-2"></i>
-                                    Mes brouillons
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!-- Onglet Sécurité -->
                 <div class="tab-pane fade" id="security-tab">
                     <div class="row justify-content-center">
@@ -479,10 +461,6 @@
                                             <?= $preferences['theme'] === 'dark' ? 'checked' : '' ?>>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary-custom" id="saveAppearanceSettings">
-                                    <i class="fas fa-save me-2"></i>
-                                    Enregistrer les modifications
-                                </button>
                             </div>
                         </div>
 
