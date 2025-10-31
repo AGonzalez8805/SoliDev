@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Service\UserService;
 use App\Config\Mailer;
 use App\Repository\FavoriteRepository;
+use App\Repository\BlogRepository;
+use App\Repository\CommentsBlogRepository;
 
 class UserController extends Controller
 {
@@ -91,6 +93,34 @@ class UserController extends Controller
         $notifications = $userRepo->getNotifications($_SESSION['user_id'], 10);
         $favoriteRepository = new FavoriteRepository();
         $favorites = $favoriteRepository->getFavoritesByUser($_SESSION['user_id']);
+
+        $activities = [];
+
+        $blogRepo = new BlogRepository();
+        $commentRepo = new CommentsBlogRepository();
+        $userId = $_SESSION['user_id'];
+
+        // Récupérer les posts de l'utilisateur
+        $blogs = $blogRepo->findByAuthorId($userId);
+
+        foreach ($blogs as $blog) {
+            $activities[] = [
+                'type' => 'blog',
+                'message' => "Vous avez publié l'article '{$blog->getTitle()}'",
+                'created_at' => $blog->getCreatedAt()
+            ];
+
+            // Ajouter commentaires reçus sur ce blog
+            $comments = $commentRepo->findByBlogId($blog->getId());
+            foreach ($comments as $comment) {
+                $activities[] = [
+                    'type' => 'comment',
+                    'message' => "Votre article '{$blog->getTitle()}' a reçu un commentaire",
+                    'created_at' => $comment->getCreatedAt()
+                ];
+            }
+        }
+
 
 
         $this->render('user/dashboard', [

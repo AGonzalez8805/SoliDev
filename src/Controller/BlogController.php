@@ -232,6 +232,22 @@ class BlogController extends Controller
             $repo = new CommentsBlogRepository();
             $repo->insert($comment);
 
+            $blogRepo = new BlogRepository();
+            $blog = $blogRepo->findOneById($blogId);
+
+            // Ajouter notification si ce n'est pas l'auteur
+            if ($blog && $blog->getAuthorId() !== $userId) {
+                $notifRepo = new \App\Repository\NotificationRepository();
+                $notifRepo->insert([
+                    'user_id' => $blog->getAuthorId(),
+                    'type' => 'comment',
+                    'message' => "Votre article '{$blog->getTitle()}' a reçu un nouveau commentaire.",
+                    'link' => "/?controller=blog&action=show&id={$blogId}",
+                    'is_read' => 0,
+                    'created_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+
             header("Location: /?controller=blog&action=show&id=" . $blogId);
             exit;
         } catch (\Exception $e) {

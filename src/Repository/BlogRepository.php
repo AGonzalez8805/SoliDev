@@ -8,6 +8,33 @@ use PDO;
 
 class BlogRepository
 {
+    public function findByAuthorId(int $authorId): array
+    {
+        $pdo = Mysql::getInstance()->getPDO();
+
+        $stmt = $pdo->prepare("SELECT * FROM blog WHERE author_id = :author_id ORDER BY created_at DESC");
+        $stmt->execute([':author_id' => $authorId]);
+
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $blogs = [];
+
+        foreach ($rows as $row) {
+            $blog = new Blog();
+            $blog->setId($row['id']);
+            $blog->setTitle($row['title']);
+            $blog->setCategory($row['category']);
+            $blog->setExcerpt($row['excerpt']);
+            $blog->setContent($row['content']);
+            $blog->setStatus($row['status']);
+            $blog->setCoverImage($row['cover_image']);
+            $blog->setAuthorId($row['author_id']);
+            $blog->setCreatedAt($row['created_at']);
+            $blogs[] = $blog;
+        }
+
+        return $blogs;
+    }
+
     public function findOneById(int $id): ?Blog
     {
         $pdo = Mysql::getInstance()->getPDO();
