@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Models\Blog;
 use App\Repository\BlogRepository;
+use App\Repository\CommentsBlogRepository;
+use App\Models\CommentsBlog;
 
 class BlogController extends Controller
 {
@@ -23,16 +25,15 @@ class BlogController extends Controller
                 case 'store':
                     $this->store();
                     break;
-                case 'comment':
-                    $this->comment();
-                    break;
                 case 'preview':
                     $this->preview();
+                    break;
+                case 'addComment':
+                    $this->addComment();
                     break;
 
                 default:
                     throw new \Exception("Cette action n'existe pas : " . $action);
-                    break;
             }
         });
     }
@@ -53,6 +54,11 @@ class BlogController extends Controller
         $totalBlogs = $blogRepository->countFiltered($category, $search);
         $totalPages = (int) ceil($totalBlogs / $limit);
 
+        $commentsRepo = new CommentsBlogRepository();
+        foreach ($blogs as $blog) {
+            $blog->setCommentsCount($commentsRepo->countByBlogId($blog->getId()));
+        }
+
         $this->render('blog/show', [
             'blogs'      => $blogs,
             'page'       => $page,
@@ -68,7 +74,6 @@ class BlogController extends Controller
     {
         try {
             if (!isset($_GET['id'])) {
-                // Redirige vers la liste si aucun id
                 header("Location: /?controller=blog&action=list");
                 exit;
             }
@@ -81,8 +86,15 @@ class BlogController extends Controller
                 throw new \Exception("Blog introuvable pour l'id : $id");
             }
 
+            // ✅ Utiliser le bon repository et le bon model
+            $commentRepository = new CommentsBlogRepository();
+            $comments = $commentRepository->findByBlogId($id);
+            $commentsCount = $commentRepository->countByBlogId($id);
+
             $this->render('blog/show_single', [
                 'blog' => $blog,
+                'comments' => $comments,
+                'commentsCount' => $commentsCount,
                 'Parsedown' => new \Parsedown()
             ]);
         } catch (\Exception $e) {
@@ -94,7 +106,6 @@ class BlogController extends Controller
 
     protected function createBlog(): void
     {
-        // Vérifier que l'utilisateur est connecté
         if (!isset($_SESSION['user_id'])) {
             header("Location: /?controller=auth&action=login");
             exit;
@@ -106,37 +117,22 @@ class BlogController extends Controller
     protected function store(): void
     {
         try {
-            // Vérifier que l'utilisateur est connecté
             if (!isset($_SESSION['user_id'])) {
                 throw new \Exception("Vous devez être connecté pour créer un article.");
             }
 
-            // Validation des champs obligatoires
-            if (empty($_POST['title'])) {
-                throw new \Exception("Le titre est obligatoire.");
-            }
+            if (empty($_POST['title'])) throw new \Exception("Le titre est obligatoire.");
+            if (empty($_POST['category'])) throw new \Exception("La catégorie est obligatoire.");
+            if (empty($_POST['excerpt'])) throw new \Exception("Le résumé est obligatoire.");
+            if (empty($_POST['content'])) throw new \Exception("Le contenu est obligatoire.");
 
-            if (empty($_POST['category'])) {
-                throw new \Exception("La catégorie est obligatoire.");
-            }
-
-            if (empty($_POST['excerpt'])) {
-                throw new \Exception("Le résumé est obligatoire.");
-            }
-
-            if (empty($_POST['content'])) {
-                throw new \Exception("Le contenu est obligatoire.");
-            }
-
-            // Récupération et nettoyage des données
             $title = trim($_POST['title']);
             $category = trim($_POST['category']);
             $excerpt = trim($_POST['excerpt']);
-            $content = $_POST['content']; // Ne pas trim le contenu HTML
-            $status = 'published'; // Publié par défaut
-            $userId = $_SESSION['user_id']; // Garder en string
+            $content = $_POST['content'];
+            $status = 'published';
+            $userId = $_SESSION['user_id'];
 
-            // Gestion de l'upload d'image
             $coverImagePath = null;
             if (!empty($_FILES['cover_image']['name'])) {
                 $uploadResult = $this->handleImageUpload($_FILES['cover_image']);
@@ -147,7 +143,6 @@ class BlogController extends Controller
                 }
             }
 
-            // Création de l'objet Blog
             $blog = new Blog();
             $blog->setTitle($title);
             $blog->setCategory($category);
@@ -157,7 +152,6 @@ class BlogController extends Controller
             $blog->setCoverImage($coverImagePath);
             $blog->setAuthorId($userId);
 
-            // Insertion en base de données
             $blogRepository = new BlogRepository();
             $lastId = $blogRepository->insert($blog);
 
@@ -165,11 +159,9 @@ class BlogController extends Controller
                 throw new \Exception("Erreur lors de la création de l'article.");
             }
 
-            // Redirection vers l'article créé
             header("Location: /?controller=blog&action=show&id=" . $lastId);
             exit;
         } catch (\Exception $e) {
-            // En cas d'erreur, afficher la page d'erreur
             $this->render('errors/default', [
                 'errors' => $e->getMessage()
             ]);
@@ -178,73 +170,74 @@ class BlogController extends Controller
 
     private function handleImageUpload(array $file): array
     {
-        // Vérifier qu'il n'y a pas d'erreur d'upload
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            return [
-                'success' => false,
-                'path' => null,
-                'error' => 'Erreur lors du téléchargement du fichier.'
-            ];
+            return ['success' => false, 'path' => null, 'error' => 'Erreur lors du téléchargement du fichier.'];
         }
 
-        // Vérifier la taille (max 2MB)
         $maxSize = 2 * 1024 * 1024;
         if ($file['size'] > $maxSize) {
-            return [
-                'success' => false,
-                'path' => null,
-                'error' => 'Le fichier est trop volumineux (max 2MB).'
-            ];
+            return ['success' => false, 'path' => null, 'error' => 'Le fichier est trop volumineux (max 2MB).'];
         }
 
-        // Vérifier le type MIME
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
 
         if (!in_array($mimeType, $allowedTypes)) {
-            return [
-                'success' => false,
-                'path' => null,
-                'error' => 'Format de fichier non autorisé. Utilisez JPG, PNG ou WebP.'
-            ];
+            return ['success' => false, 'path' => null, 'error' => 'Format de fichier non autorisé. Utilisez JPG, PNG ou WebP.'];
         }
 
-        // Créer le dossier uploads s'il n'existe pas
         $targetDir = APP_ROOT . "/public/uploads/";
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0755, true);
         }
 
-        // Générer un nom de fichier unique
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $fileName = uniqid('blog_', true) . '.' . $extension;
         $targetFile = $targetDir . $fileName;
 
-        // Déplacer le fichier
         if (move_uploaded_file($file['tmp_name'], $targetFile)) {
-            return [
-                'success' => true,
-                'path' => '/uploads/' . $fileName,
-                'error' => null
-            ];
+            return ['success' => true, 'path' => '/uploads/' . $fileName, 'error' => null];
         }
 
-        return [
-            'success' => false,
-            'path' => null,
-            'error' => 'Erreur lors de la sauvegarde du fichier.'
-        ];
-    }
-
-    protected function comment(): void
-    {
-        $this->render('blog/comment');
+        return ['success' => false, 'path' => null, 'error' => 'Erreur lors de la sauvegarde du fichier.'];
     }
 
     protected function preview(): void
     {
         $this->render('blog/preview');
+    }
+
+    protected function addComment(): void
+    {
+        try {
+            if (!isset($_SESSION['user_id'])) {
+                throw new \Exception("Vous devez être connecté pour commenter.");
+            }
+
+            if (empty($_POST['blog_id']) || empty($_POST['content'])) {
+                throw new \Exception("Le commentaire ne peut pas être vide.");
+            }
+
+            $blogId = (int)$_POST['blog_id'];
+            $userId = (int)$_SESSION['user_id'];
+            $content = trim($_POST['content']);
+
+            $comment = new CommentsBlog();
+            $comment->setBlogId($blogId);
+            $comment->setUserId($userId);
+            $comment->setContent($content);
+
+            $repo = new CommentsBlogRepository();
+            $repo->insert($comment);
+
+            header("Location: /?controller=blog&action=show&id=" . $blogId);
+            exit;
+        } catch (\Exception $e) {
+            $this->render('errors/default', [
+                'errors' => $e->getMessage()
+            ]);
+        }
     }
 }

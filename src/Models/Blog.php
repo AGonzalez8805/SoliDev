@@ -17,6 +17,7 @@ class Blog
     protected string $excerpt;
     protected string $author_id;
     private string $authorName;
+    private int $commentsCount = 0;
 
 
     /**
@@ -249,6 +250,24 @@ class Blog
     public function setAuthorName(string $authorName): self
     {
         $this->authorName = $authorName;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of commentsCount
+     */
+    public function getCommentsCount(): int
+    {
+        return $this->commentsCount;
+    }
+
+    /**
+     * Set the value of commentsCount
+     */
+    public function setCommentsCount(int $commentsCount): self
+    {
+        $this->commentsCount = $commentsCount;
 
         return $this;
     }

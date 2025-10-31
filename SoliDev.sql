@@ -108,6 +108,21 @@ CREATE TABLE project_collaborators (
 CREATE INDEX idx_project ON project_collaborators(project_id);
 CREATE INDEX idx_user ON project_collaborators(users_id);
 
+CREATE TABLE comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    blog_id INT NOT NULL,
+    user_id INT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (blog_id) REFERENCES blog(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(users_id) ON DELETE CASCADE,
+    INDEX idx_blog (blog_id),
+    INDEX idx_user (user_id),
+    INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+RENAME TABLE comments TO commentsBlog;
 
 ALTER TABLE users ADD COLUMN photo VARCHAR(255) NULL AFTER email;
 ALTER TABLE users

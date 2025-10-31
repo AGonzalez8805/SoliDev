@@ -86,6 +86,7 @@
                                 Par <strong><?= htmlspecialchars($blog->getAuthorName()) ?></strong>
                                 • <?= htmlspecialchars($blog->getCategory()) ?>
                                 • <?= $formattedDate ?>
+                                • 💬 <?= $blog->getCommentsCount() ?> commentaire<?= ($blog->commentsCount ?? 0) > 1 ? 's' : '' ?>
                             </p>
                             <p class="article-excerpt">
                                 <?= nl2br(htmlspecialchars($blog->getExcerpt())) ?>
@@ -106,6 +107,7 @@
                             Par <strong><?= htmlspecialchars($blog->getAuthorName()) ?></strong>
                             • <?= htmlspecialchars($blog->getCategory()) ?>
                             • <?= $formattedDate ?>
+                            • 💬 <?= $blog->getCommentsCount() ?> commentaire<?= ($blog->commentsCount ?? 0) > 1 ? 's' : '' ?>
                         </p>
                         <?php if ($blog->getCoverImage()): ?>
                             <img src="<?= htmlspecialchars($blog->getCoverImage()) ?>" alt="Image de couverture" class="cover-image">
