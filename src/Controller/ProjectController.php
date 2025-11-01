@@ -33,9 +33,10 @@ class ProjectController extends Controller
         $tech = $_GET['tech'] ?? '';
         $search = $_GET['q'] ?? '';
         $sort = $_GET['sort'] ?? 'recent';
+        $teamSize = $_GET['team_size'] ?? '';
 
         $repo = new \App\Repository\ProjectsRepository();
-        $projects = $repo->findAll($status, $tech, $search, $sort);
+        $projects = $repo->findAll($status, $tech, $search, $sort, $teamSize);
 
         $metaData = [
             'title' => "Projets - SoliDev",
@@ -50,10 +51,10 @@ class ProjectController extends Controller
             'status' => $status,
             'tech' => $tech,
             'search' => $search,
-            'sort' => $sort
+            'sort' => $sort,
+            'teamSize' => $teamSize
         ]));
     }
-
 
     protected function create(): void
     {

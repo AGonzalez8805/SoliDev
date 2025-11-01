@@ -7,7 +7,7 @@ use App\Models\Project;
 
 class ProjectsRepository
 {
-    public function findAll(?string $status = null, ?string $tech = null, ?string $search = null, ?string $sort = 'recent'): array
+    public function findAll(?string $status = null, ?string $tech = null, ?string $search = null, ?string $sort = 'recent', ?string $teamSize = null): array
     {
         $pdo = Mysql::getInstance()->getPDO();
 
@@ -37,6 +37,11 @@ class ProjectsRepository
         if ($search) {
             $sql .= " AND (p.title LIKE :search OR p.description LIKE :search)";
             $params['search'] = "%$search%";
+        }
+
+        if ($teamSize) {
+            $sql .= " AND p.team_size = :teamSize";
+            $params[':teamSize'] = $teamSize;
         }
 
         // Tri

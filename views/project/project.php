@@ -45,7 +45,6 @@ $Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant
                             <option value="planning" <?= (($_GET['status'] ?? '') === 'planning') ? 'selected' : '' ?>>En planification</option>
                             <option value="active" <?= (($_GET['status'] ?? '') === 'active') ? 'selected' : '' ?>>En cours</option>
                             <option value="completed" <?= (($_GET['status'] ?? '') === 'completed') ? 'selected' : '' ?>>Terminé</option>
-                            <option value="seeking" <?= (($_GET['status'] ?? '') === 'seeking') ? 'selected' : '' ?>>Recherche collaborateurs</option>
                         </select>
 
                         <select name="tech" class="filter-select">
@@ -56,6 +55,14 @@ $Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant
                             <option value="react" <?= (($_GET['tech'] ?? '') === 'react') ? 'selected' : '' ?>>React</option>
                             <option value="vue" <?= (($_GET['tech'] ?? '') === 'vue') ? 'selected' : '' ?>>Vue.js</option>
                             <option value="node" <?= (($_GET['tech'] ?? '') === 'node') ? 'selected' : '' ?>>Node.js</option>
+                        </select>
+
+                        <select name="team_size" class="filter-select">
+                            <option value="">Toutes les équipes</option>
+                            <option value="solo" <?= (($_GET['team_size'] ?? '') === 'solo') ? 'selected' : '' ?>>Solo</option>
+                            <option value="small" <?= (($_GET['team_size'] ?? '') === 'small') ? 'selected' : '' ?>>Petite équipe</option>
+                            <option value="medium" <?= (($_GET['team_size'] ?? '') === 'medium') ? 'selected' : '' ?>>Équipe moyenne</option>
+                            <option value="large" <?= (($_GET['team_size'] ?? '') === 'large') ? 'selected' : '' ?>>Grande équipe</option>
                         </select>
 
                         <select name="sort" class="filter-select">
@@ -138,7 +145,7 @@ $Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant
 
                                 <!-- Description -->
                                 <div class="project-description">
-                                    <?= $Parsedown->text($project->getDescription()) ?>
+                                    <?= $Parsedown->text($project->getShortDescription()) ?>
                                 </div>
 
                                 <!-- Technologies -->
@@ -150,6 +157,35 @@ $Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant
                                         <span class="tech-badge"><?= htmlspecialchars($tech) ?></span>
                                     <?php endforeach; ?>
                                 </div>
+
+                                <!-- NOUVELLE SECTION : Collaboration -->
+                                <?php if ($project->getTeamSize() || $project->getLookingFor()): ?>
+                                    <div class="project-collaboration">
+                                        <?php if ($project->getTeamSize()): ?>
+                                            <div class="collab-item">
+                                                <i class="fas fa-users"></i>
+                                                <span>
+                                                    <?php
+                                                    $teamSizeLabels = [
+                                                        'solo' => 'Solo',
+                                                        'small' => 'Petite équipe (2-4)',
+                                                        'medium' => 'Équipe moyenne (5-10)',
+                                                        'large' => 'Grande équipe (10+)'
+                                                    ];
+                                                    echo $teamSizeLabels[$project->getTeamSize()] ?? $project->getTeamSize();
+                                                    ?>
+                                                </span>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if ($project->getLookingFor() && $project->getStatus() === 'seeking'): ?>
+                                            <div class="collab-item looking-for">
+                                                <i class="fas fa-search"></i>
+                                                <span><?= htmlspecialchars(substr($project->getLookingFor(), 0, 80)) ?><?= strlen($project->getLookingFor()) > 80 ? '...' : '' ?></span>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
 
                                 <!-- Actions -->
                                 <div class="project-actions">
@@ -164,7 +200,6 @@ $Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant
                                         </a>
                                     <?php endif; ?>
                                 </div>
-                            </div>
                         </article>
                     </div>
                 <?php
