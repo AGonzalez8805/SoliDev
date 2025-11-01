@@ -111,18 +111,29 @@
 /* ===========================
    SECTIONS DU CONTENU
    =========================== */
-.project-description,
-.project-technologies,
-.project-details,
-.project-links {
+.project-view .project-description {
+  padding: 2rem 0;
+  border-bottom: 1px solid #e9ecef;
+  /* ANNULER le truncate de la page liste */
+  display: block !important;
+  -webkit-line-clamp: initial !important;
+  -webkit-box-orient: initial !important;
+  overflow: visible !important;
+  flex: none !important;
+  margin-bottom: 0 !important;
+}
+
+.project-view .project-technologies,
+.project-view .project-details,
+.project-view .project-links {
   padding: 2rem 0;
   border-bottom: 1px solid #e9ecef;
 }
 
-.project-description h3,
-.project-technologies h3,
-.project-details h3,
-.project-links h3 {
+.project-view .project-description h3,
+.project-view .project-technologies h3,
+.project-view .project-details h3,
+.project-view .project-links h3 {
   color: #0f1726;
   font-weight: 600;
   font-size: 1.5rem;
@@ -131,19 +142,72 @@
   align-items: center;
 }
 
-.project-description h3 i,
-.project-technologies h3 i,
-.project-details h3 i,
-.project-links h3 i {
+.project-view .project-description h3 i,
+.project-view .project-technologies h3 i,
+.project-view .project-details h3 i,
+.project-view .project-links h3 i {
   color: #d95d30;
   font-size: 1.3rem;
 }
 
-.project-description p {
+/* Contenu de la description */
+.project-view .project-description-content {
+  color: #333;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  display: block !important;
+  -webkit-line-clamp: initial !important;
+  -webkit-box-orient: initial !important;
+  overflow: visible !important;
+}
+
+.project-view .project-description-content p {
   color: #333;
   font-size: 1.05rem;
   line-height: 1.8;
   text-align: justify;
+  margin-bottom: 1.2rem;
+}
+
+.project-view .project-description-content h2,
+.project-view .project-description-content h3 {
+  color: #0f1726;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.project-view .project-description-content h2 {
+  font-size: 1.5rem;
+  border-bottom: 2px solid #f8f9fa;
+  padding-bottom: 0.5rem;
+}
+
+.project-view .project-description-content ul,
+.project-view .project-description-content ol {
+  margin: 1rem 0 1.5rem 0;
+  padding-left: 2rem;
+}
+
+.project-view .project-description-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+  color: #333;
+}
+
+.project-view .project-description-content strong {
+  color: #0f1726;
+  font-weight: 600;
+}
+
+.project-view .project-description-content code {
+  background-color: #f8f9fa;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  color: #d95d30;
+  font-size: 0.95rem;
 }
 
 /* ===========================
@@ -327,10 +391,6 @@
   .project-details h3,
   .project-links h3 {
     font-size: 1.3rem;
-  }
-
-  .project-description p {
-    font-size: 0.95rem;
   }
 
   .tech-badge {

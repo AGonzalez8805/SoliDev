@@ -46,7 +46,7 @@ $Parsedown->setSafeMode(true); // sécurise contre le HTML malveillant
             <!-- Description -->
             <article class="project-description mb-5">
                 <h3><i class="fas fa-info-circle me-2"></i>Description complète</h3>
-                <div class="project-description">
+                <div class="project-description-content">
                     <?= $Parsedown->text($project->getDescription()) ?>
                 </div>
             </article>
