@@ -109,6 +109,7 @@
                 <div class="editor-content" id="editor" contenteditable="true">
                     <p>Rédigez votre article ici...</p>
                 </div>
+                <textarea id="content" name="content" style="display: none;"></textarea>
             </div>
 
             <!-- Boutons d'action -->
